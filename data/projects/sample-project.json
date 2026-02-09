@@ -1,0 +1,19 @@
+{
+  "slug": "sample-project",
+  "title": "Sample Project",
+  "date": "2025-02-08",
+  "tags": ["demo", "meta"],
+  "author": "Tatra Labs",
+  "content": {
+    "sections": [
+      {
+        "type": "text",
+        "value": "This is a sample project. Use the same structure as posts: add an entry to data/projects-list.json and create data/projects/your-slug.json."
+      },
+      {
+        "type": "text",
+        "value": "Projects can include text, images, and video just like posts. Tags work the same way for filtering from the main page."
+      }
+    ]
+  }
+}
