@@ -65,7 +65,7 @@ Then open `http://localhost:8000`.
 ```
 
 - **text** – `value`: plain text (paragraphs split by newlines).
-- **image** – `value`: image URL, optional `alt`.
+- **image** – `value`: image URL (use `/assets/images/...` for local images), optional `alt`.
 - **video** – `value`: direct video URL (e.g. `.mp4`).
 - **embed** – `value`: iframe URL (e.g. YouTube embed link). Uses lazy loading.
 
@@ -87,4 +87,4 @@ Then open `http://localhost:8000`.
 2. In the repo: **Settings → Pages** → Source: deploy from the **main** branch (root).
 3. Your site will be at `https://<username>.github.io/<repo>/`. If the repo is `username.github.io`, it will be `https://username.github.io/`.
 
-If the site is in a subpath (e.g. `/tatra-labs.github.io/`), update links in `index.html`, `post.html`, and `project.html` to use that base path, or use a base tag.
+**URL structure** – Clean path-based URLs like [Hugging Face](https://huggingface.co/blog/community-evals) or [DeepLearning.AI](https://learn.deeplearning.ai/courses/multi-vector-image-retrieval): `/` (home), `/post/welcome-post`, `/project/sample-project`. A custom `404.html` handles `/post/*` and `/project/*` paths. Use root-relative paths (e.g. `/assets/images/...`) for images in post content. For local testing, use a server that serves 404.html for missing paths (e.g. `npx serve`); Python's `http.server` does not.

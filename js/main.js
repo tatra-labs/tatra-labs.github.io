@@ -84,7 +84,7 @@
     }).join('');
     return (
       '<div class="card" data-slug="' + escapeHtml(item.slug) + '">' +
-        '<h3 class="card-title"><a href="' + baseUrl + '?slug=' + encodeURIComponent(item.slug) + '">' + escapeHtml(item.title) + '</a></h3>' +
+        '<h3 class="card-title"><a href="' + baseUrl + encodeURIComponent(item.slug) + '">' + escapeHtml(item.title) + '</a></h3>' +
         (item.excerpt ? '<p class="card-excerpt">' + escapeHtml(item.excerpt) + '</p>' : '') +
         '<p class="card-meta">' + escapeHtml(meta) + '</p>' +
         (tagsHtml ? '<div class="card-tags">' + tagsHtml + '</div>' : '') +
@@ -103,8 +103,8 @@
     var filteredPosts = posts.filter(function (p) { return matchesFilter(p, activeTags, searchQuery); });
     var filteredProjects = projects.filter(function (p) { return matchesFilter(p, activeTags, searchQuery); });
 
-    postsList.innerHTML = filteredPosts.map(function (p) { return renderCard(p, 'post.html', true); }).join('');
-    projectsList.innerHTML = filteredProjects.map(function (p) { return renderCard(p, 'project.html', false); }).join('');
+    postsList.innerHTML = filteredPosts.map(function (p) { return renderCard(p, '/post/', true); }).join('');
+    projectsList.innerHTML = filteredProjects.map(function (p) { return renderCard(p, '/project/', false); }).join('');
 
     postsEmpty.classList.toggle('hidden', filteredPosts.length > 0);
     projectsEmpty.classList.toggle('hidden', filteredProjects.length > 0);
@@ -135,12 +135,20 @@
   }
 
   function init() {
-    var hash = (window.location.hash || '').replace(/^#/, '');
-    if (hash === 'projects') activeTab = 'projects';
+    var path = window.location.pathname;
+    if (path === '/index.html' || path.endsWith('/index.html')) {
+      var clean = path.replace(/index\.html$/i, '') || '/';
+      var search = window.location.search || '';
+      var hash = window.location.hash || '';
+      window.history.replaceState(null, '', (clean || '/') + search + hash);
+    }
+    var params = new URLSearchParams(window.location.search);
+    var tabParam = params.get('tab');
+    if (tabParam === 'projects') activeTab = 'projects';
 
     Promise.all([
-      fetch('data/posts-list.json').then(function (r) { return r.ok ? r.json() : []; }),
-      fetch('data/projects-list.json').then(function (r) { return r.ok ? r.json() : []; })
+      fetch('/data/posts-list.json').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/data/projects-list.json').then(function (r) { return r.ok ? r.json() : []; })
     ]).then(function (results) {
       posts = results[0] || [];
       projects = results[1] || [];
@@ -154,12 +162,13 @@
       renderLists();
     });
 
-    tabLinks.forEach(function (a) {
+        tabLinks.forEach(function (a) {
       if (a.getAttribute('data-tab')) {
         a.addEventListener('click', function (e) {
           e.preventDefault();
-          setTab(a.getAttribute('data-tab'));
-          window.history.replaceState(null, '', a.getAttribute('data-tab') === 'projects' ? 'index.html#projects' : 'index.html');
+          var tab = a.getAttribute('data-tab');
+          setTab(tab);
+          window.history.replaceState(null, '', tab === 'projects' ? '/?tab=projects' : '/');
         });
       }
     });

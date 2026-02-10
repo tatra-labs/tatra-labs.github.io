@@ -1,13 +1,26 @@
 (function () {
   'use strict';
 
-  var params = new URLSearchParams(window.location.search);
-  var slug = params.get('slug') || (window.location.hash || '').replace(/^#/, '');
-  var titleEl = document.getElementById('project-title');
-  var metaEl = document.getElementById('project-meta');
-  var contentEl = document.getElementById('project-content');
-  var tagsEl = document.getElementById('project-tags');
-  var errorEl = document.getElementById('load-error');
+  var path = window.location.pathname.replace(/\/$/, '');
+  var postMatch = path.match(/^\/post\/([^/]+)$/);
+  var projectMatch = path.match(/^\/project\/([^/]+)$/);
+
+  var slug, baseUrl, showReadingTime;
+  if (postMatch) {
+    slug = postMatch[1];
+    baseUrl = '/data/posts';
+    showReadingTime = true;
+  } else if (projectMatch) {
+    slug = projectMatch[1];
+    baseUrl = '/data/projects';
+    showReadingTime = false;
+  }
+
+  var titleEl = document.getElementById('viewer-title');
+  var metaEl = document.getElementById('viewer-meta');
+  var contentEl = document.getElementById('viewer-content');
+  var tagsEl = document.getElementById('viewer-tags');
+  var errorEl = document.getElementById('viewer-error');
   var articleEl = document.getElementById('article');
 
   function escapeHtml(s) {
@@ -45,19 +58,21 @@
   if (!slug) {
     articleEl.classList.add('hidden');
     errorEl.classList.remove('hidden');
-    errorEl.textContent = 'No project specified.';
+    errorEl.textContent = 'Page not found.';
+    document.title = 'Not Found – Tatra Labs';
     return;
   }
 
-  fetch('/data/projects/' + encodeURIComponent(slug) + '.json')
+  fetch(baseUrl + '/' + encodeURIComponent(slug) + '.json')
     .then(function (r) {
       if (!r.ok) throw new Error('Not found');
       return r.json();
     })
     .then(function (data) {
-      document.title = (data.title || 'Project') + ' – Tatra Labs';
+      document.title = (data.title || 'Post') + ' – Tatra Labs';
       titleEl.textContent = data.title || '';
       var meta = 'Date: ' + formatDate(data.date);
+      if (showReadingTime && data.readingTime) meta += ' | ' + data.readingTime;
       if (data.author) meta += ' | Author: ' + data.author;
       metaEl.textContent = meta;
       var sections = (data.content && data.content.sections) || [];
@@ -69,5 +84,6 @@
     .catch(function () {
       articleEl.classList.add('hidden');
       errorEl.classList.remove('hidden');
+      document.title = 'Not Found – Tatra Labs';
     });
 })();

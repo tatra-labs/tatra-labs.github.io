@@ -17,7 +17,7 @@
       },
       {
         "type": "image",
-        "value": "assets/images/workflow-of-RAG.png",
+        "value": "/assets/images/workflow-of-RAG.png",
         "alt": "RAG workflow diagram showing retrieval and generation pipeline"
       },
       {
