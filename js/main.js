@@ -15,6 +15,7 @@
   var projectsList = document.getElementById('projects-list');
   var postsSection = document.getElementById('posts-section');
   var projectsSection = document.getElementById('projects-section');
+  var foundationSection = document.getElementById('foundation-section');
   var postsEmpty = document.getElementById('posts-empty');
   var projectsEmpty = document.getElementById('projects-empty');
   var tabLinks = document.querySelectorAll('[data-tab]');
@@ -46,6 +47,10 @@
   }
 
   function renderTagFilter() {
+    if (activeTab === 'foundation') {
+      tagFilterList.innerHTML = '';
+      return;
+    }
     var tags = activeTab === 'posts' ? collectTags(posts) : collectTags(projects);
     tagFilterList.innerHTML = '';
     tags.forEach(function (t) {
@@ -80,7 +85,7 @@
     if (showReadingTime && item.readingTime) meta += ' | ' + item.readingTime;
     if (item.author) meta += ' | Author: ' + item.author;
     var tagsHtml = (item.tags || []).map(function (t) {
-      return '<span class="tag">' + escapeHtml(t) + '</span>';
+      return '<button type="button" class="tag tag-btn" data-tag="' + escapeHtml(t) + '" aria-label="Filter by tag: ' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
     }).join('');
     return (
       '<div class="card" data-slug="' + escapeHtml(item.slug) + '">' +
@@ -99,6 +104,16 @@
     return div.innerHTML;
   }
 
+  function filterByTag(tag) {
+    activeTags = [tag];
+    if (tagFilterBox && tagFilterBox.classList.contains('collapsed')) {
+      tagFilterBox.classList.remove('collapsed');
+      if (tagFilterToggle) tagFilterToggle.setAttribute('aria-expanded', 'true');
+    }
+    renderTagFilter();
+    renderLists();
+  }
+
   function renderLists() {
     var filteredPosts = posts.filter(function (p) { return matchesFilter(p, activeTags, searchQuery); });
     var filteredProjects = projects.filter(function (p) { return matchesFilter(p, activeTags, searchQuery); });
@@ -114,6 +129,12 @@
     activeTab = tab;
     postsSection.classList.toggle('hidden', tab !== 'posts');
     projectsSection.classList.toggle('hidden', tab !== 'projects');
+    if (foundationSection) {
+      foundationSection.classList.toggle('hidden', tab !== 'foundation');
+    }
+    if (tagFilterBox) {
+      tagFilterBox.classList.toggle('hidden', tab === 'foundation');
+    }
     document.querySelectorAll('.tabs a').forEach(function (a) {
       var isActive = a.getAttribute('data-tab') === tab;
       a.classList.toggle('active', isActive);
@@ -144,7 +165,7 @@
     }
     var params = new URLSearchParams(window.location.search);
     var tabParam = params.get('tab');
-    if (tabParam === 'projects') activeTab = 'projects';
+    if (tabParam === 'projects' || tabParam === 'foundation') activeTab = tabParam;
 
     Promise.all([
       fetch('/data/posts-list.json').then(function (r) { return r.ok ? r.json() : []; }),
@@ -162,13 +183,21 @@
       renderLists();
     });
 
-        tabLinks.forEach(function (a) {
+    document.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest && e.target.closest('.tag-btn');
+      if (!btn || !btn.dataset.tag) return;
+      e.preventDefault();
+      filterByTag(btn.dataset.tag);
+    });
+
+    tabLinks.forEach(function (a) {
       if (a.getAttribute('data-tab')) {
         a.addEventListener('click', function (e) {
           e.preventDefault();
           var tab = a.getAttribute('data-tab');
           setTab(tab);
-          window.history.replaceState(null, '', tab === 'projects' ? '/?tab=projects' : '/');
+          if (tab === 'projects' || tab === 'foundation') window.history.replaceState(null, '', '/?tab=' + tab);
+          else window.history.replaceState(null, '', '/');
         });
       }
     });
