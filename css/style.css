@@ -277,6 +277,20 @@ a:hover { color: var(--link-hover); text-decoration: underline; }
 .card-tags .tag-btn:focus { outline: 2px solid var(--link); outline-offset: 2px; }
 .card-tags .tag-btn:focus:not(:focus-visible) { outline: none; }
 
+.foundation-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  margin: 0 0 0.75rem;
+}
+.foundation-content p {
+  margin: 0 0 1rem;
+}
+.foundation-content p:last-child {
+  margin-bottom: 0;
+}
+
 /* Tabs: Posts | Projects */
 .tabs { display: flex; gap: 0; margin-bottom: 1rem; border-bottom: 1px solid var(--border); }
 .tabs a {

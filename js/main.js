@@ -13,12 +13,15 @@
   var searchInput = document.getElementById('search-input');
   var postsList = document.getElementById('posts-list');
   var projectsList = document.getElementById('projects-list');
+  var foundationList = document.getElementById('foundation-list');
   var postsSection = document.getElementById('posts-section');
   var projectsSection = document.getElementById('projects-section');
   var foundationSection = document.getElementById('foundation-section');
   var postsEmpty = document.getElementById('posts-empty');
   var projectsEmpty = document.getElementById('projects-empty');
   var tabLinks = document.querySelectorAll('[data-tab]');
+
+  var foundationData = null;
 
   function formatDate(iso) {
     if (!iso) return '';
@@ -114,6 +117,33 @@
     renderLists();
   }
 
+  function renderFoundation() {
+    if (!foundationList) return;
+    var data = foundationData || {};
+    var title = data.bookTitle || 'Book Overview';
+    var excerpt = data.excerpt || '';
+    var image = data.image || '';
+    var imageAlt = data.imageAlt || '';
+    var content = data.content || [];
+
+    var imageHtml = image
+      ? '<img class="foundation-image" src="' + image + '" alt="' + escapeHtml(imageAlt) + '">'
+      : '';
+
+    var contentHtml = content.map(function (p) {
+      return '<p>' + escapeHtml(p) + '</p>';
+    }).join('');
+
+    foundationList.innerHTML = (
+      '<div class="card">' +
+        '<h3 class="card-title">' + escapeHtml(title) + '</h3>' +
+        imageHtml +
+        (excerpt ? '<p class="card-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
+        (contentHtml ? '<div class="foundation-content">' + contentHtml + '</div>' : '') +
+      '</div>'
+    );
+  }
+
   function renderLists() {
     var filteredPosts = posts.filter(function (p) { return matchesFilter(p, activeTags, searchQuery); });
     var filteredProjects = projects.filter(function (p) { return matchesFilter(p, activeTags, searchQuery); });
@@ -145,7 +175,8 @@
     });
     activeTags = [];
     renderTagFilter();
-    renderLists();
+    if (tab === 'foundation') renderFoundation();
+    else renderLists();
   }
 
   if (tagFilterToggle && tagFilterBox) {
@@ -169,10 +200,12 @@
 
     Promise.all([
       fetch('/data/posts-list.json').then(function (r) { return r.ok ? r.json() : []; }),
-      fetch('/data/projects-list.json').then(function (r) { return r.ok ? r.json() : []; })
+      fetch('/data/projects-list.json').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/data/foundation/foundation-overview.json').then(function (r) { return r.ok ? r.json() : {}; })
     ]).then(function (results) {
       posts = results[0] || [];
       projects = results[1] || [];
+      foundationData = results[2] || {};
       setTab(activeTab);
     }).catch(function () {
       setTab(activeTab);
@@ -180,7 +213,7 @@
 
     searchInput.addEventListener('input', function () {
       searchQuery = searchInput.value.trim();
-      renderLists();
+      if (activeTab !== 'foundation') renderLists();
     });
 
     document.addEventListener('click', function (e) {
