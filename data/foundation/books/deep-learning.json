@@ -1,0 +1,25 @@
+{
+  "slug": "deep-learning",
+  "title": "Deep Learning (Book)",
+  "date": "2025-02-08",
+  "author": "Tatra Labs",
+  "tags": ["Book", "Deep Learning"],
+  "content": {
+    "sections": [
+      {
+        "type": "text",
+        "value": "This is a placeholder overview for your book. Replace the text below with your real book summary, chapters, and key takeaways."
+      },
+      {
+        "type": "image",
+        "value": "/data/foundation/deep_learning.webp",
+        "alt": "Deep learning cover"
+      },
+      {
+        "type": "text",
+        "value": "Suggested structure:\n\n- What problem the book solves\n- Concepts roadmap\n- Core chapters (each with 2-3 bullet points)\n- A short “how to study this” plan"
+      }
+    ]
+  }
+}
+

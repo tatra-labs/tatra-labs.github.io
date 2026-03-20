@@ -4,16 +4,31 @@
   var path = window.location.pathname.replace(/\/$/, '');
   var postMatch = path.match(/^\/post\/([^/]+)$/);
   var projectMatch = path.match(/^\/project\/([^/]+)$/);
+  var foundationBookMatch = path.match(/^\/foundation\/book\/([^/]+)$/);
+  var foundationPaperMatch = path.match(/^\/foundation\/paper\/([^/]+)$/);
 
   var slug, baseUrl, showReadingTime;
+  var backLinkEl = document.querySelector('.back-link');
   if (postMatch) {
     slug = postMatch[1];
     baseUrl = '/data/posts';
     showReadingTime = true;
+    if (backLinkEl) backLinkEl.setAttribute('href', '/?tab=posts');
   } else if (projectMatch) {
     slug = projectMatch[1];
     baseUrl = '/data/projects';
     showReadingTime = false;
+    if (backLinkEl) backLinkEl.setAttribute('href', '/?tab=projects');
+  } else if (foundationBookMatch) {
+    slug = foundationBookMatch[1];
+    baseUrl = '/data/foundation/books';
+    showReadingTime = false;
+    if (backLinkEl) backLinkEl.setAttribute('href', '/?tab=foundation');
+  } else if (foundationPaperMatch) {
+    slug = foundationPaperMatch[1];
+    baseUrl = '/data/foundation/papers';
+    showReadingTime = false;
+    if (backLinkEl) backLinkEl.setAttribute('href', '/?tab=foundation');
   }
 
   var titleEl = document.getElementById('viewer-title');
@@ -71,10 +86,11 @@
     .then(function (data) {
       document.title = (data.title || 'Post') + ' – Tatra Labs';
       titleEl.textContent = data.title || '';
-      var meta = 'Date: ' + formatDate(data.date);
-      if (showReadingTime && data.readingTime) meta += ' | ' + data.readingTime;
-      if (data.author) meta += ' | Author: ' + data.author;
-      metaEl.textContent = meta;
+      var metaParts = [];
+      if (data.date) metaParts.push('Date: ' + formatDate(data.date));
+      if (showReadingTime && data.readingTime) metaParts.push(data.readingTime);
+      if (data.author) metaParts.push('Author: ' + data.author);
+      metaEl.textContent = metaParts.join(' | ');
       var sections = (data.content && data.content.sections) || [];
       contentEl.innerHTML = sections.map(renderSection).join('');
       var tags = data.tags || [];

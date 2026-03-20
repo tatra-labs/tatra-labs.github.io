@@ -1,0 +1,25 @@
+{
+  "slug": "deep-learning-paper",
+  "title": "Deep Learning (Paper)",
+  "date": "2025-02-08",
+  "author": "Tatra Labs",
+  "tags": ["Paper", "Deep Learning"],
+  "content": {
+    "sections": [
+      {
+        "type": "text",
+        "value": "This is a placeholder overview for your paper. Replace it with your paper abstract, key ideas, and conclusions."
+      },
+      {
+        "type": "image",
+        "value": "/data/foundation/deep_learning.webp",
+        "alt": "Deep learning paper thumbnail"
+      },
+      {
+        "type": "text",
+        "value": "Suggested structure:\n\n- Abstract\n- Motivation + related work\n- Method (high level)\n- Results\n- Limitations + future work"
+      }
+    ]
+  }
+}
+

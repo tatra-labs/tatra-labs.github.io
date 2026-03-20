@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "deep-learning",
+    "title": "Deep Learning (Book)",
+    "icon": "/data/foundation/deep_learning.webp",
+    "iconAlt": "Deep learning book cover",
+    "date": "2025-02-08",
+    "authors": ["Tatra Labs"],
+    "summary": "A short overview of deep learning foundations and key concepts. Replace this summary with your real book blurb."
+  }
+]
+

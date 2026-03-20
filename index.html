@@ -55,6 +55,21 @@
           <p>Write, Share, Grow</p>
         </section>
 
+        <div class="foundation-sidebar-details hidden" id="foundation-sidebar-details" aria-label="Selected book or paper">
+          <div class="foundation-details">
+            <div class="foundation-details-top">
+              <div>
+                <h3 class="foundation-details-title" id="foundation-details-title">Select an item</h3>
+                <p class="foundation-details-meta" id="foundation-details-meta"></p>
+              </div>
+              <a id="foundation-details-open" class="foundation-details-open hidden" href="#" aria-label="Open selected content">Open</a>
+            </div>
+            <div class="foundation-details-summary-wrap">
+              <p class="foundation-details-summary" id="foundation-details-summary"></p>
+            </div>
+          </div>
+        </div>
+
         <div class="tag-filter-box collapsed">
           <button type="button" class="tag-filter-header" id="tag-filter-toggle" aria-expanded="false"
             aria-controls="tag-filter-list">
@@ -96,10 +111,16 @@
 
         <section class="list-section hidden" id="foundation-section">
           <h2>Foundation</h2>
-          <div class="card-list" id="foundation-list">
-            <div class="card">
-              <h3 class="card-title">Book Overview</h3>
-              <p class="card-excerpt">Loading the foundation overview...</p>
+          <div class="foundation-layout" aria-label="Foundation catalog">
+            <div class="foundation-categories" id="foundation-categories" aria-label="Books and Papers">
+              <section class="foundation-category" aria-label="Books">
+                <h3>Books</h3>
+                <div class="foundation-icon-grid" id="foundation-books-list"></div>
+              </section>
+              <section class="foundation-category" aria-label="Papers">
+                <h3>Papers</h3>
+                <div class="foundation-icon-grid" id="foundation-papers-list"></div>
+              </section>
             </div>
           </div>
         </section>

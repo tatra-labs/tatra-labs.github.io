@@ -13,15 +13,46 @@
   var searchInput = document.getElementById('search-input');
   var postsList = document.getElementById('posts-list');
   var projectsList = document.getElementById('projects-list');
-  var foundationList = document.getElementById('foundation-list');
+  var foundationBooksList = document.getElementById('foundation-books-list');
+  var foundationPapersList = document.getElementById('foundation-papers-list');
   var postsSection = document.getElementById('posts-section');
   var projectsSection = document.getElementById('projects-section');
   var foundationSection = document.getElementById('foundation-section');
+  var foundationSidebarDetails = document.getElementById('foundation-sidebar-details');
   var postsEmpty = document.getElementById('posts-empty');
   var projectsEmpty = document.getElementById('projects-empty');
   var tabLinks = document.querySelectorAll('[data-tab]');
 
-  var foundationData = null;
+  var foundationBooks = [];
+  var foundationPapers = [];
+
+  var foundationDetailsTitle = document.getElementById('foundation-details-title');
+  var foundationDetailsMeta = document.getElementById('foundation-details-meta');
+  var foundationDetailsSummary = document.getElementById('foundation-details-summary');
+  var foundationDetailsOpen = document.getElementById('foundation-details-open');
+
+  var selectedFoundationKind = '';
+  var selectedFoundationSlug = '';
+
+  function resetFoundationSelection() {
+    selectedFoundationKind = '';
+    selectedFoundationSlug = '';
+
+    if (foundationDetailsTitle) foundationDetailsTitle.textContent = 'Select an item';
+    if (foundationDetailsMeta) foundationDetailsMeta.textContent = '';
+    if (foundationDetailsSummary) foundationDetailsSummary.textContent = '';
+    if (foundationDetailsOpen) {
+      foundationDetailsOpen.classList.add('hidden');
+      foundationDetailsOpen.href = '#';
+    }
+
+    // Hide the card entirely when nothing is selected.
+    if (foundationSidebarDetails) foundationSidebarDetails.classList.add('hidden');
+
+    // Clear any active icon styling (if already rendered).
+    var activeIcons = document.querySelectorAll('.foundation-icon.active');
+    activeIcons.forEach(function (el) { el.classList.remove('active'); });
+  }
 
   function formatDate(iso) {
     if (!iso) return '';
@@ -118,30 +149,79 @@
   }
 
   function renderFoundation() {
-    if (!foundationList) return;
-    var data = foundationData || {};
-    var title = data.bookTitle || 'Book Overview';
-    var excerpt = data.excerpt || '';
-    var image = data.image || '';
-    var imageAlt = data.imageAlt || '';
-    var content = data.content || [];
+    if (!foundationBooksList || !foundationPapersList) return;
 
-    var imageHtml = image
-      ? '<img class="foundation-image" src="' + image + '" alt="' + escapeHtml(imageAlt) + '">'
-      : '';
+    foundationBooksList.innerHTML = '';
+    foundationPapersList.innerHTML = '';
 
-    var contentHtml = content.map(function (p) {
-      return '<p>' + escapeHtml(p) + '</p>';
-    }).join('');
+    function formatAuthors(item) {
+      if (!item) return '';
+      if (item.authors && item.authors.length) return item.authors.join(', ');
+      if (item.author) return item.author;
+      return '';
+    }
 
-    foundationList.innerHTML = (
-      '<div class="card">' +
-        '<h3 class="card-title">' + escapeHtml(title) + '</h3>' +
-        imageHtml +
-        (excerpt ? '<p class="card-excerpt">' + escapeHtml(excerpt) + '</p>' : '') +
-        (contentHtml ? '<div class="foundation-content">' + contentHtml + '</div>' : '') +
-      '</div>'
-    );
+    function renderItemButton(item, kind) {
+      var icon = item.icon || '';
+      var iconAlt = item.iconAlt || item.title || '';
+      var title = item.title || '';
+      var slug = item.slug || '';
+      var isActive = selectedFoundationKind === kind && selectedFoundationSlug === slug;
+      var activeClass = isActive ? ' active' : '';
+
+      return (
+        '<button type="button" class="foundation-icon' + activeClass + '" data-kind="' + escapeHtml(kind) + '" data-slug="' + escapeHtml(slug) + '" ' +
+          'aria-label="' + (kind === 'book' ? 'Open book' : 'Open paper') + ': ' + escapeHtml(title) + '">' +
+          (icon ? '<img src="' + escapeHtml(icon) + '" alt="' + escapeHtml(iconAlt) + '" class="foundation-icon-img">' : '') +
+          '<div class="foundation-icon-title">' + escapeHtml(title) + '</div>' +
+        '</button>'
+      );
+    }
+
+    foundationBooks.forEach(function (item) {
+      foundationBooksList.insertAdjacentHTML('beforeend', renderItemButton(item, 'book'));
+    });
+
+    foundationPapers.forEach(function (item) {
+      foundationPapersList.insertAdjacentHTML('beforeend', renderItemButton(item, 'paper'));
+    });
+  }
+
+  function selectFoundationItem(kind, slug, btnEl) {
+    if (!kind || !slug) return;
+
+    selectedFoundationKind = kind;
+    selectedFoundationSlug = slug;
+
+    var item = null;
+    if (kind === 'book') item = foundationBooks.find(function (x) { return x.slug === slug; });
+    else if (kind === 'paper') item = foundationPapers.find(function (x) { return x.slug === slug; });
+    if (!item) return;
+
+    var title = item.title || '';
+    var authors = '';
+    if (item.authors && item.authors.length) authors = item.authors.join(', ');
+    else if (item.author) authors = item.author;
+    var dateStr = item.date ? formatDate(item.date) : '';
+    var metaStr = [dateStr, authors].filter(Boolean).join(' | ');
+
+    if (foundationDetailsTitle) foundationDetailsTitle.textContent = title || 'Select an item';
+    if (foundationDetailsMeta) foundationDetailsMeta.textContent = metaStr;
+    if (foundationDetailsSummary) foundationDetailsSummary.textContent = item.summary || '';
+
+    if (foundationDetailsOpen) {
+      var href = (kind === 'book') ? '/foundation/book/' : '/foundation/paper/';
+      foundationDetailsOpen.href = href + encodeURIComponent(slug);
+      foundationDetailsOpen.classList.remove('hidden');
+    }
+
+    // Update active icon styling.
+    var activeIcons = document.querySelectorAll('.foundation-icon.active');
+    activeIcons.forEach(function (el) { el.classList.remove('active'); });
+    if (btnEl) btnEl.classList.add('active');
+
+    // Show the left details card once something is selected.
+    if (foundationSidebarDetails) foundationSidebarDetails.classList.remove('hidden');
   }
 
   function renderLists() {
@@ -165,6 +245,17 @@
     if (tagFilterBox) {
       tagFilterBox.classList.toggle('hidden', tab === 'foundation');
     }
+
+    // Keep the welcome message visible; only toggle the foundation details card.
+    if (foundationSidebarDetails) {
+      var shouldShow = tab === 'foundation' && !!selectedFoundationSlug;
+      foundationSidebarDetails.classList.toggle('hidden', !shouldShow);
+    }
+
+    if (tab !== 'foundation') {
+      resetFoundationSelection();
+    }
+
     document.querySelectorAll('.tabs a').forEach(function (a) {
       var isActive = a.getAttribute('data-tab') === tab;
       a.classList.toggle('active', isActive);
@@ -201,11 +292,13 @@
     Promise.all([
       fetch('/data/posts-list.json').then(function (r) { return r.ok ? r.json() : []; }),
       fetch('/data/projects-list.json').then(function (r) { return r.ok ? r.json() : []; }),
-      fetch('/data/foundation/foundation-overview.json').then(function (r) { return r.ok ? r.json() : {}; })
+      fetch('/data/foundation/books-list.json').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/data/foundation/papers-list.json').then(function (r) { return r.ok ? r.json() : []; })
     ]).then(function (results) {
       posts = results[0] || [];
       projects = results[1] || [];
-      foundationData = results[2] || {};
+      foundationBooks = results[2] || [];
+      foundationPapers = results[3] || [];
       setTab(activeTab);
     }).catch(function () {
       setTab(activeTab);
@@ -221,6 +314,32 @@
       if (!btn || !btn.dataset.tag) return;
       e.preventDefault();
       filterByTag(btn.dataset.tag);
+    });
+
+    document.addEventListener('click', function (e) {
+      var fbtn = e.target && e.target.closest && e.target.closest('.foundation-icon');
+      if (!fbtn || !fbtn.dataset || !fbtn.dataset.kind || !fbtn.dataset.slug) return;
+      e.preventDefault();
+      selectFoundationItem(fbtn.dataset.kind, fbtn.dataset.slug, fbtn);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (activeTab !== 'foundation') return;
+
+      // Ignore clicks on the icon buttons themselves.
+      var fbtn = e.target && e.target.closest && e.target.closest('.foundation-icon');
+      if (fbtn) return;
+
+      // Ignore clicks inside the left sidebar details panel.
+      var detailsPanel = e.target && e.target.closest && e.target.closest('#foundation-sidebar-details');
+      if (detailsPanel) return;
+
+      // Ignore clicks on the "Open" button/link.
+      var openBtn = e.target && e.target.closest && e.target.closest('#foundation-details-open');
+      if (openBtn) return;
+
+      // Clicked blank space -> deactivate.
+      resetFoundationSelection();
     });
 
     tabLinks.forEach(function (a) {
