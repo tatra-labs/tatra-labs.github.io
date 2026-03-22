@@ -9,20 +9,23 @@ A minimal, fast blog and project site (inspired by [Lil'Log](https://lilianweng.
 - **Search** – Filter by typing in the search box (matches title, excerpt, and tags).
 - **Date** – Each item shows “Date written” (and reading time for posts).
 - **Content** – Posts and projects support **text**, **images**, and **video** (including embeds).
+- **Foundation** – Books and papers live under `/foundation/book/{slug}` and `/foundation/paper/{slug}` with a **table of contents** (chapters for books; section anchors for papers). The viewer uses the same site header as the home page.
 
 ## How to run locally
 
-Serve the folder with any static server, e.g.:
+**Recommended (Python):** use the included dev server so clean URLs like `/foundation/book/deep-learning` work (same idea as GitHub Pages serving `404.html` for unknown paths):
 
 ```bash
-# Python
-python -m http.server 8000
-
-# Node (npx)
-npx serve .
+python dev_server.py
 ```
 
-Then open `http://localhost:8000`.
+Then open `http://127.0.0.1:8000/foundation/book/deep-learning` (or `localhost`).
+
+**Why not `python -m http.server`?** That server only maps URLs to files on disk. There is no file at `/foundation/book/deep-learning`, so you get a plain 404 and the viewer never loads. `dev_server.py` serves `404.html` for those routes so `viewer.js` can run.
+
+**Optional:** For each foundation slug you can add a real page at `foundation/book/<slug>/index.html` (and `foundation/paper/<slug>/index.html`) — same shell as `404.html`. Then plain `python -m http.server` can open `/foundation/book/<slug>/` without `dev_server.py`. `viewer.js` strips a trailing `/index.html` from the path so routing still works.
+
+**Alternatives:** `npx serve .` (also serves SPA-style routes), or any static server that falls back to `404.html` for missing paths.
 
 ## Adding content
 
@@ -74,6 +77,43 @@ Then open `http://localhost:8000`.
 1. Add an entry to `data/projects-list.json` (same shape as post, without `readingTime`).
 2. Create `data/projects/your-slug.json` with the same `content.sections` format as a post.
 
+### Foundation: books and papers
+
+**URLs** (slug is the filename without `.json`, not the display title):
+
+- Book: `/foundation/book/deep-learning` → `data/foundation/books/deep-learning.json`
+- Paper: `/foundation/paper/deep-learning-paper` → `data/foundation/papers/deep-learning-paper.json`
+
+List entries go in `data/foundation/books-list.json` and `data/foundation/papers-list.json` (same `slug` values).
+
+**Books – Markdown + generated TOC (recommended for long books)** – Set `"reader": "markdown-toc"`, `"contentRoot"`, and `"tocFile"` in the book JSON. The viewer loads **Marked** + **DOMPurify** + **KaTeX** (CDN) to render `.md` files with math and images. The sidebar shows the full TOC; each leaf links with `?section=sec-X-Y`. Content files live under `content/foundation/books/<slug>/` (e.g. `sec-1-1.md`). See `content/foundation/books/README.md`.
+
+The **Deep Learning** book ships with a TOC aligned to the standard textbook outline (`data/foundation/books/deep-learning-toc.json`). Regenerate it after editing `tools/dl-toc-source.txt`:
+
+```bash
+python tools/generate_dl_toc.py
+```
+
+**Books – JSON-only (legacy)** – One **chapter per page** in the reader. The table of contents links to `?chapter=chapter-id`. Define chapters in `content.chapters` with `sections` (text, image, video, embed, heading). If you omit `content.chapters`, the viewer uses a single **Overview** chapter from `content.sections`.
+
+**Papers** – **One long page** with a TOC that jumps to in-page anchors. Add `heading` sections with unique `id` values:
+
+```json
+"content": {
+  "sections": [
+    { "type": "heading", "id": "abstract", "value": "Abstract" },
+    { "type": "text", "value": "..." },
+    { "type": "heading", "id": "method", "value": "Method" }
+  ]
+}
+```
+
+Optional: `"level": 3` on a heading renders `<h3>` instead of `<h2>`.
+
+Section types for JSON-driven content: `text`, `heading`, `image`, `video`, `embed` (same as posts). Paper boilerplate notes: `content/foundation/papers/README.md`.
+
+**Local server** – Use `python dev_server.py` or `npx serve .`, or add a `foundation/book/<slug>/index.html` (see earlier note) so plain `python -m http.server` can open `/foundation/book/<slug>/`.
+
 ## Tech notes
 
 - **Light** – Single CSS file, small vanilla JS, no runtime framework. System font stack (no extra font requests).
@@ -87,4 +127,4 @@ Then open `http://localhost:8000`.
 2. In the repo: **Settings → Pages** → Source: deploy from the **main** branch (root).
 3. Your site will be at `https://<username>.github.io/<repo>/`. If the repo is `username.github.io`, it will be `https://username.github.io/`.
 
-**URL structure** – Clean path-based URLs like [Hugging Face](https://huggingface.co/blog/community-evals) or [DeepLearning.AI](https://learn.deeplearning.ai/courses/multi-vector-image-retrieval): `/` (home), `/post/welcome-post`, `/project/sample-project`. A custom `404.html` handles `/post/*` and `/project/*` paths. Use root-relative paths (e.g. `/assets/images/...`) for images in post content. For local testing, use a server that serves 404.html for missing paths (e.g. `npx serve`); Python's `http.server` does not.
+**URL structure** – Clean path-based URLs: `/` (home), `/post/welcome-post`, `/project/sample-project`, `/foundation/book/{slug}`, `/foundation/paper/{slug}`. A custom `404.html` loads the viewer script for those paths. Use root-relative paths (e.g. `/data/foundation/...`) for images. For local testing, use a server that serves `404.html` for missing paths (e.g. `npx serve`); Python's `http.server` does not.

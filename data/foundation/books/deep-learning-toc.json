@@ -1,0 +1,2134 @@
+{
+  "prelude": {
+    "title": null,
+    "chapters": [
+      {
+        "id": "ch-1",
+        "number": "1",
+        "title": "Introduction",
+        "sections": [
+          {
+            "id": "sec-1-1",
+            "number": "1.1",
+            "title": "Who Should Read This Book?",
+            "file": "sec-1-1.md"
+          },
+          {
+            "id": "sec-1-2",
+            "number": "1.2",
+            "title": "Historical Trends in Deep Learning",
+            "file": "sec-1-2.md"
+          }
+        ]
+      }
+    ]
+  },
+  "parts": [
+    {
+      "title": "Part I: Applied Math and Machine Learning Basics",
+      "chapters": [
+        {
+          "id": "ch-2",
+          "number": "2",
+          "title": "Linear Algebra",
+          "sections": [
+            {
+              "id": "sec-2-1",
+              "number": "2.1",
+              "title": "Scalars, Vectors, Matrices and Tensors",
+              "file": "sec-2-1.md"
+            },
+            {
+              "id": "sec-2-2",
+              "number": "2.2",
+              "title": "Multiplying Matrices and Vectors",
+              "file": "sec-2-2.md"
+            },
+            {
+              "id": "sec-2-3",
+              "number": "2.3",
+              "title": "Identity and Inverse Matrices",
+              "file": "sec-2-3.md"
+            },
+            {
+              "id": "sec-2-4",
+              "number": "2.4",
+              "title": "Linear Dependence and Span",
+              "file": "sec-2-4.md"
+            },
+            {
+              "id": "sec-2-5",
+              "number": "2.5",
+              "title": "Norms",
+              "file": "sec-2-5.md"
+            },
+            {
+              "id": "sec-2-6",
+              "number": "2.6",
+              "title": "Special Kinds of Matrices and Vectors",
+              "file": "sec-2-6.md"
+            },
+            {
+              "id": "sec-2-7",
+              "number": "2.7",
+              "title": "Eigendecomposition",
+              "file": "sec-2-7.md"
+            },
+            {
+              "id": "sec-2-8",
+              "number": "2.8",
+              "title": "Singular Value Decomposition",
+              "file": "sec-2-8.md"
+            },
+            {
+              "id": "sec-2-9",
+              "number": "2.9",
+              "title": "The Moore-Penrose Pseudoinverse",
+              "file": "sec-2-9.md"
+            },
+            {
+              "id": "sec-2-10",
+              "number": "2.10",
+              "title": "The Trace Operator",
+              "file": "sec-2-10.md"
+            },
+            {
+              "id": "sec-2-11",
+              "number": "2.11",
+              "title": "The Determinant",
+              "file": "sec-2-11.md"
+            },
+            {
+              "id": "sec-2-12",
+              "number": "2.12",
+              "title": "Example: Principal Components Analysis",
+              "file": "sec-2-12.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-3",
+          "number": "3",
+          "title": "Probability and Information Theory",
+          "sections": [
+            {
+              "id": "sec-3-1",
+              "number": "3.1",
+              "title": "Why Probability?",
+              "file": "sec-3-1.md"
+            },
+            {
+              "id": "sec-3-2",
+              "number": "3.2",
+              "title": "Random Variables",
+              "file": "sec-3-2.md"
+            },
+            {
+              "id": "sec-3-3",
+              "number": "3.3",
+              "title": "Probability Distributions",
+              "file": "sec-3-3.md"
+            },
+            {
+              "id": "sec-3-4",
+              "number": "3.4",
+              "title": "Marginal Probability",
+              "file": "sec-3-4.md"
+            },
+            {
+              "id": "sec-3-5",
+              "number": "3.5",
+              "title": "Conditional Probability",
+              "file": "sec-3-5.md"
+            },
+            {
+              "id": "sec-3-6",
+              "number": "3.6",
+              "title": "The Chain Rule of Conditional Probabilities",
+              "file": "sec-3-6.md"
+            },
+            {
+              "id": "sec-3-7",
+              "number": "3.7",
+              "title": "Independence and Conditional Independence",
+              "file": "sec-3-7.md"
+            },
+            {
+              "id": "sec-3-8",
+              "number": "3.8",
+              "title": "Expectation, Variance and Covariance",
+              "file": "sec-3-8.md"
+            },
+            {
+              "id": "sec-3-9",
+              "number": "3.9",
+              "title": "Common Probability Distributions",
+              "file": "sec-3-9.md"
+            },
+            {
+              "id": "sec-3-10",
+              "number": "3.10",
+              "title": "Useful Properties of Common Functions",
+              "file": "sec-3-10.md"
+            },
+            {
+              "id": "sec-3-11",
+              "number": "3.11",
+              "title": "Bayes' Rule",
+              "file": "sec-3-11.md"
+            },
+            {
+              "id": "sec-3-12",
+              "number": "3.12",
+              "title": "Technical Details of Continuous Variables",
+              "file": "sec-3-12.md"
+            },
+            {
+              "id": "sec-3-13",
+              "number": "3.13",
+              "title": "Information Theory",
+              "file": "sec-3-13.md"
+            },
+            {
+              "id": "sec-3-14",
+              "number": "3.14",
+              "title": "Structured Probabilistic Models",
+              "file": "sec-3-14.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-4",
+          "number": "4",
+          "title": "Numerical Computation",
+          "sections": [
+            {
+              "id": "sec-4-1",
+              "number": "4.1",
+              "title": "Overflow and Underflow",
+              "file": "sec-4-1.md"
+            },
+            {
+              "id": "sec-4-2",
+              "number": "4.2",
+              "title": "Poor Conditioning",
+              "file": "sec-4-2.md"
+            },
+            {
+              "id": "sec-4-3",
+              "number": "4.3",
+              "title": "Gradient-Based Optimization",
+              "file": "sec-4-3.md"
+            },
+            {
+              "id": "sec-4-4",
+              "number": "4.4",
+              "title": "Constrained Optimization",
+              "file": "sec-4-4.md"
+            },
+            {
+              "id": "sec-4-5",
+              "number": "4.5",
+              "title": "Example: Linear Least Squares",
+              "file": "sec-4-5.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-5",
+          "number": "5",
+          "title": "Machine Learning Basics",
+          "sections": [
+            {
+              "id": "sec-5-1",
+              "number": "5.1",
+              "title": "Learning Algorithms",
+              "file": "sec-5-1.md"
+            },
+            {
+              "id": "sec-5-2",
+              "number": "5.2",
+              "title": "Capacity, Overfitting and Underfitting",
+              "file": "sec-5-2.md"
+            },
+            {
+              "id": "sec-5-3",
+              "number": "5.3",
+              "title": "Hyperparameters and Validation Sets",
+              "file": "sec-5-3.md"
+            },
+            {
+              "id": "sec-5-4",
+              "number": "5.4",
+              "title": "Estimators, Bias and Variance",
+              "file": "sec-5-4.md"
+            },
+            {
+              "id": "sec-5-5",
+              "number": "5.5",
+              "title": "Maximum Likelihood Estimation",
+              "file": "sec-5-5.md"
+            },
+            {
+              "id": "sec-5-6",
+              "number": "5.6",
+              "title": "Bayesian Statistics",
+              "file": "sec-5-6.md"
+            },
+            {
+              "id": "sec-5-7",
+              "number": "5.7",
+              "title": "Supervised Learning Algorithms",
+              "file": "sec-5-7.md"
+            },
+            {
+              "id": "sec-5-8",
+              "number": "5.8",
+              "title": "Unsupervised Learning Algorithms",
+              "file": "sec-5-8.md"
+            },
+            {
+              "id": "sec-5-9",
+              "number": "5.9",
+              "title": "Stochastic Gradient Descent",
+              "file": "sec-5-9.md"
+            },
+            {
+              "id": "sec-5-10",
+              "number": "5.10",
+              "title": "Building a Machine Learning Algorithm",
+              "file": "sec-5-10.md"
+            },
+            {
+              "id": "sec-5-11",
+              "number": "5.11",
+              "title": "Challenges Motivating Deep Learning",
+              "file": "sec-5-11.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part II: Deep Networks: Modern Practices",
+      "chapters": [
+        {
+          "id": "ch-6",
+          "number": "6",
+          "title": "Deep Feedforward Networks",
+          "sections": [
+            {
+              "id": "sec-6-1",
+              "number": "6.1",
+              "title": "Example: Learning XOR",
+              "file": "sec-6-1.md"
+            },
+            {
+              "id": "sec-6-2",
+              "number": "6.2",
+              "title": "Gradient-Based Learning",
+              "file": "sec-6-2.md"
+            },
+            {
+              "id": "sec-6-3",
+              "number": "6.3",
+              "title": "Hidden Units",
+              "file": "sec-6-3.md"
+            },
+            {
+              "id": "sec-6-4",
+              "number": "6.4",
+              "title": "Architecture Design",
+              "file": "sec-6-4.md"
+            },
+            {
+              "id": "sec-6-5",
+              "number": "6.5",
+              "title": "Back-Propagation and Other Differentiation Algorithms",
+              "file": "sec-6-5.md"
+            },
+            {
+              "id": "sec-6-6",
+              "number": "6.6",
+              "title": "Historical Notes",
+              "file": "sec-6-6.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-7",
+          "number": "7",
+          "title": "Regularization for Deep Learning",
+          "sections": [
+            {
+              "id": "sec-7-1",
+              "number": "7.1",
+              "title": "Parameter Norm Penalties",
+              "file": "sec-7-1.md"
+            },
+            {
+              "id": "sec-7-2",
+              "number": "7.2",
+              "title": "Norm Penalties as Constrained Optimization",
+              "file": "sec-7-2.md"
+            },
+            {
+              "id": "sec-7-3",
+              "number": "7.3",
+              "title": "Regularization and Under-Constrained Problems",
+              "file": "sec-7-3.md"
+            },
+            {
+              "id": "sec-7-4",
+              "number": "7.4",
+              "title": "Dataset Augmentation",
+              "file": "sec-7-4.md"
+            },
+            {
+              "id": "sec-7-5",
+              "number": "7.5",
+              "title": "Noise Robustness",
+              "file": "sec-7-5.md"
+            },
+            {
+              "id": "sec-7-6",
+              "number": "7.6",
+              "title": "Semi-Supervised Learning",
+              "file": "sec-7-6.md"
+            },
+            {
+              "id": "sec-7-7",
+              "number": "7.7",
+              "title": "Multi-Task Learning",
+              "file": "sec-7-7.md"
+            },
+            {
+              "id": "sec-7-8",
+              "number": "7.8",
+              "title": "Early Stopping",
+              "file": "sec-7-8.md"
+            },
+            {
+              "id": "sec-7-9",
+              "number": "7.9",
+              "title": "Parameter Tying and Parameter Sharing",
+              "file": "sec-7-9.md"
+            },
+            {
+              "id": "sec-7-10",
+              "number": "7.10",
+              "title": "Sparse Representations",
+              "file": "sec-7-10.md"
+            },
+            {
+              "id": "sec-7-11",
+              "number": "7.11",
+              "title": "Bagging and Other Ensemble Methods",
+              "file": "sec-7-11.md"
+            },
+            {
+              "id": "sec-7-12",
+              "number": "7.12",
+              "title": "Dropout",
+              "file": "sec-7-12.md"
+            },
+            {
+              "id": "sec-7-13",
+              "number": "7.13",
+              "title": "Adversarial Training",
+              "file": "sec-7-13.md"
+            },
+            {
+              "id": "sec-7-14",
+              "number": "7.14",
+              "title": "Tangent Distance, Tangent Prop, and Manifold Tangent Classifier",
+              "file": "sec-7-14.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-8",
+          "number": "8",
+          "title": "Optimization for Training Deep Models",
+          "sections": [
+            {
+              "id": "sec-8-1",
+              "number": "8.1",
+              "title": "How Learning Differs from Pure Optimization",
+              "file": "sec-8-1.md"
+            },
+            {
+              "id": "sec-8-2",
+              "number": "8.2",
+              "title": "Challenges in Neural Network Optimization",
+              "file": "sec-8-2.md"
+            },
+            {
+              "id": "sec-8-3",
+              "number": "8.3",
+              "title": "Basic Algorithms",
+              "file": "sec-8-3.md"
+            },
+            {
+              "id": "sec-8-4",
+              "number": "8.4",
+              "title": "Parameter Initialization Strategies",
+              "file": "sec-8-4.md"
+            },
+            {
+              "id": "sec-8-5",
+              "number": "8.5",
+              "title": "Algorithms with Adaptive Learning Rates",
+              "file": "sec-8-5.md"
+            },
+            {
+              "id": "sec-8-6",
+              "number": "8.6",
+              "title": "Approximate Second-Order Methods",
+              "file": "sec-8-6.md"
+            },
+            {
+              "id": "sec-8-7",
+              "number": "8.7",
+              "title": "Optimization Strategies and Meta-Algorithms",
+              "file": "sec-8-7.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-9",
+          "number": "9",
+          "title": "Convolutional Networks",
+          "sections": [
+            {
+              "id": "sec-9-1",
+              "number": "9.1",
+              "title": "The Convolution Operation",
+              "file": "sec-9-1.md"
+            },
+            {
+              "id": "sec-9-2",
+              "number": "9.2",
+              "title": "Motivation",
+              "file": "sec-9-2.md"
+            },
+            {
+              "id": "sec-9-3",
+              "number": "9.3",
+              "title": "Pooling",
+              "file": "sec-9-3.md"
+            },
+            {
+              "id": "sec-9-4",
+              "number": "9.4",
+              "title": "Convolution and Pooling as an Infinitely Strong Prior",
+              "file": "sec-9-4.md"
+            },
+            {
+              "id": "sec-9-5",
+              "number": "9.5",
+              "title": "Variants of the Basic Convolution Function",
+              "file": "sec-9-5.md"
+            },
+            {
+              "id": "sec-9-6",
+              "number": "9.6",
+              "title": "Structured Outputs",
+              "file": "sec-9-6.md"
+            },
+            {
+              "id": "sec-9-7",
+              "number": "9.7",
+              "title": "Data Types",
+              "file": "sec-9-7.md"
+            },
+            {
+              "id": "sec-9-8",
+              "number": "9.8",
+              "title": "Efficient Convolution Algorithms",
+              "file": "sec-9-8.md"
+            },
+            {
+              "id": "sec-9-9",
+              "number": "9.9",
+              "title": "Random or Unsupervised Features",
+              "file": "sec-9-9.md"
+            },
+            {
+              "id": "sec-9-10",
+              "number": "9.10",
+              "title": "The Neuroscientific Basis for Convolutional Networks",
+              "file": "sec-9-10.md"
+            },
+            {
+              "id": "sec-9-11",
+              "number": "9.11",
+              "title": "Convolutional Networks and the History of Deep Learning",
+              "file": "sec-9-11.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-10",
+          "number": "10",
+          "title": "Sequence Modeling: Recurrent and Recursive Nets",
+          "sections": [
+            {
+              "id": "sec-10-1",
+              "number": "10.1",
+              "title": "Unfolding Computational Graphs",
+              "file": "sec-10-1.md"
+            },
+            {
+              "id": "sec-10-2",
+              "number": "10.2",
+              "title": "Recurrent Neural Networks",
+              "file": "sec-10-2.md"
+            },
+            {
+              "id": "sec-10-3",
+              "number": "10.3",
+              "title": "Bidirectional RNNs",
+              "file": "sec-10-3.md"
+            },
+            {
+              "id": "sec-10-4",
+              "number": "10.4",
+              "title": "Encoder-Decoder Sequence-to-Sequence Architectures",
+              "file": "sec-10-4.md"
+            },
+            {
+              "id": "sec-10-5",
+              "number": "10.5",
+              "title": "Deep Recurrent Networks",
+              "file": "sec-10-5.md"
+            },
+            {
+              "id": "sec-10-6",
+              "number": "10.6",
+              "title": "Recursive Neural Networks",
+              "file": "sec-10-6.md"
+            },
+            {
+              "id": "sec-10-7",
+              "number": "10.7",
+              "title": "The Challenge of Long-Term Dependencies",
+              "file": "sec-10-7.md"
+            },
+            {
+              "id": "sec-10-8",
+              "number": "10.8",
+              "title": "Echo State Networks",
+              "file": "sec-10-8.md"
+            },
+            {
+              "id": "sec-10-9",
+              "number": "10.9",
+              "title": "Leaky Units and Other Strategies for Multiple Time Scales",
+              "file": "sec-10-9.md"
+            },
+            {
+              "id": "sec-10-10",
+              "number": "10.10",
+              "title": "The Long Short-Term Memory and Other Gated RNNs",
+              "file": "sec-10-10.md"
+            },
+            {
+              "id": "sec-10-11",
+              "number": "10.11",
+              "title": "Optimization for Long-Term Dependencies",
+              "file": "sec-10-11.md"
+            },
+            {
+              "id": "sec-10-12",
+              "number": "10.12",
+              "title": "Explicit Memory",
+              "file": "sec-10-12.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-11",
+          "number": "11",
+          "title": "Practical Methodology",
+          "sections": [
+            {
+              "id": "sec-11-1",
+              "number": "11.1",
+              "title": "Performance Metrics",
+              "file": "sec-11-1.md"
+            },
+            {
+              "id": "sec-11-2",
+              "number": "11.2",
+              "title": "Default Baseline Models",
+              "file": "sec-11-2.md"
+            },
+            {
+              "id": "sec-11-3",
+              "number": "11.3",
+              "title": "Determining Whether to Gather More Data",
+              "file": "sec-11-3.md"
+            },
+            {
+              "id": "sec-11-4",
+              "number": "11.4",
+              "title": "Selecting Hyperparameters",
+              "file": "sec-11-4.md"
+            },
+            {
+              "id": "sec-11-5",
+              "number": "11.5",
+              "title": "Debugging Strategies",
+              "file": "sec-11-5.md"
+            },
+            {
+              "id": "sec-11-6",
+              "number": "11.6",
+              "title": "Example: Multi-Digit Number Recognition",
+              "file": "sec-11-6.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-12",
+          "number": "12",
+          "title": "Applications",
+          "sections": [
+            {
+              "id": "sec-12-1",
+              "number": "12.1",
+              "title": "Large-Scale Deep Learning",
+              "file": "sec-12-1.md"
+            },
+            {
+              "id": "sec-12-2",
+              "number": "12.2",
+              "title": "Computer Vision",
+              "file": "sec-12-2.md"
+            },
+            {
+              "id": "sec-12-3",
+              "number": "12.3",
+              "title": "Speech Recognition",
+              "file": "sec-12-3.md"
+            },
+            {
+              "id": "sec-12-4",
+              "number": "12.4",
+              "title": "Natural Language Processing",
+              "file": "sec-12-4.md"
+            },
+            {
+              "id": "sec-12-5",
+              "number": "12.5",
+              "title": "Other Applications",
+              "file": "sec-12-5.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part III: Deep Learning Research",
+      "chapters": [
+        {
+          "id": "ch-13",
+          "number": "13",
+          "title": "Linear Factor Models",
+          "sections": [
+            {
+              "id": "sec-13-1",
+              "number": "13.1",
+              "title": "Probabilistic PCA and Factor Analysis",
+              "file": "sec-13-1.md"
+            },
+            {
+              "id": "sec-13-2",
+              "number": "13.2",
+              "title": "Independent Component Analysis (ICA)",
+              "file": "sec-13-2.md"
+            },
+            {
+              "id": "sec-13-3",
+              "number": "13.3",
+              "title": "Slow Feature Analysis",
+              "file": "sec-13-3.md"
+            },
+            {
+              "id": "sec-13-4",
+              "number": "13.4",
+              "title": "Sparse Coding",
+              "file": "sec-13-4.md"
+            },
+            {
+              "id": "sec-13-5",
+              "number": "13.5",
+              "title": "Manifold Interpretation of PCA",
+              "file": "sec-13-5.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-14",
+          "number": "14",
+          "title": "Autoencoders",
+          "sections": [
+            {
+              "id": "sec-14-1",
+              "number": "14.1",
+              "title": "Undercomplete Autoencoders",
+              "file": "sec-14-1.md"
+            },
+            {
+              "id": "sec-14-2",
+              "number": "14.2",
+              "title": "Regularized Autoencoders",
+              "file": "sec-14-2.md"
+            },
+            {
+              "id": "sec-14-3",
+              "number": "14.3",
+              "title": "Representational Power, Layer Size and Depth",
+              "file": "sec-14-3.md"
+            },
+            {
+              "id": "sec-14-4",
+              "number": "14.4",
+              "title": "Stochastic Encoders and Decoders",
+              "file": "sec-14-4.md"
+            },
+            {
+              "id": "sec-14-5",
+              "number": "14.5",
+              "title": "Denoising Autoencoders",
+              "file": "sec-14-5.md"
+            },
+            {
+              "id": "sec-14-6",
+              "number": "14.6",
+              "title": "Learning Manifolds with Autoencoders",
+              "file": "sec-14-6.md"
+            },
+            {
+              "id": "sec-14-7",
+              "number": "14.7",
+              "title": "Contractive Autoencoders",
+              "file": "sec-14-7.md"
+            },
+            {
+              "id": "sec-14-8",
+              "number": "14.8",
+              "title": "Predictive Sparse Decomposition",
+              "file": "sec-14-8.md"
+            },
+            {
+              "id": "sec-14-9",
+              "number": "14.9",
+              "title": "Applications of Autoencoders",
+              "file": "sec-14-9.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-15",
+          "number": "15",
+          "title": "Representation Learning",
+          "sections": [
+            {
+              "id": "sec-15-1",
+              "number": "15.1",
+              "title": "Greedy Layer-Wise Unsupervised Pretraining",
+              "file": "sec-15-1.md"
+            },
+            {
+              "id": "sec-15-2",
+              "number": "15.2",
+              "title": "Transfer Learning and Domain Adaptation",
+              "file": "sec-15-2.md"
+            },
+            {
+              "id": "sec-15-3",
+              "number": "15.3",
+              "title": "Semi-Supervised Disentangling of Causal Factors",
+              "file": "sec-15-3.md"
+            },
+            {
+              "id": "sec-15-4",
+              "number": "15.4",
+              "title": "Distributed Representation",
+              "file": "sec-15-4.md"
+            },
+            {
+              "id": "sec-15-5",
+              "number": "15.5",
+              "title": "Exponential Gains from Depth",
+              "file": "sec-15-5.md"
+            },
+            {
+              "id": "sec-15-6",
+              "number": "15.6",
+              "title": "Providing Clues to Discover Underlying Causes",
+              "file": "sec-15-6.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-16",
+          "number": "16",
+          "title": "Structured Probabilistic Models for Deep Learning",
+          "sections": [
+            {
+              "id": "sec-16-1",
+              "number": "16.1",
+              "title": "The Challenge of Unstructured Modeling",
+              "file": "sec-16-1.md"
+            },
+            {
+              "id": "sec-16-2",
+              "number": "16.2",
+              "title": "Using Graphs to Describe Model Structure",
+              "file": "sec-16-2.md"
+            },
+            {
+              "id": "sec-16-3",
+              "number": "16.3",
+              "title": "Sampling from Graphical Models",
+              "file": "sec-16-3.md"
+            },
+            {
+              "id": "sec-16-4",
+              "number": "16.4",
+              "title": "Advantages of Structured Modeling",
+              "file": "sec-16-4.md"
+            },
+            {
+              "id": "sec-16-5",
+              "number": "16.5",
+              "title": "Learning about Dependencies",
+              "file": "sec-16-5.md"
+            },
+            {
+              "id": "sec-16-6",
+              "number": "16.6",
+              "title": "Inference and Approximate Inference",
+              "file": "sec-16-6.md"
+            },
+            {
+              "id": "sec-16-7",
+              "number": "16.7",
+              "title": "The Deep Learning Approach to Structured Probabilistic Models",
+              "file": "sec-16-7.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-17",
+          "number": "17",
+          "title": "Monte Carlo Methods",
+          "sections": [
+            {
+              "id": "sec-17-1",
+              "number": "17.1",
+              "title": "Sampling and Monte Carlo Methods",
+              "file": "sec-17-1.md"
+            },
+            {
+              "id": "sec-17-2",
+              "number": "17.2",
+              "title": "Importance Sampling",
+              "file": "sec-17-2.md"
+            },
+            {
+              "id": "sec-17-3",
+              "number": "17.3",
+              "title": "Markov Chain Monte Carlo Methods",
+              "file": "sec-17-3.md"
+            },
+            {
+              "id": "sec-17-4",
+              "number": "17.4",
+              "title": "Gibbs Sampling",
+              "file": "sec-17-4.md"
+            },
+            {
+              "id": "sec-17-5",
+              "number": "17.5",
+              "title": "The Challenge of Mixing between Separated Modes",
+              "file": "sec-17-5.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-18",
+          "number": "18",
+          "title": "Confronting the Partition Function",
+          "sections": [
+            {
+              "id": "sec-18-1",
+              "number": "18.1",
+              "title": "The Log-Likelihood Gradient",
+              "file": "sec-18-1.md"
+            },
+            {
+              "id": "sec-18-2",
+              "number": "18.2",
+              "title": "Stochastic Maximum Likelihood and Contrastive Divergence",
+              "file": "sec-18-2.md"
+            },
+            {
+              "id": "sec-18-3",
+              "number": "18.3",
+              "title": "Pseudolikelihood",
+              "file": "sec-18-3.md"
+            },
+            {
+              "id": "sec-18-4",
+              "number": "18.4",
+              "title": "Score Matching and Ratio Matching",
+              "file": "sec-18-4.md"
+            },
+            {
+              "id": "sec-18-5",
+              "number": "18.5",
+              "title": "Denoising Score Matching",
+              "file": "sec-18-5.md"
+            },
+            {
+              "id": "sec-18-6",
+              "number": "18.6",
+              "title": "Noise-Contrastive Estimation",
+              "file": "sec-18-6.md"
+            },
+            {
+              "id": "sec-18-7",
+              "number": "18.7",
+              "title": "Estimating the Partition Function",
+              "file": "sec-18-7.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-19",
+          "number": "19",
+          "title": "Approximate Inference",
+          "sections": [
+            {
+              "id": "sec-19-1",
+              "number": "19.1",
+              "title": "Inference as Optimization",
+              "file": "sec-19-1.md"
+            },
+            {
+              "id": "sec-19-2",
+              "number": "19.2",
+              "title": "Expectation Maximization",
+              "file": "sec-19-2.md"
+            },
+            {
+              "id": "sec-19-3",
+              "number": "19.3",
+              "title": "MAP Inference and Sparse Coding",
+              "file": "sec-19-3.md"
+            },
+            {
+              "id": "sec-19-4",
+              "number": "19.4",
+              "title": "Variational Inference and Learning",
+              "file": "sec-19-4.md"
+            },
+            {
+              "id": "sec-19-5",
+              "number": "19.5",
+              "title": "Learned Approximate Inference",
+              "file": "sec-19-5.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-20",
+          "number": "20",
+          "title": "Deep Generative Models",
+          "sections": [
+            {
+              "id": "sec-20-1",
+              "number": "20.1",
+              "title": "Boltzmann Machines",
+              "file": "sec-20-1.md"
+            },
+            {
+              "id": "sec-20-2",
+              "number": "20.2",
+              "title": "Restricted Boltzmann Machines",
+              "file": "sec-20-2.md"
+            },
+            {
+              "id": "sec-20-3",
+              "number": "20.3",
+              "title": "Deep Belief Networks",
+              "file": "sec-20-3.md"
+            },
+            {
+              "id": "sec-20-4",
+              "number": "20.4",
+              "title": "Deep Boltzmann Machines",
+              "file": "sec-20-4.md"
+            },
+            {
+              "id": "sec-20-5",
+              "number": "20.5",
+              "title": "Boltzmann Machines for Real-Valued Data",
+              "file": "sec-20-5.md"
+            },
+            {
+              "id": "sec-20-6",
+              "number": "20.6",
+              "title": "Convolutional Boltzmann Machines",
+              "file": "sec-20-6.md"
+            },
+            {
+              "id": "sec-20-7",
+              "number": "20.7",
+              "title": "Boltzmann Machines for Structured or Sequential Outputs",
+              "file": "sec-20-7.md"
+            },
+            {
+              "id": "sec-20-8",
+              "number": "20.8",
+              "title": "Other Boltzmann Machines",
+              "file": "sec-20-8.md"
+            },
+            {
+              "id": "sec-20-9",
+              "number": "20.9",
+              "title": "Back-Propagation through Random Operations",
+              "file": "sec-20-9.md"
+            },
+            {
+              "id": "sec-20-10",
+              "number": "20.10",
+              "title": "Directed Generative Nets",
+              "file": "sec-20-10.md"
+            },
+            {
+              "id": "sec-20-11",
+              "number": "20.11",
+              "title": "Drawing Samples from Autoencoders",
+              "file": "sec-20-11.md"
+            },
+            {
+              "id": "sec-20-12",
+              "number": "20.12",
+              "title": "Generative Stochastic Networks",
+              "file": "sec-20-12.md"
+            },
+            {
+              "id": "sec-20-13",
+              "number": "20.13",
+              "title": "Other Generation Schemes",
+              "file": "sec-20-13.md"
+            },
+            {
+              "id": "sec-20-14",
+              "number": "20.14",
+              "title": "Evaluating Generative Models",
+              "file": "sec-20-14.md"
+            },
+            {
+              "id": "sec-20-15",
+              "number": "20.15",
+              "title": "Conclusion",
+              "file": "sec-20-15.md"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "flatSections": [
+    {
+      "id": "sec-1-1",
+      "number": "1.1",
+      "title": "Who Should Read This Book?",
+      "file": "sec-1-1.md"
+    },
+    {
+      "id": "sec-1-2",
+      "number": "1.2",
+      "title": "Historical Trends in Deep Learning",
+      "file": "sec-1-2.md"
+    },
+    {
+      "id": "sec-2-1",
+      "number": "2.1",
+      "title": "Scalars, Vectors, Matrices and Tensors",
+      "file": "sec-2-1.md"
+    },
+    {
+      "id": "sec-2-2",
+      "number": "2.2",
+      "title": "Multiplying Matrices and Vectors",
+      "file": "sec-2-2.md"
+    },
+    {
+      "id": "sec-2-3",
+      "number": "2.3",
+      "title": "Identity and Inverse Matrices",
+      "file": "sec-2-3.md"
+    },
+    {
+      "id": "sec-2-4",
+      "number": "2.4",
+      "title": "Linear Dependence and Span",
+      "file": "sec-2-4.md"
+    },
+    {
+      "id": "sec-2-5",
+      "number": "2.5",
+      "title": "Norms",
+      "file": "sec-2-5.md"
+    },
+    {
+      "id": "sec-2-6",
+      "number": "2.6",
+      "title": "Special Kinds of Matrices and Vectors",
+      "file": "sec-2-6.md"
+    },
+    {
+      "id": "sec-2-7",
+      "number": "2.7",
+      "title": "Eigendecomposition",
+      "file": "sec-2-7.md"
+    },
+    {
+      "id": "sec-2-8",
+      "number": "2.8",
+      "title": "Singular Value Decomposition",
+      "file": "sec-2-8.md"
+    },
+    {
+      "id": "sec-2-9",
+      "number": "2.9",
+      "title": "The Moore-Penrose Pseudoinverse",
+      "file": "sec-2-9.md"
+    },
+    {
+      "id": "sec-2-10",
+      "number": "2.10",
+      "title": "The Trace Operator",
+      "file": "sec-2-10.md"
+    },
+    {
+      "id": "sec-2-11",
+      "number": "2.11",
+      "title": "The Determinant",
+      "file": "sec-2-11.md"
+    },
+    {
+      "id": "sec-2-12",
+      "number": "2.12",
+      "title": "Example: Principal Components Analysis",
+      "file": "sec-2-12.md"
+    },
+    {
+      "id": "sec-3-1",
+      "number": "3.1",
+      "title": "Why Probability?",
+      "file": "sec-3-1.md"
+    },
+    {
+      "id": "sec-3-2",
+      "number": "3.2",
+      "title": "Random Variables",
+      "file": "sec-3-2.md"
+    },
+    {
+      "id": "sec-3-3",
+      "number": "3.3",
+      "title": "Probability Distributions",
+      "file": "sec-3-3.md"
+    },
+    {
+      "id": "sec-3-4",
+      "number": "3.4",
+      "title": "Marginal Probability",
+      "file": "sec-3-4.md"
+    },
+    {
+      "id": "sec-3-5",
+      "number": "3.5",
+      "title": "Conditional Probability",
+      "file": "sec-3-5.md"
+    },
+    {
+      "id": "sec-3-6",
+      "number": "3.6",
+      "title": "The Chain Rule of Conditional Probabilities",
+      "file": "sec-3-6.md"
+    },
+    {
+      "id": "sec-3-7",
+      "number": "3.7",
+      "title": "Independence and Conditional Independence",
+      "file": "sec-3-7.md"
+    },
+    {
+      "id": "sec-3-8",
+      "number": "3.8",
+      "title": "Expectation, Variance and Covariance",
+      "file": "sec-3-8.md"
+    },
+    {
+      "id": "sec-3-9",
+      "number": "3.9",
+      "title": "Common Probability Distributions",
+      "file": "sec-3-9.md"
+    },
+    {
+      "id": "sec-3-10",
+      "number": "3.10",
+      "title": "Useful Properties of Common Functions",
+      "file": "sec-3-10.md"
+    },
+    {
+      "id": "sec-3-11",
+      "number": "3.11",
+      "title": "Bayes' Rule",
+      "file": "sec-3-11.md"
+    },
+    {
+      "id": "sec-3-12",
+      "number": "3.12",
+      "title": "Technical Details of Continuous Variables",
+      "file": "sec-3-12.md"
+    },
+    {
+      "id": "sec-3-13",
+      "number": "3.13",
+      "title": "Information Theory",
+      "file": "sec-3-13.md"
+    },
+    {
+      "id": "sec-3-14",
+      "number": "3.14",
+      "title": "Structured Probabilistic Models",
+      "file": "sec-3-14.md"
+    },
+    {
+      "id": "sec-4-1",
+      "number": "4.1",
+      "title": "Overflow and Underflow",
+      "file": "sec-4-1.md"
+    },
+    {
+      "id": "sec-4-2",
+      "number": "4.2",
+      "title": "Poor Conditioning",
+      "file": "sec-4-2.md"
+    },
+    {
+      "id": "sec-4-3",
+      "number": "4.3",
+      "title": "Gradient-Based Optimization",
+      "file": "sec-4-3.md"
+    },
+    {
+      "id": "sec-4-4",
+      "number": "4.4",
+      "title": "Constrained Optimization",
+      "file": "sec-4-4.md"
+    },
+    {
+      "id": "sec-4-5",
+      "number": "4.5",
+      "title": "Example: Linear Least Squares",
+      "file": "sec-4-5.md"
+    },
+    {
+      "id": "sec-5-1",
+      "number": "5.1",
+      "title": "Learning Algorithms",
+      "file": "sec-5-1.md"
+    },
+    {
+      "id": "sec-5-2",
+      "number": "5.2",
+      "title": "Capacity, Overfitting and Underfitting",
+      "file": "sec-5-2.md"
+    },
+    {
+      "id": "sec-5-3",
+      "number": "5.3",
+      "title": "Hyperparameters and Validation Sets",
+      "file": "sec-5-3.md"
+    },
+    {
+      "id": "sec-5-4",
+      "number": "5.4",
+      "title": "Estimators, Bias and Variance",
+      "file": "sec-5-4.md"
+    },
+    {
+      "id": "sec-5-5",
+      "number": "5.5",
+      "title": "Maximum Likelihood Estimation",
+      "file": "sec-5-5.md"
+    },
+    {
+      "id": "sec-5-6",
+      "number": "5.6",
+      "title": "Bayesian Statistics",
+      "file": "sec-5-6.md"
+    },
+    {
+      "id": "sec-5-7",
+      "number": "5.7",
+      "title": "Supervised Learning Algorithms",
+      "file": "sec-5-7.md"
+    },
+    {
+      "id": "sec-5-8",
+      "number": "5.8",
+      "title": "Unsupervised Learning Algorithms",
+      "file": "sec-5-8.md"
+    },
+    {
+      "id": "sec-5-9",
+      "number": "5.9",
+      "title": "Stochastic Gradient Descent",
+      "file": "sec-5-9.md"
+    },
+    {
+      "id": "sec-5-10",
+      "number": "5.10",
+      "title": "Building a Machine Learning Algorithm",
+      "file": "sec-5-10.md"
+    },
+    {
+      "id": "sec-5-11",
+      "number": "5.11",
+      "title": "Challenges Motivating Deep Learning",
+      "file": "sec-5-11.md"
+    },
+    {
+      "id": "sec-6-1",
+      "number": "6.1",
+      "title": "Example: Learning XOR",
+      "file": "sec-6-1.md"
+    },
+    {
+      "id": "sec-6-2",
+      "number": "6.2",
+      "title": "Gradient-Based Learning",
+      "file": "sec-6-2.md"
+    },
+    {
+      "id": "sec-6-3",
+      "number": "6.3",
+      "title": "Hidden Units",
+      "file": "sec-6-3.md"
+    },
+    {
+      "id": "sec-6-4",
+      "number": "6.4",
+      "title": "Architecture Design",
+      "file": "sec-6-4.md"
+    },
+    {
+      "id": "sec-6-5",
+      "number": "6.5",
+      "title": "Back-Propagation and Other Differentiation Algorithms",
+      "file": "sec-6-5.md"
+    },
+    {
+      "id": "sec-6-6",
+      "number": "6.6",
+      "title": "Historical Notes",
+      "file": "sec-6-6.md"
+    },
+    {
+      "id": "sec-7-1",
+      "number": "7.1",
+      "title": "Parameter Norm Penalties",
+      "file": "sec-7-1.md"
+    },
+    {
+      "id": "sec-7-2",
+      "number": "7.2",
+      "title": "Norm Penalties as Constrained Optimization",
+      "file": "sec-7-2.md"
+    },
+    {
+      "id": "sec-7-3",
+      "number": "7.3",
+      "title": "Regularization and Under-Constrained Problems",
+      "file": "sec-7-3.md"
+    },
+    {
+      "id": "sec-7-4",
+      "number": "7.4",
+      "title": "Dataset Augmentation",
+      "file": "sec-7-4.md"
+    },
+    {
+      "id": "sec-7-5",
+      "number": "7.5",
+      "title": "Noise Robustness",
+      "file": "sec-7-5.md"
+    },
+    {
+      "id": "sec-7-6",
+      "number": "7.6",
+      "title": "Semi-Supervised Learning",
+      "file": "sec-7-6.md"
+    },
+    {
+      "id": "sec-7-7",
+      "number": "7.7",
+      "title": "Multi-Task Learning",
+      "file": "sec-7-7.md"
+    },
+    {
+      "id": "sec-7-8",
+      "number": "7.8",
+      "title": "Early Stopping",
+      "file": "sec-7-8.md"
+    },
+    {
+      "id": "sec-7-9",
+      "number": "7.9",
+      "title": "Parameter Tying and Parameter Sharing",
+      "file": "sec-7-9.md"
+    },
+    {
+      "id": "sec-7-10",
+      "number": "7.10",
+      "title": "Sparse Representations",
+      "file": "sec-7-10.md"
+    },
+    {
+      "id": "sec-7-11",
+      "number": "7.11",
+      "title": "Bagging and Other Ensemble Methods",
+      "file": "sec-7-11.md"
+    },
+    {
+      "id": "sec-7-12",
+      "number": "7.12",
+      "title": "Dropout",
+      "file": "sec-7-12.md"
+    },
+    {
+      "id": "sec-7-13",
+      "number": "7.13",
+      "title": "Adversarial Training",
+      "file": "sec-7-13.md"
+    },
+    {
+      "id": "sec-7-14",
+      "number": "7.14",
+      "title": "Tangent Distance, Tangent Prop, and Manifold Tangent Classifier",
+      "file": "sec-7-14.md"
+    },
+    {
+      "id": "sec-8-1",
+      "number": "8.1",
+      "title": "How Learning Differs from Pure Optimization",
+      "file": "sec-8-1.md"
+    },
+    {
+      "id": "sec-8-2",
+      "number": "8.2",
+      "title": "Challenges in Neural Network Optimization",
+      "file": "sec-8-2.md"
+    },
+    {
+      "id": "sec-8-3",
+      "number": "8.3",
+      "title": "Basic Algorithms",
+      "file": "sec-8-3.md"
+    },
+    {
+      "id": "sec-8-4",
+      "number": "8.4",
+      "title": "Parameter Initialization Strategies",
+      "file": "sec-8-4.md"
+    },
+    {
+      "id": "sec-8-5",
+      "number": "8.5",
+      "title": "Algorithms with Adaptive Learning Rates",
+      "file": "sec-8-5.md"
+    },
+    {
+      "id": "sec-8-6",
+      "number": "8.6",
+      "title": "Approximate Second-Order Methods",
+      "file": "sec-8-6.md"
+    },
+    {
+      "id": "sec-8-7",
+      "number": "8.7",
+      "title": "Optimization Strategies and Meta-Algorithms",
+      "file": "sec-8-7.md"
+    },
+    {
+      "id": "sec-9-1",
+      "number": "9.1",
+      "title": "The Convolution Operation",
+      "file": "sec-9-1.md"
+    },
+    {
+      "id": "sec-9-2",
+      "number": "9.2",
+      "title": "Motivation",
+      "file": "sec-9-2.md"
+    },
+    {
+      "id": "sec-9-3",
+      "number": "9.3",
+      "title": "Pooling",
+      "file": "sec-9-3.md"
+    },
+    {
+      "id": "sec-9-4",
+      "number": "9.4",
+      "title": "Convolution and Pooling as an Infinitely Strong Prior",
+      "file": "sec-9-4.md"
+    },
+    {
+      "id": "sec-9-5",
+      "number": "9.5",
+      "title": "Variants of the Basic Convolution Function",
+      "file": "sec-9-5.md"
+    },
+    {
+      "id": "sec-9-6",
+      "number": "9.6",
+      "title": "Structured Outputs",
+      "file": "sec-9-6.md"
+    },
+    {
+      "id": "sec-9-7",
+      "number": "9.7",
+      "title": "Data Types",
+      "file": "sec-9-7.md"
+    },
+    {
+      "id": "sec-9-8",
+      "number": "9.8",
+      "title": "Efficient Convolution Algorithms",
+      "file": "sec-9-8.md"
+    },
+    {
+      "id": "sec-9-9",
+      "number": "9.9",
+      "title": "Random or Unsupervised Features",
+      "file": "sec-9-9.md"
+    },
+    {
+      "id": "sec-9-10",
+      "number": "9.10",
+      "title": "The Neuroscientific Basis for Convolutional Networks",
+      "file": "sec-9-10.md"
+    },
+    {
+      "id": "sec-9-11",
+      "number": "9.11",
+      "title": "Convolutional Networks and the History of Deep Learning",
+      "file": "sec-9-11.md"
+    },
+    {
+      "id": "sec-10-1",
+      "number": "10.1",
+      "title": "Unfolding Computational Graphs",
+      "file": "sec-10-1.md"
+    },
+    {
+      "id": "sec-10-2",
+      "number": "10.2",
+      "title": "Recurrent Neural Networks",
+      "file": "sec-10-2.md"
+    },
+    {
+      "id": "sec-10-3",
+      "number": "10.3",
+      "title": "Bidirectional RNNs",
+      "file": "sec-10-3.md"
+    },
+    {
+      "id": "sec-10-4",
+      "number": "10.4",
+      "title": "Encoder-Decoder Sequence-to-Sequence Architectures",
+      "file": "sec-10-4.md"
+    },
+    {
+      "id": "sec-10-5",
+      "number": "10.5",
+      "title": "Deep Recurrent Networks",
+      "file": "sec-10-5.md"
+    },
+    {
+      "id": "sec-10-6",
+      "number": "10.6",
+      "title": "Recursive Neural Networks",
+      "file": "sec-10-6.md"
+    },
+    {
+      "id": "sec-10-7",
+      "number": "10.7",
+      "title": "The Challenge of Long-Term Dependencies",
+      "file": "sec-10-7.md"
+    },
+    {
+      "id": "sec-10-8",
+      "number": "10.8",
+      "title": "Echo State Networks",
+      "file": "sec-10-8.md"
+    },
+    {
+      "id": "sec-10-9",
+      "number": "10.9",
+      "title": "Leaky Units and Other Strategies for Multiple Time Scales",
+      "file": "sec-10-9.md"
+    },
+    {
+      "id": "sec-10-10",
+      "number": "10.10",
+      "title": "The Long Short-Term Memory and Other Gated RNNs",
+      "file": "sec-10-10.md"
+    },
+    {
+      "id": "sec-10-11",
+      "number": "10.11",
+      "title": "Optimization for Long-Term Dependencies",
+      "file": "sec-10-11.md"
+    },
+    {
+      "id": "sec-10-12",
+      "number": "10.12",
+      "title": "Explicit Memory",
+      "file": "sec-10-12.md"
+    },
+    {
+      "id": "sec-11-1",
+      "number": "11.1",
+      "title": "Performance Metrics",
+      "file": "sec-11-1.md"
+    },
+    {
+      "id": "sec-11-2",
+      "number": "11.2",
+      "title": "Default Baseline Models",
+      "file": "sec-11-2.md"
+    },
+    {
+      "id": "sec-11-3",
+      "number": "11.3",
+      "title": "Determining Whether to Gather More Data",
+      "file": "sec-11-3.md"
+    },
+    {
+      "id": "sec-11-4",
+      "number": "11.4",
+      "title": "Selecting Hyperparameters",
+      "file": "sec-11-4.md"
+    },
+    {
+      "id": "sec-11-5",
+      "number": "11.5",
+      "title": "Debugging Strategies",
+      "file": "sec-11-5.md"
+    },
+    {
+      "id": "sec-11-6",
+      "number": "11.6",
+      "title": "Example: Multi-Digit Number Recognition",
+      "file": "sec-11-6.md"
+    },
+    {
+      "id": "sec-12-1",
+      "number": "12.1",
+      "title": "Large-Scale Deep Learning",
+      "file": "sec-12-1.md"
+    },
+    {
+      "id": "sec-12-2",
+      "number": "12.2",
+      "title": "Computer Vision",
+      "file": "sec-12-2.md"
+    },
+    {
+      "id": "sec-12-3",
+      "number": "12.3",
+      "title": "Speech Recognition",
+      "file": "sec-12-3.md"
+    },
+    {
+      "id": "sec-12-4",
+      "number": "12.4",
+      "title": "Natural Language Processing",
+      "file": "sec-12-4.md"
+    },
+    {
+      "id": "sec-12-5",
+      "number": "12.5",
+      "title": "Other Applications",
+      "file": "sec-12-5.md"
+    },
+    {
+      "id": "sec-13-1",
+      "number": "13.1",
+      "title": "Probabilistic PCA and Factor Analysis",
+      "file": "sec-13-1.md"
+    },
+    {
+      "id": "sec-13-2",
+      "number": "13.2",
+      "title": "Independent Component Analysis (ICA)",
+      "file": "sec-13-2.md"
+    },
+    {
+      "id": "sec-13-3",
+      "number": "13.3",
+      "title": "Slow Feature Analysis",
+      "file": "sec-13-3.md"
+    },
+    {
+      "id": "sec-13-4",
+      "number": "13.4",
+      "title": "Sparse Coding",
+      "file": "sec-13-4.md"
+    },
+    {
+      "id": "sec-13-5",
+      "number": "13.5",
+      "title": "Manifold Interpretation of PCA",
+      "file": "sec-13-5.md"
+    },
+    {
+      "id": "sec-14-1",
+      "number": "14.1",
+      "title": "Undercomplete Autoencoders",
+      "file": "sec-14-1.md"
+    },
+    {
+      "id": "sec-14-2",
+      "number": "14.2",
+      "title": "Regularized Autoencoders",
+      "file": "sec-14-2.md"
+    },
+    {
+      "id": "sec-14-3",
+      "number": "14.3",
+      "title": "Representational Power, Layer Size and Depth",
+      "file": "sec-14-3.md"
+    },
+    {
+      "id": "sec-14-4",
+      "number": "14.4",
+      "title": "Stochastic Encoders and Decoders",
+      "file": "sec-14-4.md"
+    },
+    {
+      "id": "sec-14-5",
+      "number": "14.5",
+      "title": "Denoising Autoencoders",
+      "file": "sec-14-5.md"
+    },
+    {
+      "id": "sec-14-6",
+      "number": "14.6",
+      "title": "Learning Manifolds with Autoencoders",
+      "file": "sec-14-6.md"
+    },
+    {
+      "id": "sec-14-7",
+      "number": "14.7",
+      "title": "Contractive Autoencoders",
+      "file": "sec-14-7.md"
+    },
+    {
+      "id": "sec-14-8",
+      "number": "14.8",
+      "title": "Predictive Sparse Decomposition",
+      "file": "sec-14-8.md"
+    },
+    {
+      "id": "sec-14-9",
+      "number": "14.9",
+      "title": "Applications of Autoencoders",
+      "file": "sec-14-9.md"
+    },
+    {
+      "id": "sec-15-1",
+      "number": "15.1",
+      "title": "Greedy Layer-Wise Unsupervised Pretraining",
+      "file": "sec-15-1.md"
+    },
+    {
+      "id": "sec-15-2",
+      "number": "15.2",
+      "title": "Transfer Learning and Domain Adaptation",
+      "file": "sec-15-2.md"
+    },
+    {
+      "id": "sec-15-3",
+      "number": "15.3",
+      "title": "Semi-Supervised Disentangling of Causal Factors",
+      "file": "sec-15-3.md"
+    },
+    {
+      "id": "sec-15-4",
+      "number": "15.4",
+      "title": "Distributed Representation",
+      "file": "sec-15-4.md"
+    },
+    {
+      "id": "sec-15-5",
+      "number": "15.5",
+      "title": "Exponential Gains from Depth",
+      "file": "sec-15-5.md"
+    },
+    {
+      "id": "sec-15-6",
+      "number": "15.6",
+      "title": "Providing Clues to Discover Underlying Causes",
+      "file": "sec-15-6.md"
+    },
+    {
+      "id": "sec-16-1",
+      "number": "16.1",
+      "title": "The Challenge of Unstructured Modeling",
+      "file": "sec-16-1.md"
+    },
+    {
+      "id": "sec-16-2",
+      "number": "16.2",
+      "title": "Using Graphs to Describe Model Structure",
+      "file": "sec-16-2.md"
+    },
+    {
+      "id": "sec-16-3",
+      "number": "16.3",
+      "title": "Sampling from Graphical Models",
+      "file": "sec-16-3.md"
+    },
+    {
+      "id": "sec-16-4",
+      "number": "16.4",
+      "title": "Advantages of Structured Modeling",
+      "file": "sec-16-4.md"
+    },
+    {
+      "id": "sec-16-5",
+      "number": "16.5",
+      "title": "Learning about Dependencies",
+      "file": "sec-16-5.md"
+    },
+    {
+      "id": "sec-16-6",
+      "number": "16.6",
+      "title": "Inference and Approximate Inference",
+      "file": "sec-16-6.md"
+    },
+    {
+      "id": "sec-16-7",
+      "number": "16.7",
+      "title": "The Deep Learning Approach to Structured Probabilistic Models",
+      "file": "sec-16-7.md"
+    },
+    {
+      "id": "sec-17-1",
+      "number": "17.1",
+      "title": "Sampling and Monte Carlo Methods",
+      "file": "sec-17-1.md"
+    },
+    {
+      "id": "sec-17-2",
+      "number": "17.2",
+      "title": "Importance Sampling",
+      "file": "sec-17-2.md"
+    },
+    {
+      "id": "sec-17-3",
+      "number": "17.3",
+      "title": "Markov Chain Monte Carlo Methods",
+      "file": "sec-17-3.md"
+    },
+    {
+      "id": "sec-17-4",
+      "number": "17.4",
+      "title": "Gibbs Sampling",
+      "file": "sec-17-4.md"
+    },
+    {
+      "id": "sec-17-5",
+      "number": "17.5",
+      "title": "The Challenge of Mixing between Separated Modes",
+      "file": "sec-17-5.md"
+    },
+    {
+      "id": "sec-18-1",
+      "number": "18.1",
+      "title": "The Log-Likelihood Gradient",
+      "file": "sec-18-1.md"
+    },
+    {
+      "id": "sec-18-2",
+      "number": "18.2",
+      "title": "Stochastic Maximum Likelihood and Contrastive Divergence",
+      "file": "sec-18-2.md"
+    },
+    {
+      "id": "sec-18-3",
+      "number": "18.3",
+      "title": "Pseudolikelihood",
+      "file": "sec-18-3.md"
+    },
+    {
+      "id": "sec-18-4",
+      "number": "18.4",
+      "title": "Score Matching and Ratio Matching",
+      "file": "sec-18-4.md"
+    },
+    {
+      "id": "sec-18-5",
+      "number": "18.5",
+      "title": "Denoising Score Matching",
+      "file": "sec-18-5.md"
+    },
+    {
+      "id": "sec-18-6",
+      "number": "18.6",
+      "title": "Noise-Contrastive Estimation",
+      "file": "sec-18-6.md"
+    },
+    {
+      "id": "sec-18-7",
+      "number": "18.7",
+      "title": "Estimating the Partition Function",
+      "file": "sec-18-7.md"
+    },
+    {
+      "id": "sec-19-1",
+      "number": "19.1",
+      "title": "Inference as Optimization",
+      "file": "sec-19-1.md"
+    },
+    {
+      "id": "sec-19-2",
+      "number": "19.2",
+      "title": "Expectation Maximization",
+      "file": "sec-19-2.md"
+    },
+    {
+      "id": "sec-19-3",
+      "number": "19.3",
+      "title": "MAP Inference and Sparse Coding",
+      "file": "sec-19-3.md"
+    },
+    {
+      "id": "sec-19-4",
+      "number": "19.4",
+      "title": "Variational Inference and Learning",
+      "file": "sec-19-4.md"
+    },
+    {
+      "id": "sec-19-5",
+      "number": "19.5",
+      "title": "Learned Approximate Inference",
+      "file": "sec-19-5.md"
+    },
+    {
+      "id": "sec-20-1",
+      "number": "20.1",
+      "title": "Boltzmann Machines",
+      "file": "sec-20-1.md"
+    },
+    {
+      "id": "sec-20-2",
+      "number": "20.2",
+      "title": "Restricted Boltzmann Machines",
+      "file": "sec-20-2.md"
+    },
+    {
+      "id": "sec-20-3",
+      "number": "20.3",
+      "title": "Deep Belief Networks",
+      "file": "sec-20-3.md"
+    },
+    {
+      "id": "sec-20-4",
+      "number": "20.4",
+      "title": "Deep Boltzmann Machines",
+      "file": "sec-20-4.md"
+    },
+    {
+      "id": "sec-20-5",
+      "number": "20.5",
+      "title": "Boltzmann Machines for Real-Valued Data",
+      "file": "sec-20-5.md"
+    },
+    {
+      "id": "sec-20-6",
+      "number": "20.6",
+      "title": "Convolutional Boltzmann Machines",
+      "file": "sec-20-6.md"
+    },
+    {
+      "id": "sec-20-7",
+      "number": "20.7",
+      "title": "Boltzmann Machines for Structured or Sequential Outputs",
+      "file": "sec-20-7.md"
+    },
+    {
+      "id": "sec-20-8",
+      "number": "20.8",
+      "title": "Other Boltzmann Machines",
+      "file": "sec-20-8.md"
+    },
+    {
+      "id": "sec-20-9",
+      "number": "20.9",
+      "title": "Back-Propagation through Random Operations",
+      "file": "sec-20-9.md"
+    },
+    {
+      "id": "sec-20-10",
+      "number": "20.10",
+      "title": "Directed Generative Nets",
+      "file": "sec-20-10.md"
+    },
+    {
+      "id": "sec-20-11",
+      "number": "20.11",
+      "title": "Drawing Samples from Autoencoders",
+      "file": "sec-20-11.md"
+    },
+    {
+      "id": "sec-20-12",
+      "number": "20.12",
+      "title": "Generative Stochastic Networks",
+      "file": "sec-20-12.md"
+    },
+    {
+      "id": "sec-20-13",
+      "number": "20.13",
+      "title": "Other Generation Schemes",
+      "file": "sec-20-13.md"
+    },
+    {
+      "id": "sec-20-14",
+      "number": "20.14",
+      "title": "Evaluating Generative Models",
+      "file": "sec-20-14.md"
+    },
+    {
+      "id": "sec-20-15",
+      "number": "20.15",
+      "title": "Conclusion",
+      "file": "sec-20-15.md"
+    }
+  ]
+}
