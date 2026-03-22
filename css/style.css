@@ -532,10 +532,6 @@ a:hover {
 }
 
 .foundation-details-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
   margin-bottom: 0.75rem;
 }
 
@@ -552,28 +548,8 @@ a:hover {
   color: var(--text-muted);
 }
 
-.foundation-details-open {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.45rem 0.75rem;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  color: var(--text);
-  background: transparent;
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
 .foundation-sidebar-details {
   width: 100%;
-}
-
-.foundation-details-open:hover {
-  border-color: var(--link);
-  color: var(--link);
 }
 
 .foundation-details-summary-wrap {
@@ -598,12 +574,67 @@ a:hover {
   gap: 1rem;
 }
 
+.foundation-item {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+
+/* Full-page (external-link icon): hidden until item is selected (see [hidden] on button in JS) */
+.foundation-item-open {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  margin: 0;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--card-bg);
+  font: inherit;
+  line-height: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.foundation-item-open-icon {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.foundation-item-open[hidden] {
+  display: none !important;
+}
+
+.foundation-item-open:hover {
+  border-color: var(--link);
+  color: var(--link);
+}
+
+.foundation-item-open:focus {
+  outline: none;
+}
+
+.foundation-item-open:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
 .foundation-icon {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   text-decoration: none;
   padding: 1rem;
+  width: 100%;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -625,6 +656,7 @@ a:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
   border-color: var(--link);
   transform: scale(1.04);
+  padding-right: 3.25rem;
 }
 
 @media (prefers-color-scheme: dark) {

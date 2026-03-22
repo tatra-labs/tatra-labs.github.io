@@ -29,7 +29,6 @@
   var foundationDetailsTitle = document.getElementById('foundation-details-title');
   var foundationDetailsMeta = document.getElementById('foundation-details-meta');
   var foundationDetailsSummary = document.getElementById('foundation-details-summary');
-  var foundationDetailsOpen = document.getElementById('foundation-details-open');
 
   var selectedFoundationKind = '';
   var selectedFoundationSlug = '';
@@ -41,17 +40,48 @@
     if (foundationDetailsTitle) foundationDetailsTitle.textContent = 'Select an item';
     if (foundationDetailsMeta) foundationDetailsMeta.textContent = '';
     if (foundationDetailsSummary) foundationDetailsSummary.textContent = '';
-    if (foundationDetailsOpen) {
-      foundationDetailsOpen.classList.add('hidden');
-      foundationDetailsOpen.href = '#';
-    }
 
     // Hide the card entirely when nothing is selected.
-    if (foundationSidebarDetails) foundationSidebarDetails.classList.add('hidden');
+    if (foundationSidebarDetails) {
+      foundationSidebarDetails.classList.add('hidden');
+      foundationSidebarDetails.style.marginTop = '';
+    }
 
     // Clear any active icon styling (if already rendered).
     var activeIcons = document.querySelectorAll('.foundation-icon.active');
     activeIcons.forEach(function (el) { el.classList.remove('active'); });
+
+    // Hide all per-item open-full-page controls until something is selected again.
+    document.querySelectorAll('.foundation-item-open').forEach(function (el) {
+      el.setAttribute('hidden', '');
+    });
+  }
+
+  /** Align left info card top edge with the selected book/paper icon (same Y as that item). */
+  function alignFoundationSidebarDetails() {
+    if (!foundationSidebarDetails || foundationSidebarDetails.classList.contains('hidden')) return;
+    if (activeTab !== 'foundation') return;
+
+    // Prefer the active/selected icon so paper aligns with paper, book with book.
+    var refIcon = document.querySelector('.foundation-icon.active');
+    if (!refIcon) {
+      refIcon = document.querySelector('#foundation-books-list .foundation-icon, #foundation-papers-list .foundation-icon');
+    }
+    if (!refIcon) {
+      foundationSidebarDetails.style.marginTop = '';
+      return;
+    }
+
+    foundationSidebarDetails.style.marginTop = '0px';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (!foundationSidebarDetails || foundationSidebarDetails.classList.contains('hidden')) return;
+        var iconRect = refIcon.getBoundingClientRect();
+        var detailsRect = foundationSidebarDetails.getBoundingClientRect();
+        var delta = Math.round(iconRect.top - detailsRect.top);
+        foundationSidebarDetails.style.marginTop = delta + 'px';
+      });
+    });
   }
 
   function formatDate(iso) {
@@ -123,10 +153,10 @@
     }).join('');
     return (
       '<div class="card" data-slug="' + escapeHtml(item.slug) + '">' +
-        '<h3 class="card-title"><a href="' + baseUrl + encodeURIComponent(item.slug) + '">' + escapeHtml(item.title) + '</a></h3>' +
-        (item.excerpt ? '<p class="card-excerpt">' + escapeHtml(item.excerpt) + '</p>' : '') +
-        '<p class="card-meta">' + escapeHtml(meta) + '</p>' +
-        (tagsHtml ? '<div class="card-tags">' + tagsHtml + '</div>' : '') +
+      '<h3 class="card-title"><a href="' + baseUrl + encodeURIComponent(item.slug) + '">' + escapeHtml(item.title) + '</a></h3>' +
+      (item.excerpt ? '<p class="card-excerpt">' + escapeHtml(item.excerpt) + '</p>' : '') +
+      '<p class="card-meta">' + escapeHtml(meta) + '</p>' +
+      (tagsHtml ? '<div class="card-tags">' + tagsHtml + '</div>' : '') +
       '</div>'
     );
   }
@@ -168,13 +198,26 @@
       var slug = item.slug || '';
       var isActive = selectedFoundationKind === kind && selectedFoundationSlug === slug;
       var activeClass = isActive ? ' active' : '';
+      var href = (kind === 'book' ? '/foundation/book/' : '/foundation/paper/') + encodeURIComponent(slug);
+      // Full-page link control is hidden until this tile is selected (native hidden + CSS top-right overlay).
+      var openHidden = isActive ? '' : ' hidden';
+      var openActionLabel = kind === 'book' ? 'Open this book' : 'Open this paper';
+      var openIconSvg =
+        '<svg class="foundation-item-open-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' +
+        '<polyline points="15 3 21 3 21 9"/>' +
+        '<line x1="10" y1="14" x2="21" y2="3"/>' +
+        '</svg>';
 
       return (
+        '<div class="foundation-item">' +
         '<button type="button" class="foundation-icon' + activeClass + '" data-kind="' + escapeHtml(kind) + '" data-slug="' + escapeHtml(slug) + '" ' +
-          'aria-label="' + (kind === 'book' ? 'Open book' : 'Open paper') + ': ' + escapeHtml(title) + '">' +
-          (icon ? '<img src="' + escapeHtml(icon) + '" alt="' + escapeHtml(iconAlt) + '" class="foundation-icon-img">' : '') +
-          '<div class="foundation-icon-title">' + escapeHtml(title) + '</div>' +
-        '</button>'
+        'aria-label="' + (kind === 'book' ? 'Select book' : 'Select paper') + ': ' + escapeHtml(title) + '">' +
+        (icon ? '<img src="' + escapeHtml(icon) + '" alt="' + escapeHtml(iconAlt) + '" class="foundation-icon-img">' : '') +
+        '<div class="foundation-icon-title">' + escapeHtml(title) + '</div>' +
+        '</button>' +
+        '<button type="button" class="foundation-item-open"' + openHidden + ' data-href="' + href + '" title="' + openActionLabel + '" aria-label="' + openActionLabel + ': ' + escapeHtml(title) + '">' + openIconSvg + '</button>' +
+        '</div>'
       );
     }
 
@@ -209,19 +252,24 @@
     if (foundationDetailsMeta) foundationDetailsMeta.textContent = metaStr;
     if (foundationDetailsSummary) foundationDetailsSummary.textContent = item.summary || '';
 
-    if (foundationDetailsOpen) {
-      var href = (kind === 'book') ? '/foundation/book/' : '/foundation/paper/';
-      foundationDetailsOpen.href = href + encodeURIComponent(slug);
-      foundationDetailsOpen.classList.remove('hidden');
-    }
-
     // Update active icon styling.
     var activeIcons = document.querySelectorAll('.foundation-icon.active');
     activeIcons.forEach(function (el) { el.classList.remove('active'); });
     if (btnEl) btnEl.classList.add('active');
 
+    // Only the selected tile shows the full-page control (top-right); keep others hidden.
+    document.querySelectorAll('.foundation-item-open').forEach(function (el) {
+      el.setAttribute('hidden', '');
+    });
+    if (btnEl) {
+      var wrap = btnEl.closest('.foundation-item');
+      var openBtn = wrap && wrap.querySelector('.foundation-item-open');
+      if (openBtn) openBtn.removeAttribute('hidden');
+    }
+
     // Show the left details card once something is selected.
     if (foundationSidebarDetails) foundationSidebarDetails.classList.remove('hidden');
+    alignFoundationSidebarDetails();
   }
 
   function renderLists() {
@@ -254,6 +302,7 @@
 
     if (tab !== 'foundation') {
       resetFoundationSelection();
+      if (foundationSidebarDetails) foundationSidebarDetails.style.marginTop = '';
     }
 
     document.querySelectorAll('.tabs a').forEach(function (a) {
@@ -266,8 +315,12 @@
     });
     activeTags = [];
     renderTagFilter();
-    if (tab === 'foundation') renderFoundation();
-    else renderLists();
+    if (tab === 'foundation') {
+      renderFoundation();
+      if (foundationSidebarDetails && !foundationSidebarDetails.classList.contains('hidden')) {
+        alignFoundationSidebarDetails();
+      }
+    } else renderLists();
   }
 
   if (tagFilterToggle && tagFilterBox) {
@@ -317,6 +370,14 @@
     });
 
     document.addEventListener('click', function (e) {
+      var openItem = e.target && e.target.closest && e.target.closest('.foundation-item-open');
+      if (openItem && openItem.dataset && openItem.dataset.href) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = openItem.dataset.href;
+        return;
+      }
+
       var fbtn = e.target && e.target.closest && e.target.closest('.foundation-icon');
       if (!fbtn || !fbtn.dataset || !fbtn.dataset.kind || !fbtn.dataset.slug) return;
       e.preventDefault();
@@ -334,9 +395,9 @@
       var detailsPanel = e.target && e.target.closest && e.target.closest('#foundation-sidebar-details');
       if (detailsPanel) return;
 
-      // Ignore clicks on the "Open" button/link.
-      var openBtn = e.target && e.target.closest && e.target.closest('#foundation-details-open');
-      if (openBtn) return;
+      // Ignore clicks on per-item full-page button (navigation).
+      var openItem = e.target && e.target.closest && e.target.closest('.foundation-item-open');
+      if (openItem) return;
 
       // Clicked blank space -> deactivate.
       resetFoundationSelection();
@@ -352,6 +413,14 @@
           else window.history.replaceState(null, '', '/');
         });
       }
+    });
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        if (activeTab === 'foundation') alignFoundationSidebarDetails();
+      }, 100);
     });
   }
 
