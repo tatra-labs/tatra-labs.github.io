@@ -18,6 +18,7 @@
   var postsSection = document.getElementById('posts-section');
   var projectsSection = document.getElementById('projects-section');
   var foundationSection = document.getElementById('foundation-section');
+  var foundationEmpty = document.getElementById('foundation-empty');
   var foundationSidebarDetails = document.getElementById('foundation-sidebar-details');
   var postsEmpty = document.getElementById('posts-empty');
   var projectsEmpty = document.getElementById('projects-empty');
@@ -110,6 +111,22 @@
     return text.indexOf(q) !== -1;
   }
 
+  /** Foundation sidebar search: match query against summary (primary), title, authors, and tags. */
+  function matchesFoundationSearch(item, query) {
+    if (!query) return true;
+    var q = query.toLowerCase();
+    var authorsText = '';
+    if (item.authors && item.authors.length) authorsText = item.authors.join(' ');
+    else if (item.author) authorsText = item.author;
+    var text = (
+      (item.title || '') + ' ' +
+      (item.summary || '') + ' ' +
+      authorsText + ' ' +
+      (item.tags || []).join(' ')
+    ).toLowerCase();
+    return text.indexOf(q) !== -1;
+  }
+
   function renderTagFilter() {
     if (activeTab === 'foundation') {
       tagFilterList.innerHTML = '';
@@ -181,6 +198,19 @@
   function renderFoundation() {
     if (!foundationBooksList || !foundationPapersList) return;
 
+    var filteredBooks = foundationBooks.filter(function (item) { return matchesFoundationSearch(item, searchQuery); });
+    var filteredPapers = foundationPapers.filter(function (item) { return matchesFoundationSearch(item, searchQuery); });
+
+    if (selectedFoundationSlug) {
+      var stillVisible = false;
+      if (selectedFoundationKind === 'book') {
+        stillVisible = filteredBooks.some(function (x) { return x.slug === selectedFoundationSlug; });
+      } else if (selectedFoundationKind === 'paper') {
+        stillVisible = filteredPapers.some(function (x) { return x.slug === selectedFoundationSlug; });
+      }
+      if (!stillVisible) resetFoundationSelection();
+    }
+
     foundationBooksList.innerHTML = '';
     foundationPapersList.innerHTML = '';
 
@@ -221,13 +251,24 @@
       );
     }
 
-    foundationBooks.forEach(function (item) {
+    filteredBooks.forEach(function (item) {
       foundationBooksList.insertAdjacentHTML('beforeend', renderItemButton(item, 'book'));
     });
 
-    foundationPapers.forEach(function (item) {
+    filteredPapers.forEach(function (item) {
       foundationPapersList.insertAdjacentHTML('beforeend', renderItemButton(item, 'paper'));
     });
+
+    var noFoundationMatches = !!searchQuery && filteredBooks.length === 0 && filteredPapers.length === 0;
+    if (foundationEmpty) foundationEmpty.classList.toggle('hidden', !noFoundationMatches);
+    if (foundationSection) {
+      var catalogLayout = foundationSection.querySelector('.foundation-layout');
+      if (catalogLayout) catalogLayout.classList.toggle('hidden', noFoundationMatches);
+    }
+
+    if (activeTab === 'foundation' && selectedFoundationSlug && foundationSidebarDetails && !foundationSidebarDetails.classList.contains('hidden')) {
+      alignFoundationSidebarDetails();
+    }
   }
 
   function selectFoundationItem(kind, slug, btnEl) {
@@ -359,7 +400,8 @@
 
     searchInput.addEventListener('input', function () {
       searchQuery = searchInput.value.trim();
-      if (activeTab !== 'foundation') renderLists();
+      if (activeTab === 'foundation') renderFoundation();
+      else renderLists();
     });
 
     document.addEventListener('click', function (e) {
