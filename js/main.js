@@ -384,10 +384,10 @@
     if (tabParam === 'projects' || tabParam === 'foundation') activeTab = tabParam;
 
     Promise.all([
-      fetch('/data/posts-list.json').then(function (r) { return r.ok ? r.json() : []; }),
-      fetch('/data/projects-list.json').then(function (r) { return r.ok ? r.json() : []; }),
-      fetch('/data/foundation/books-list.json').then(function (r) { return r.ok ? r.json() : []; }),
-      fetch('/data/foundation/papers-list.json').then(function (r) { return r.ok ? r.json() : []; })
+      fetch('/content/posts/index.json').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/content/projects/index.json').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/content/foundation/books/index.json').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/content/foundation/papers/index.json').then(function (r) { return r.ok ? r.json() : []; })
     ]).then(function (results) {
       posts = results[0] || [];
       projects = results[1] || [];

@@ -1,6 +1,6 @@
 # 1.1 Who Should Read This Book?
 
-This file is the **Markdown source** for one section of the book reader. The table of contents is built from `data/foundation/books/deep-learning-toc.json` (regenerated from `tools/dl-toc-source.txt`).
+This file is the **Markdown source** for one section. The table of contents is `toc.json` in this book folder (regenerated from `toc-source.txt` via `tools/generate_dl_toc.py`).
 
 ## Paragraphs and lists
 
@@ -19,6 +19,6 @@ $$
 
 ## Image
 
-![Sample](/data/foundation/deep_learning.webp)
+![Sample](/content/foundation/media/deep_learning.webp)
 
 Use root-relative paths so the same site works on GitHub Pages and locally.

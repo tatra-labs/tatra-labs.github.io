@@ -2,11 +2,10 @@
   {
     "slug": "deep-learning-paper",
     "title": "Deep Learning (Paper)",
-    "icon": "/data/foundation/deep_learning.webp",
+    "icon": "/content/foundation/media/deep_learning.webp",
     "iconAlt": "Deep learning paper thumbnail",
     "date": "2025-02-08",
     "authors": ["Tatra Labs"],
     "summary": "A concise summary of the paper: motivation, method, and main takeaways. Replace with your actual abstract/summary."
   }
 ]
-

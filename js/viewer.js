@@ -17,7 +17,7 @@
   var backLinkEl = document.querySelector('.back-link');
   if (postMatch) {
     slug = decodeURIComponent(postMatch[1]);
-    baseUrl = '/data/posts';
+    baseUrl = '/content/posts';
     showReadingTime = true;
     if (backLinkEl) {
       backLinkEl.setAttribute('href', '/?tab=posts');
@@ -25,7 +25,7 @@
     }
   } else if (projectMatch) {
     slug = decodeURIComponent(projectMatch[1]);
-    baseUrl = '/data/projects';
+    baseUrl = '/content/projects';
     showReadingTime = false;
     if (backLinkEl) {
       backLinkEl.setAttribute('href', '/?tab=projects');
@@ -33,7 +33,7 @@
     }
   } else if (foundationBookMatch) {
     slug = decodeURIComponent(foundationBookMatch[1]);
-    baseUrl = '/data/foundation/books';
+    baseUrl = '/content/foundation/books';
     showReadingTime = false;
     if (backLinkEl) {
       backLinkEl.setAttribute('href', '/?tab=foundation');
@@ -41,7 +41,7 @@
     }
   } else if (foundationPaperMatch) {
     slug = decodeURIComponent(foundationPaperMatch[1]);
-    baseUrl = '/data/foundation/papers';
+    baseUrl = '/content/foundation/papers';
     showReadingTime = false;
     if (backLinkEl) {
       backLinkEl.setAttribute('href', '/?tab=foundation');
@@ -351,7 +351,7 @@
             '<div class="md-missing">' +
             '<p><strong>No Markdown file yet.</strong> Create:</p>' +
             '<p><code>' + escapeHtml(root + current.file) + '</code></p>' +
-            '<p>See <code>content/foundation/books/README.md</code> for the boilerplate.</p>' +
+            '<p>See <code>content/README.md</code> for how sections are organized.</p>' +
             '</div>';
         }
         contentEl.innerHTML = html;
@@ -476,7 +476,12 @@
     return;
   }
 
-  fetch(baseUrl + '/' + encodeURIComponent(slug) + '.json')
+  var jsonUrl = baseUrl + '/' + encodeURIComponent(slug) + '.json';
+  if (isFoundationBook) {
+    jsonUrl = baseUrl + '/' + encodeURIComponent(slug) + '/book.json';
+  }
+
+  fetch(jsonUrl)
     .then(function (r) {
       if (!r.ok) throw new Error('Not found');
       return r.json();
@@ -488,7 +493,7 @@
       if (viewerShell) viewerShell.classList.remove('hidden');
 
       if (isFoundationBook && data.reader === 'markdown-toc') {
-        var tocUrl = data.tocFile || '/data/foundation/books/' + encodeURIComponent(slug) + '-toc.json';
+        var tocUrl = data.tocFile || baseUrl + '/' + encodeURIComponent(slug) + '/toc.json';
         return fetch(tocUrl)
           .then(function (r) {
             if (!r.ok) throw new Error('toc');

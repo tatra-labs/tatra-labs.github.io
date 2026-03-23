@@ -2,11 +2,10 @@
   "title": "Foundation",
   "bookTitle": "Book Overview",
   "excerpt": "Deep learning foundation overview (summary + key topics). Replace this placeholder text with your real content.",
-  "image": "/data/foundation/deep_learning.webp",
+  "image": "/content/foundation/media/deep_learning.webp",
   "imageAlt": "Deep learning illustration",
   "content": [
-    "This section is powered by `data/foundation/foundation-overview.json`.",
+    "Foundation copy can live in `content/foundation/overview.json`.",
     "Update `excerpt` and `content` with your book summary, chapters, or learning goals."
   ]
 }
-

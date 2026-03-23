@@ -8,7 +8,7 @@
     "sections": [
       {
         "type": "text",
-        "value": "This is a sample project. Use the same structure as posts: add an entry to data/projects-list.json and create data/projects/your-slug.json."
+        "value": "This is a sample project. Use the same structure as posts: add an entry to content/projects/index.json and create content/projects/your-slug.json."
       },
       {
         "type": "text",

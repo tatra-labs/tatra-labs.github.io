@@ -17,7 +17,7 @@
       },
       {
         "type": "text",
-        "value": "To add a new post: add an entry to data/posts-list.json and create data/posts/your-slug.json with full content. Tags are automatic from the data."
+        "value": "To add a new post: add an entry to content/posts/index.json and create content/posts/your-slug.json with full content. Tags are automatic from the data."
       }
     ]
   }

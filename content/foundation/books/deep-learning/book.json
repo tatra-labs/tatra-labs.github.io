@@ -5,6 +5,6 @@
   "author": "Tatra Labs",
   "tags": ["Book", "Deep Learning"],
   "reader": "markdown-toc",
-  "contentRoot": "/content/foundation/books/deep-learning",
-  "tocFile": "/data/foundation/books/deep-learning-toc.json"
+  "contentRoot": "/content/foundation/books/deep-learning/sections",
+  "tocFile": "/content/foundation/books/deep-learning/toc.json"
 }

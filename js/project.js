@@ -49,7 +49,7 @@
     return;
   }
 
-  fetch('/data/projects/' + encodeURIComponent(slug) + '.json')
+  fetch('/content/projects/' + encodeURIComponent(slug) + '.json')
     .then(function (r) {
       if (!r.ok) throw new Error('Not found');
       return r.json();

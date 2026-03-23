@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""One-time generator: dl-toc-source.txt -> data/foundation/books/deep-learning-toc.json"""
+"""Regenerate TOC JSON for the Deep Learning book from toc-source.txt."""
 
 import json
 import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "tools", "dl-toc-source.txt")
-OUT = os.path.join(ROOT, "data", "foundation", "books", "deep-learning-toc.json")
+BOOK = os.path.join(ROOT, "content", "foundation", "books", "deep-learning")
+SRC = os.path.join(BOOK, "toc-source.txt")
+OUT = os.path.join(BOOK, "toc.json")
 
 
 def main():
@@ -73,7 +74,6 @@ def main():
     tree = {"prelude": prelude, "parts": parts}
 
     def flatten_sections():
-        """Ordered leaf sections for prev/next navigation."""
         leaves = []
 
         def walk_chapter(ch):
