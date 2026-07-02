@@ -1,6 +1,6 @@
 # Tatra Labs – Blog & Projects
 
-A minimal, fast blog and project site (inspired by [Lil'Log](https://lilianweng.github.io/)). No build step, no heavy frameworks. Optimized for **lightweight**, **responsive**, and **efficient** delivery.
+A minimal, fast blog and project site. No build step, no heavy frameworks. Optimized for **lightweight**, **responsive**, and **efficient** delivery.
 
 ## Where everything lives
 
@@ -9,7 +9,7 @@ A minimal, fast blog and project site (inspired by [Lil'Log](https://lilianweng.
 | **Authoring** | **`content/`** | All posts, projects, foundation lists, book/paper JSON, Markdown sections, and shared foundation images. Start with **`content/README.md`** for the full map. |
 | **Optional assets** | **`assets/images/`** | Extra images referenced from JSON posts (e.g. diagrams). Not required for foundation. |
 | **App shell** | **`index.html`**, **`404.html`**, **`css/`**, **`js/`**, **`foundation/`** | Pages and scripts. `foundation/book/.../index.html` is optional for local static servers. |
-| **Dev helper** | **`dev_server.py`**, **`tools/`** | Local server and the Deep Learning TOC generator. |
+| **Tools** | **`tools/`** | Utility scripts such as the Deep Learning TOC generator. |
 
 There is **no** separate `data/` folder—everything you edit for the site is under **`content/`** so you only look in one place.
 
@@ -24,19 +24,33 @@ There is **no** separate `data/` folder—everything you edit for the site is un
 
 ## How to run locally
 
-**Recommended (Python):** use the included dev server so clean URLs like `/foundation/book/deep-learning` work (same idea as GitHub Pages serving `404.html` for unknown paths):
+Use any static server from the project root:
+
+### Approach 1: Python built-in server (no install)
 
 ```bash
-python dev_server.py
+python -m http.server 8000
 ```
 
-Then open `http://127.0.0.1:8000/foundation/book/deep-learning` (or `localhost`).
+Open: `http://127.0.0.1:8000/`
 
-**Why not `python -m http.server`?** That server only maps URLs to files on disk. There is no file at `/foundation/book/deep-learning`, so you get a plain 404 and the viewer never loads. `dev_server.py` serves `404.html` for those routes so `viewer.js` can run.
+### Approach 2: Node `serve` (recommended fallback behavior)
 
-**Optional:** Add a real page at `foundation/book/<slug>/index.html` (same shell as `404.html`). Then plain `python -m http.server` can open `/foundation/book/<slug>/`. `viewer.js` strips a trailing `/index.html` from the path so routing still works.
+```bash
+npx serve .
+```
 
-**Alternatives:** `npx serve .`, or any static server that falls back to `404.html` for missing paths.
+Open the URL shown in the terminal (usually `http://localhost:3000/`).
+
+### Approach 3: VS Code Live Server
+
+1. Install the **Live Server** extension.
+2. Right-click `index.html` and choose **Open with Live Server**.
+3. Open the URL provided by the extension.
+
+### Routing note
+
+This site uses clean URLs such as `/foundation/book/deep-learning`. If your local server does not handle fallback routing, open the root page and navigate from there.
 
 ## Adding content
 
@@ -95,7 +109,7 @@ python tools/generate_dl_toc.py
 
 **Papers** – One scrollable page; use `heading` sections with unique `id` for the in-page TOC. Optional: `"level": 3` renders `<h3>`.
 
-**Local server** – Use `python dev_server.py` or `npx serve .`, or the optional `foundation/book/<slug>/index.html` for plain `http.server`.
+**Local server** – Use any static server from the repo root (examples above).
 
 ## Tech notes
 
@@ -110,4 +124,4 @@ python tools/generate_dl_toc.py
 2. In the repo: **Settings → Pages** → Source: deploy from the **main** branch (root).
 3. Your site will be at `https://<username>.github.io/<repo>/`. If the repo is `username.github.io`, it will be `https://username.github.io/`.
 
-**URL structure** – `/` (home), `/post/...`, `/project/...`, `/foundation/book/...`, `/foundation/paper/...`. **`404.html`** loads the viewer for those routes. Use root-relative paths in JSON and Markdown (e.g. **`/content/foundation/media/...`** for shared foundation images). For local testing, use a server that serves `404.html` for missing paths (e.g. `npx serve`); Python’s `http.server` does not—unless you use **`dev_server.py`** or the optional **`foundation/book/<slug>/index.html`**.
+**URL structure** – `/` (home), `/post/...`, `/project/...`, `/foundation/book/...`, `/foundation/paper/...`. **`404.html`** loads the viewer for those routes. Use root-relative paths in JSON and Markdown (e.g. **`/content/foundation/media/...`** for shared foundation images). For local testing, prefer a server with fallback behavior for missing paths (e.g. `npx serve`).
