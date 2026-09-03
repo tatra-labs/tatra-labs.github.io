@@ -10,6 +10,7 @@ Everything you **author or configure** for the live site lives under **`content/
 | **`content/posts/<slug>.json`** | Full post body (`content.sections`: text, image, video, embed). |
 | **`content/projects/index.json`** | List of projects for the home page. |
 | **`content/projects/<slug>.json`** | Full project JSON (same section types as posts). |
+| **`assets/images/projects/`** | Screenshots and clips used by project cards and pages. |
 | **`content/foundation/books/index.json`** | List of books (cards on Foundation tab). |
 | **`content/foundation/papers/index.json`** | List of papers. |
 | **`content/foundation/media/`** | Shared images for foundation cards and Markdown (e.g. `deep_learning.webp`). |
@@ -20,6 +21,30 @@ Everything you **author or configure** for the live site lives under **`content/
 | **`content/foundation/books/<slug>/sections/*.md`** | Markdown for each section (filenames must match `toc.json`). |
 | **`content/foundation/papers/<slug>.json`** | Paper article (JSON sections + optional headings for in-page TOC). |
 | **`content/foundation/overview.json`** | Optional copy for foundation marketing text (if you wire it in the UI). |
+
+## Section types
+
+Both posts and projects use `content.sections`. Every type takes a `value`; media types also take an optional `caption`.
+
+| `type` | `value` | Extras |
+|--------|---------|--------|
+| `text` | Paragraph text; newlines split paragraphs. | — |
+| `heading` | Heading text. | `id` (for a paper's in-page TOC), `level: 3` for `<h3>` |
+| `image` | Image URL. | `alt`, `caption` |
+| `video` | Video URL. | `caption`, `poster`, and `autoplay` + `loop` together to make it a silent, controls-free animated screenshot |
+| `embed` | Iframe URL (e.g. a YouTube embed). | `caption` |
+| `links` | An **array** of `{ label, url }`. | `primary: true` on one of them for the filled button |
+
+```json
+{ "type": "links", "value": [
+  { "label": "Open the live tool", "url": "/project/jobs/", "primary": true },
+  { "label": "Source on GitHub", "url": "https://github.com/tatra-labs/jobs" }
+] }
+```
+
+Links to another origin get `target="_blank"` and an arrow icon automatically. Only `http`, `https` and `mailto` URLs are rendered.
+
+A list entry (in `index.json`) may also carry **`image`** — a preview shown across the top of that card, cropped 2:1.
 
 ## Rules of thumb
 

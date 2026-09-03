@@ -87,7 +87,10 @@
 
   function formatDate(iso) {
     if (!iso) return '';
-    var d = new Date(iso);
+    // new Date('2026-09-03') is UTC midnight, which prints as the day before
+    // anywhere west of Greenwich, so read a plain date as a local one.
+    var ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
+    var d = ymd ? new Date(+ymd[1], +ymd[2] - 1, +ymd[3]) : new Date(iso);
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
@@ -168,9 +171,17 @@
     var tagsHtml = (item.tags || []).map(function (t) {
       return '<button type="button" class="tag tag-btn" data-tag="' + escapeHtml(t) + '" aria-label="Filter by tag: ' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
     }).join('');
+    var href = baseUrl + encodeURIComponent(item.slug);
+    // Optional preview image. It repeats the title link, so it is hidden from
+    // assistive tech and skipped by the tab order rather than read out twice.
+    var thumbHtml = item.image
+      ? '<a class="card-thumb" href="' + href + '" tabindex="-1" aria-hidden="true">' +
+        '<img src="' + escapeHtml(item.image) + '" alt="" loading="lazy" decoding="async"></a>'
+      : '';
     return (
-      '<div class="card" data-slug="' + escapeHtml(item.slug) + '">' +
-      '<h3 class="card-title"><a href="' + baseUrl + encodeURIComponent(item.slug) + '">' + escapeHtml(item.title) + '</a></h3>' +
+      '<div class="card' + (thumbHtml ? ' card--has-thumb' : '') + '" data-slug="' + escapeHtml(item.slug) + '">' +
+      thumbHtml +
+      '<h3 class="card-title"><a href="' + href + '">' + escapeHtml(item.title) + '</a></h3>' +
       (item.excerpt ? '<p class="card-excerpt">' + escapeHtml(item.excerpt) + '</p>' : '') +
       '<p class="card-meta">' + escapeHtml(meta) + '</p>' +
       (tagsHtml ? '<div class="card-tags">' + tagsHtml + '</div>' : '') +

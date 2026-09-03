@@ -7,9 +7,10 @@ A minimal, fast blog and project site. No build step, no heavy frameworks. Optim
 | Area | On disk | What it is |
 |------|---------|------------|
 | **Authoring** | **`content/`** | All posts, projects, foundation lists, book/paper JSON, Markdown sections, and shared foundation images. Start with **`content/README.md`** for the full map. |
-| **Optional assets** | **`assets/images/`** | Extra images referenced from JSON posts (e.g. diagrams). Not required for foundation. |
+| **Optional assets** | **`assets/images/`** | Extra images referenced from JSON posts (e.g. diagrams) and project screenshots under `assets/images/projects/`. Not required for foundation. |
 | **App shell** | **`index.html`**, **`404.html`**, **`css/`**, **`js/`**, **`foundation/`** | Pages and scripts. `foundation/book/.../index.html` is optional for local static servers. |
-| **Tools** | **`tools/`** | Utility scripts such as the Deep Learning TOC generator. |
+| **Hosted apps** | **`project/<name>/`** | Self-contained static apps served from this site, vendored from their own repos. See [Hosting a project here](#hosting-a-project-here). |
+| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator and the hosted-app sync script. |
 
 There is **no** separate `data/` folder—everything you edit for the site is under **`content/`** so you only look in one place.
 
@@ -85,8 +86,32 @@ This site uses clean URLs such as `/foundation/book/deep-learning`. If your loca
 
 ### New project
 
-1. Add an entry to **`content/projects/index.json`** (same shape as a post list item, without `readingTime`).
+1. Add an entry to **`content/projects/index.json`** (same shape as a post list item, without `readingTime`). Add an **`image`** to give the card a preview strip.
 2. Create **`content/projects/your-slug.json`** with the same `content.sections` format as a post.
+
+Projects usually want a **`links`** section for "open the live thing" and "read the source" — see the section-type table in **`content/README.md`**.
+
+## Hosting a project here
+
+A project that is a **static** site (no server, relative asset paths) can be served from this one at `/project/<name>/`, alongside its write-up at `/project/<slug>`. Real files win over the `404.html` fallback, so the two do not collide — but the app directory name and the write-up slug must differ.
+
+Currently hosted:
+
+| URL | App | Source |
+|-----|-----|--------|
+| [`/project/jobs/`](https://tatra-labs.github.io/project/jobs/) | US Job Market Visualizer + Remote Job Explorer (write-up at `/project/us-job-market`) | [tatra-labs/jobs](https://github.com/tatra-labs/jobs) |
+
+`project/jobs/` is **vendored**, not a submodule — do not hand-edit it. Refresh it from a local checkout of the source repo:
+
+```bash
+python tools/sync_project_jobs.py                 # expects ../jobs
+python tools/sync_project_jobs.py --source /path/to/jobs
+python tools/sync_project_jobs.py --check         # exits non-zero if out of date
+```
+
+The script copies `jobs/site/` verbatim and injects one "← Tatra Labs" link into each page's header so visitors can get back. It fails loudly if the upstream markup moves rather than silently dropping the link.
+
+**`.nojekyll`** at the repo root keeps GitHub Pages from running these vendored files through Jekyll.
 
 ### Foundation: books and papers
 
@@ -124,4 +149,4 @@ python tools/generate_dl_toc.py
 2. In the repo: **Settings → Pages** → Source: deploy from the **main** branch (root).
 3. Your site will be at `https://<username>.github.io/<repo>/`. If the repo is `username.github.io`, it will be `https://username.github.io/`.
 
-**URL structure** – `/` (home), `/post/...`, `/project/...`, `/foundation/book/...`, `/foundation/paper/...`. **`404.html`** loads the viewer for those routes. Use root-relative paths in JSON and Markdown (e.g. **`/content/foundation/media/...`** for shared foundation images). For local testing, prefer a server with fallback behavior for missing paths (e.g. `npx serve`).
+**URL structure** – `/` (home), `/post/...`, `/project/...`, `/foundation/book/...`, `/foundation/paper/...`. **`404.html`** loads the viewer for those routes, so they are served with a 404 status and rendered client-side; a real directory such as `project/jobs/` is served directly instead. Use root-relative paths in JSON and Markdown (e.g. **`/content/foundation/media/...`** for shared foundation images). For local testing, prefer a server with fallback behavior for missing paths (e.g. `npx serve`).

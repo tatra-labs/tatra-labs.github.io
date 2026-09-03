@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore the US job market</title>
+<meta name="description" content="Where US jobs are, how remote work spread, and which technologies remote IT postings are asking for — built on BLS OEWS, Census ACS, Indeed Hiring Lab and Hacker News data.">
+<link rel="stylesheet" href="explore/style.css">
+</head>
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+  <div class="intro">
+    <h1>Explore the US job market
+      <a href="index.html">&larr; Treemap</a>
+      <a href="/?tab=projects">&larr; Tatra Labs</a>
+      <a href="https://github.com/karpathy/jobs">GitHub</a>
+    </h1>
+
+    <p>The <a href="index.html">treemap</a> shows one snapshot: how many people hold each job today. This page asks
+      the three questions a snapshot cannot answer. <b>Where</b> the jobs are and how that has shifted over seven years
+      (BLS OEWS, 2018&ndash;2024). <b>How far remote work spread</b>, by state and by occupation, and whether employers
+      and job seekers moved together (Census ACS 2018&ndash;2024, Indeed Hiring Lab 2019&ndash;2026). And, for remote
+      software jobs specifically, <b>which technologies and roles are rising or falling</b> (15 years of
+      <i>Ask HN: Who is hiring?</i>). It is a tool for someone deciding what to learn and where to apply &mdash;
+      not a report or a forecast.</p>
+
+    <p>Every number on screen comes from a file in <code style="font-family:var(--mono);font-size:12.5px">data/</code>
+      of this repository, fetched and parsed by the scripts in <code style="font-family:var(--mono);font-size:12.5px">pipeline/</code>.
+      Nothing is smoothed, back-cast or interpolated to make a line look tidier. Where a series has a hole, the hole is
+      drawn. The address bar carries whatever you have selected on each tab, so a particular occupation, state,
+      year or set of technologies can be reloaded or sent to someone. <b>Two of these datasets do not mean what their names suggest</b>, and one of them is not a sample of the
+      US labour market at all &mdash; read the caveats before you conclude anything.</p>
+
+    <details class="intro-details">
+      <summary>Eight things this data cannot tell you (worth two minutes before you draw a conclusion)</summary>
+      <ul class="caveats">
+        <li><b>The ACS has no 2020.</b> The Census Bureau never released a standard 1-year file for 2020; pandemic
+          data collection failed. Every 2020 point in the work-from-home series is missing and is drawn as a
+          <b>gap, never a straight line</b>. The step from 2019 to 2021 spans two survey years, not one.</li>
+
+        <li><b>OEWS occupation codes break across SOC vintages, so a gap is not a decline.</b> Software Developers is
+          <code>15-1132</code> in 2018 (SOC 2010), then a combined <code>15-1256</code> in 2019&ndash;2020, then
+          <code>15-1252</code> from 2021. A naive seven-year line for <code>15-1252</code> shows nothing before 2021 &mdash;
+          that is a renumbering, not an industry collapse. Each series carries the exact years its code was published,
+          and discontinuous series are labelled as such.</li>
+
+        <li><b>A <code>#</code> wage is a censored high value, not a missing one.</b> OEWS prints <code>#</code> when the
+          median is at or above the top code &mdash; $208,000/yr for 2018&ndash;2021, $239,200/yr for 2022 onward. It means
+          &ldquo;at least this much&rdquo;. <code>**</code> (estimate not released) and <code>*</code> (wage not available)
+          are genuinely missing. They are drawn differently here, because treating top-coded pay as missing biases
+          high-paying occupations downward.</li>
+
+        <li><b>May 2020 OEWS is a COVID-affected reference period.</b> National employment falls 5.3% from 2019 and
+          California drops roughly 950,000 jobs. Do not read 2019&thinsp;&rarr;&thinsp;2020&thinsp;&rarr;&thinsp;2021 as a
+          structural shift.</li>
+
+        <li><b>Indeed&rsquo;s &ldquo;remote&rdquo; is not the ACS&rsquo;s &ldquo;worked from home&rdquo;.</b> Indeed measures the share of
+          <i>job postings whose text mentions</i> remote or hybrid work &mdash; a demand-side signal that lumps hybrid in with
+          fully remote. The ACS measures workers who <i>did not commute</i> in the reference week &mdash; a supply-side,
+          primary-mode, place-of-residence measure that undercounts hybrid arrangements. They answer different questions
+          and are never plotted as one quantity. Indeed&rsquo;s job-seeker <i>search</i> series is a third thing again: what
+          workers typed, not what employers offered.</li>
+
+        <li><b>Each Indeed series is drawn only to its own last month.</b> The brief for this page assumed the per-sector
+          remote series was discontinued at 2023-05-26. It is not: in this retrieval every country&ndash;sector series runs
+          to 2026-07, which the repository&rsquo;s own dataset notes confirm. Rather than hard-code either date, each series
+          carries the last month it actually has data for, and no line is drawn past it. Indeed also changed its
+          seasonal-adjustment method in November 2024 and <b>revised history</b>, so figures here will not match older
+          Hiring Lab articles.</li>
+
+        <li><b><i>Ask HN: Who is hiring?</i> is a biased convenience sample.</b> It is YC-adjacent startups posting to one
+          monthly thread &mdash; not the US labour market, not weighted, not random. Thread volume fell from
+          <b>10,259 postings in 2021 to 2,644 in 2026</b> (a partial year), so <b>counts are not a hiring indicator</b>;
+          only shares of postings are informative, and even those describe this thread&rsquo;s crowd. 2026 is partial
+          everywhere and is marked as such. Significance intervals shown here are a noise floor, not a claim about the
+          labour market.</li>
+
+        <li><b>Some geographies and estimates are not what a total suggests.</b> OEWS publishes 54 state-equivalents but
+          the map has 52 shapes: Guam and the US Virgin Islands have no polygon, so summing the map does not reproduce the
+          national figure. Puerto Rico must be excluded from any &ldquo;sum the states&rdquo; ACS total. Metro location
+          quotients on this page are <b>derived</b> from employment shares, not published by BLS. And state and national
+          OEWS totals differ slightly because BLS rounds every estimate independently.</li>
+      </ul>
+    </details>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Views">
+  <div id="view-tabs" role="tablist"></div>
+  <div id="view-subtitle"></div>
+</nav>
+
+<main id="view-root" role="tabpanel" aria-busy="true" aria-live="polite">
+  <div class="state-loading" role="status">
+    <span class="spinner"></span>Loading&hellip;
+  </div>
+</main>
+
+<noscript>
+  <div class="state-error">
+    <div class="state-error-title">JavaScript is required</div>
+    <div class="state-error-msg">This page renders its charts in the browser from JSON payloads. The underlying data is
+      in <code>data/</code> and <code>site/explore/data/</code> if you would rather read the files directly.</div>
+  </div>
+</noscript>
+
+<footer id="footer">
+  <h3 class="section-head">Sources</h3>
+  <ul>
+    <li><a href="https://www.bls.gov/oes/">BLS Occupational Employment and Wage Statistics (OEWS)</a> &mdash; state, metro
+      and national employment and wages by occupation, May 2018&ndash;May 2024. Public domain.</li>
+    <li><a href="https://www.census.gov/programs-surveys/acs">US Census Bureau, American Community Survey</a> &mdash;
+      1-year tables B08006 and B08124, worked from home by state and occupation group, 2018&ndash;2024 (no 2020).</li>
+    <li><a href="https://www.hiringlab.org/">Indeed Hiring Lab</a> &mdash; the
+      <a href="https://github.com/hiring-lab/remote-tracker">remote work tracker</a> and
+      <a href="https://github.com/hiring-lab/ai-tracker">AI tracker</a>, daily 2019-01 to 2026-07, CC&nbsp;BY.</li>
+    <li><a href="https://news.ycombinator.com/">Hacker News</a> &mdash; 186 monthly
+      <a href="https://hn.algolia.com/?query=Ask%20HN%3A%20Who%20is%20hiring%3F">&ldquo;Ask HN: Who is hiring?&rdquo;</a>
+      threads, 2011-04 to 2026-09, parsed into 94,548 postings.</li>
+    <li><a href="https://www.bls.gov/ooh/">BLS Occupational Outlook Handbook</a> &mdash; occupation pages the
+      <a href="index.html">treemap</a> links to, joined here through the official
+      <a href="https://www.bls.gov/soc/2018/">SOC 2010&rarr;2018 crosswalk</a>.</li>
+  </ul>
+  <p class="foot-note">Map geometry: <a href="https://github.com/topojson/us-atlas">us-atlas</a> (ISC) over US Census
+    cartographic boundary files, projected once at build time into a 975&times;610 Albers&nbsp;USA frame &mdash; Alaska,
+    Hawaii and Puerto Rico are insets and are not to scale. This page ships no third-party JavaScript and makes no
+    network requests beyond its own JSON payloads. Data caveats are reproduced from each dataset&rsquo;s own
+    <code>meta</code> block; the build is reproducible from <code>pipeline/</code>.</p>
+</footer>
+
+</div>
+
+<script src="explore/app.js"></script>
+<script src="explore/view_map.js"></script>
+<script src="explore/view_remote.js"></script>
+<script src="explore/view_tech.js"></script>
+
+</body>
+</html>

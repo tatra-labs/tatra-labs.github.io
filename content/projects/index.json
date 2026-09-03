@@ -1,5 +1,23 @@
 [
   {
+    "slug": "us-job-market",
+    "title": "US Job Market Visualizer + Remote Job Explorer",
+    "excerpt": "An interactive tool for exploring where US jobs are, how far remote work spread, and which technologies remote software postings are asking for — built on BLS, Census, Indeed and Hacker News data, 2018–2026. Hosted here and running in your browser.",
+    "date": "2026-09-03",
+    "tags": ["Data Visualization", "Labor Market", "Python", "Remote Work", "BLS"],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/jobs-occupations-map.webp"
+  },
+  {
+    "slug": "crossword-puzzle-agent",
+    "title": "Crossword Puzzle Agent",
+    "excerpt": "An agent that solves crosswords by pairing an LLM reading clues with belief propagation and search that make the grid agree with itself — then re-asking only the clues it doubts. Turns 0 of 14 NYT puzzles into 7.",
+    "date": "2026-09-02",
+    "tags": ["LLM Agents", "Belief Propagation", "Python", "Evaluation", "For Fun"],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/crossword-studio.webp"
+  },
+  {
     "slug": "sample-project",
     "title": "Sample Project",
     "excerpt": "A placeholder project to show how projects appear. Replace with your own work—code, research, or experiments.",

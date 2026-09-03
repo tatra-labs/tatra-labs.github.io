@@ -71,8 +71,33 @@
 
   function formatDate(iso) {
     if (!iso) return '';
-    var d = new Date(iso);
+    // new Date('2026-09-03') is UTC midnight, which prints as the day before
+    // anywhere west of Greenwich, so read a plain date as a local one.
+    var ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
+    var d = ymd ? new Date(+ymd[1], +ymd[2] - 1, +ymd[3]) : new Date(iso);
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  /** Keep the original (possibly relative) URL, but only for schemes we serve. */
+  function safeUrl(raw) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return '';
+    var resolved;
+    try {
+      resolved = new URL(s, window.location.href);
+    } catch (e) {
+      return '';
+    }
+    if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:' && resolved.protocol !== 'mailto:') return '';
+    return s;
+  }
+
+  function isExternal(url) {
+    try {
+      return new URL(url, window.location.href).origin !== window.location.origin;
+    } catch (e) {
+      return false;
+    }
   }
 
   var mdBookDepsLoaded = false;
@@ -174,16 +199,73 @@
       return '<p>' + escapeHtml(value).replace(/\n/g, '</p><p>') + '</p>';
     }
     if (type === 'image') {
+      var imgSrc = safeUrl(value);
+      if (!imgSrc) return '';
       var alt = section.alt || '';
-      return '<div class="media-wrap"><img src="' + escapeHtml(value) + '" alt="' + escapeHtml(alt) + '" loading="lazy" decoding="async"></div>';
+      return mediaFigure(
+        '<img src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(alt) + '" loading="lazy" decoding="async">',
+        section.caption
+      );
     }
     if (type === 'video') {
-      return '<div class="media-wrap"><video src="' + escapeHtml(value) + '" controls preload="metadata" playsinline></video></div>';
+      var videoSrc = safeUrl(value);
+      if (!videoSrc) return '';
+      // A looping muted clip is an animated screenshot, so it plays itself and
+      // hides the controls; anything else behaves like a normal video.
+      var isClip = !!section.loop && !!section.autoplay;
+      var attrs = isClip
+        ? ' autoplay loop muted preload="metadata"'
+        : ' controls preload="metadata"';
+      var poster = safeUrl(section.poster);
+      if (poster) attrs += ' poster="' + escapeHtml(poster) + '"';
+      return mediaFigure(
+        '<video src="' + escapeHtml(videoSrc) + '"' + attrs + ' playsinline></video>',
+        section.caption
+      );
     }
-    if (type === 'embed' && value) {
-      return '<div class="media-wrap"><iframe src="' + escapeHtml(value) + '" loading="lazy" allowfullscreen></iframe></div>';
+    if (type === 'embed') {
+      var embedSrc = safeUrl(value);
+      if (!embedSrc) return '';
+      return mediaFigure(
+        '<iframe src="' + escapeHtml(embedSrc) + '" loading="lazy" allowfullscreen></iframe>',
+        section.caption
+      );
+    }
+    if (type === 'links') {
+      return renderLinks(Array.isArray(value) ? value : []);
     }
     return '';
+  }
+
+  function mediaFigure(mediaHtml, caption) {
+    if (!caption) return '<div class="media-wrap">' + mediaHtml + '</div>';
+    return (
+      '<figure class="media-wrap media-wrap--captioned">' + mediaHtml +
+      '<figcaption class="media-caption">' + escapeHtml(caption) + '</figcaption></figure>'
+    );
+  }
+
+  var EXTERNAL_ICON =
+    '<svg class="article-link-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' +
+    '<polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+
+  function renderLinks(links) {
+    var html = links.map(function (link) {
+      var url = safeUrl(link && (link.url || link.href));
+      var label = (link && link.label) || url;
+      if (!url) return '';
+      var cls = 'article-link' + (link.primary ? ' article-link--primary' : '');
+      var external = isExternal(url);
+      return (
+        '<a class="' + cls + '" href="' + escapeHtml(url) + '"' +
+        (external ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
+        escapeHtml(label) + (external ? EXTERNAL_ICON : '') +
+        '</a>'
+      );
+    }).join('');
+    return html ? '<div class="article-links">' + html + '</div>' : '';
   }
 
   function normalizeBookChapters(data) {

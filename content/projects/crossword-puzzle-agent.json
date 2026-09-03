@@ -1,0 +1,57 @@
+{
+  "slug": "crossword-puzzle-agent",
+  "title": "Crossword Puzzle Agent",
+  "date": "2026-09-02",
+  "tags": ["LLM Agents", "Belief Propagation", "Python", "Evaluation", "For Fun"],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/crossword-studio.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "video",
+        "value": "/assets/images/projects/crossword-demo.mp4",
+        "poster": "/assets/images/projects/crossword-demo-poster.webp",
+        "autoplay": true,
+        "loop": true,
+        "caption": "The agent solving a 7×7 end to end. A real recording, not a reconstruction: a headless browser drives the actual page and the frames are encoded at their wall-clock durations, so video time is real time."
+      },
+      {
+        "type": "links",
+        "value": [
+          { "label": "Try the live demo", "url": "https://crossword-puzzle-agent.vercel.app/", "primary": true },
+          { "label": "Source on GitHub", "url": "https://github.com/tatra-labs/crossword-puzzle-agent" }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "A weekend project: an AI agent that solves crossword puzzles by pairing a language model that reads clues with probabilistic inference and search that make the whole grid agree with itself."
+      },
+      {
+        "type": "text",
+        "value": "Hand a language model 76 crossword clues and it hands back 76 confident answers that do not fit together. 17-Across says OREO; 5-Down insists the third letter is A; both are stated with total certainty. A crossword is not a quiz — it is roughly 76 coupled constraints over roughly 180 shared letters.\nSo the agent asks for several ranked answers per clue with probabilities instead of one, and keeps explicit probability on \"the answer is in none of my candidates\" — the piece that stops a confident-but-wrong guess corrupting every entry that crosses it. Loopy belief propagation then runs over the grid so every entry's opinion is tempered by what its crossings believe, and a search finds the highest-scoring set of real words that mutually fit."
+      },
+      {
+        "type": "text",
+        "value": "The last step is the one that makes it an agent rather than a prompt: it critiques its own grid, finds the weak entries, and re-asks only those clues — now handing the model the crossing letters it has become confident about. That is also how people solve. The clue you could not get becomes easy once three of its letters are filled in."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/crossword-studio.webp",
+        "alt": "The studio UI with three panels: bundled puzzles and live sessions on the left, a solved 7x7 grid and its clue list in the middle, and the agent's step-by-step trace of model calls on the right",
+        "caption": "The finished solve: 37/37 squares in 8.7s on 2 model calls, for about a cent. The right panel is the trace — every prompt as sent, the tool call that came back, tokens and duration."
+      },
+      {
+        "type": "text",
+        "value": "Does the scaffolding earn its keep? On 14 real New York Times puzzles, stratified two per weekday so Saturdays count as much as Mondays, the full agent solves 7 of 14 exactly (96.8% cell accuracy, 94.1% word accuracy). Prompting the same model and taking its top answer solves 0 of 14 (71.2% cell, 49.3% word). Same model, same clues — McNemar's exact test on the seven discordant puzzles gives p = 0.016."
+      },
+      {
+        "type": "text",
+        "value": "Two things worth saying plainly about that. n = 14 is a demonstration that the harness works on real data, not a benchmark result — the confidence interval on the solve rate is 57 points wide, and a defensible ablation claim would need around 150 puzzles. And every puzzle in the evaluation archive predates 2019 and has been on the public web for years, so the model has very likely seen many of these clue/answer pairs in pretraining. These numbers are an upper bound on performance against fresh puzzles, and the repo documents the probes that size that effect."
+      },
+      {
+        "type": "text",
+        "value": "The live demo above runs the real agent against ten original CC0-licensed puzzles that ship with the repo. Solves cost real API credit and real time — a 5×5 is about eight seconds, a 15×15 is a couple of minutes — and the button tells you what the selected puzzle will cost before you press it.\nThe whole pipeline is testable offline: 390 tests run in about four seconds with no API key and no network, because the clue-answering component accepts an injected fake client. No test in the suite calls the real API."
+      }
+    ]
+  }
+}

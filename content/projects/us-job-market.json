@@ -1,0 +1,64 @@
+{
+  "slug": "us-job-market",
+  "title": "US Job Market Visualizer + Remote Job Explorer",
+  "date": "2026-09-03",
+  "tags": ["Data Visualization", "Labor Market", "Python", "Remote Work", "BLS"],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/jobs-occupations-map.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "image",
+        "value": "/assets/images/projects/jobs-occupations-map.webp",
+        "alt": "The explorer showing Software Developers across all US states, coloured by jobs per 1,000, with a year slider, a ranked state table and a national employment trend chart",
+        "caption": "Where the jobs are: one occupation across 50 states, DC and the territories, 2018–2024, from the BLS Occupational Employment and Wage Statistics files."
+      },
+      {
+        "type": "links",
+        "value": [
+          { "label": "Open the live tool", "url": "/project/jobs/", "primary": true },
+          { "label": "Go straight to the Remote Job Explorer", "url": "/project/jobs/explore.html" },
+          { "label": "Source on GitHub", "url": "https://github.com/tatra-labs/jobs" }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "A research tool for exploring US labour-market data visually. It runs right here on this site — no install, no sign-up, nothing to download.\nIt starts as a fork of karpathy/jobs, which draws the Bureau of Labor Statistics Occupational Outlook Handbook as a treemap of 342 occupations: each rectangle's area is total employment, and its colour is whichever metric you pick — projected growth, median pay, education, or an LLM-scored estimate of AI exposure."
+      },
+      {
+        "type": "text",
+        "value": "My contribution is the second page, the US Remote Job Explorer, which answers three questions a single-snapshot treemap cannot: where occupations actually are across the US and how that shifted over seven years; how far remote work spread, by state and by kind of work, and whether it stayed; and, for remote software work, which technologies and roles are rising or falling.\nIt is built on six datasets the upstream project does not use, spans 2018–2026, and ships as a static page with no d3, no npm, no CDN and no build step. The US map is projected to SVG paths in Python, so the browser needs no mapping library at all."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/jobs-what-to-learn.webp",
+        "alt": "Answer cards ranking the fastest-rising and fastest-falling technologies, the most remote-friendly technologies, and the most remote-friendly roles",
+        "caption": "What to learn, and what to apply to — built from 94,548 job postings parsed out of 186 monthly \"Ask HN: Who is hiring?\" threads, 2011–2026."
+      },
+      {
+        "type": "text",
+        "value": "Some of what falls out of it: TypeScript went from 5.4% to 23.4% of postings between 2018 and 2025 (+18.0pp) while JavaScript fell 20.4% to 5.9%, largely absorbed by it. LLMs went from zero to 12.5% and AI agents from one posting to 408. Fully-remote postings went 6.4% in 2018 to 42.3% in 2022, then settled at 36.1% in 2025 — remote did not collapse back, it plateaued well above where it started."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/jobs-tech-quadrant.webp",
+        "alt": "A scatter plot of 112 tracked technologies: current share of postings on the x axis, change since 2018 on the y axis, so the top-right quadrant is both large and growing",
+        "caption": "Current share against change since 2018. Top-right is big and growing; bottom-right is big and shrinking."
+      },
+      {
+        "type": "text",
+        "value": "Most of the engineering went into what the tool refuses to do, because the failure mode of a chart is looking confident while being wrong. Suppressed, top-coded and never-published BLS values are three different states, not three kinds of null. No occupation is compared across a SOC vintage break unless BLS's own crosswalk says it is comparable. There is no 2020 ACS file, so the gap is drawn as a hole rather than interpolated across. State-level changes are tested against their own margins of error before being called a rise or a fall — where they fail that test they are drawn in neutral grey and labelled not distinguishable from no change. Every figure carries the raw counts behind it, and nothing is smoothed or back-cast to make a line look tidier."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/jobs-remote-states.webp",
+        "alt": "Work-from-home share by state from Census ACS data, with a year slider that strikes out 2020, and a panel ranking the biggest movers against their margins of error",
+        "caption": "Work-from-home share by state, 2018–2024 (Census ACS). The colour scale is fixed across every year, so the rise and the partial retreat are both visible."
+      },
+      {
+        "type": "text",
+        "value": "Data comes from BLS OEWS (967 occupations, 54 state-equivalents, 219 metro areas), Census ACS tables B08006 and B08124, the Indeed Hiring Lab remote and AI trackers, and the Hacker News hiring corpus. Every number on screen traces to a file produced by a script in the repo's pipeline, and the whole thing is idempotent — sources are cached and never re-downloaded.\nThe page you open loads 0.60 MB against a 1.5 MB budget the build script enforces by exiting non-zero. The remaining 13.4 MB is lazy: the state file is split into 23 bundles keyed by occupation group, so picking an occupation fetches about 270 KB."
+      }
+    ]
+  }
+}
