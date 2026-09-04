@@ -165,9 +165,8 @@
   }
 
   function renderCard(item, baseUrl, showReadingTime) {
-    var meta = 'Date: ' + formatDate(item.date);
-    if (showReadingTime && item.readingTime) meta += ' | ' + item.readingTime;
-    if (item.author) meta += ' | Author: ' + item.author;
+    // Cards carry reading time only; date and author belong on the article page.
+    var meta = (showReadingTime && item.readingTime) ? item.readingTime : '';
     var tagsHtml = (item.tags || []).map(function (t) {
       return '<button type="button" class="tag tag-btn" data-tag="' + escapeHtml(t) + '" aria-label="Filter by tag: ' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
     }).join('');
@@ -183,7 +182,7 @@
       thumbHtml +
       '<h3 class="card-title"><a href="' + href + '">' + escapeHtml(item.title) + '</a></h3>' +
       (item.excerpt ? '<p class="card-excerpt">' + escapeHtml(item.excerpt) + '</p>' : '') +
-      '<p class="card-meta">' + escapeHtml(meta) + '</p>' +
+      (meta ? '<p class="card-meta">' + escapeHtml(meta) + '</p>' : '') +
       (tagsHtml ? '<div class="card-tags">' + tagsHtml + '</div>' : '') +
       '</div>'
     );
