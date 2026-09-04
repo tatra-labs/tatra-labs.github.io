@@ -1,24 +1,43 @@
 # 1.1 Who Should Read This Book?
 
-This file is the **Markdown source** for one section. The table of contents is `toc.json` in this book folder (regenerated from `toc-source.txt` via `tools/generate_dl_toc.py`).
+The authors name two audiences and, usefully, decline to write for both at once. The first is
+university students — undergraduate or graduate — starting a career in machine learning. The second
+is working software engineers with no machine-learning background who need to acquire it quickly to
+ship something. The book is built so that each group can skip a different third of it.
 
-## Paragraphs and lists
+## The two paths through the book
 
-- Add your own notes or summaries here.
-- Replace placeholder content with material aligned to the original book.
+Part I is the applied mathematics and machine-learning background: linear algebra, probability,
+numerical computation, and a compressed course in classical machine learning. The authors expect the
+student audience to skim it and the engineering audience to read it properly. Part II is the deep
+networks that are actually deployed in industry, and is the common core both audiences need. Part III
+is the research frontier — generative models, inference, structured probabilistic models — and is
+aimed at whoever intends to publish rather than deploy.
 
-## Math
+The prerequisite the authors do insist on is comfort with programming and a willingness to treat
+calculus and linear algebra as tools rather than obstacles. They are explicit that no prior machine
+learning is assumed.
 
-Inline: $E = mc^2$, and $\nabla_\theta J(\theta)$.
+## Why the structure matters
 
-Display:
+The three-part split is the book's real argument: that deep learning is not a bag of architectures
+but a stack, and that the mathematics underneath it is load-bearing rather than ceremonial. A reader
+who skips Part I and goes straight to convolutional networks can implement them, but cannot reason
+about why a particular optimiser stalls or why an initialisation scheme matters.
+
+The notation section that follows is worth reading once and returning to — the book is consistent
+about it, and later chapters lean on that consistency. For example, a gradient step on parameters
+$\theta$ with respect to a cost $J$ is written throughout as
 
 $$
-\int_0^1 x^2\,dx = \frac{1}{3}
+\theta \leftarrow \theta - \epsilon \nabla_\theta J(\theta)
 $$
 
-## Image
+and the meaning of every symbol in that line is fixed in Chapter 2 rather than re-explained.
 
-![Sample](/content/foundation/media/deep_learning.webp)
+## My take
 
-Use root-relative paths so the same site works on GitHub Pages and locally.
+The engineering path is undersold. Reading Part I properly — rather than skimming it as the authors
+permit — is what makes the rest of the book compress instead of accumulate. The chapters on
+regularisation and optimisation only make sense as a single idea if the probability chapter is
+already in place.

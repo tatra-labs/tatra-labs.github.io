@@ -1,11 +1,11 @@
 [
   {
     "slug": "deep-learning-paper",
-    "title": "Deep Learning (Paper)",
-    "icon": "/content/foundation/media/deep_learning.webp",
-    "iconAlt": "Deep learning paper thumbnail",
+    "title": "Deep Learning",
     "date": "2025-02-08",
-    "authors": ["Tatra Labs"],
-    "summary": "A concise summary of the paper: motivation, method, and main takeaways. Replace with your actual abstract/summary."
+    "authors": ["Yann LeCun", "Yoshua Bengio", "Geoffrey Hinton"],
+    "venue": "Nature 521, 436–444 (2015)",
+    "status": "in-progress",
+    "summary": "The review that framed deep learning for a general scientific audience: representation learning as the central idea, backpropagation as the mechanism, and convolutional and recurrent architectures as the two workhorses. Useful as a map of what the field believed about itself in 2015."
   }
 ]

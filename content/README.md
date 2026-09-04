@@ -44,7 +44,21 @@ Both posts and projects use `content.sections`. Every type takes a `value`; medi
 
 Links to another origin get `target="_blank"` and an arrow icon automatically. Only `http`, `https` and `mailto` URLs are rendered.
 
-A list entry (in `index.json`) may also carry **`image`** — a preview shown across the top of that card, cropped 2:1.
+### Fields a list entry can carry
+
+`index.json` entries render as rows in a **register** (a ruled contents table), not as cards.
+
+| Field | Effect |
+|-------|--------|
+| `title`, `slug`, `date`, `excerpt`, `tags` | the row itself. The **year prints only when it changes**, so a run of same-year entries shows it once. |
+| `image` | projects/posts: a 16:9 plate under the excerpt, full width of the band |
+| `readingTime` | posts: shown in the rail |
+| `icon` | foundation: the cover. **Omit it** and an initials plate renders instead — honest, and better than reusing another item's cover. |
+| `authors` | foundation: the byline. The site owner is filtered out, so list the *work's* authors. |
+| `venue` | foundation: appended to the byline (e.g. `Nature 521, 436–444 (2015)`) |
+| `summary` | foundation: the row's body copy — this is the only prose on a Foundation row, so it carries the section |
+
+Book rows additionally show how much is written (`1 / 164 sections`), read live from that book's `toc.json`. Nothing is hand-maintained.
 
 ## Rules of thumb
 

@@ -1,33 +1,57 @@
 {
   "slug": "deep-learning-paper",
-  "title": "Deep Learning (Paper)",
+  "title": "Deep Learning",
   "date": "2025-02-08",
   "author": "Tatra Labs",
-  "tags": ["Paper", "Deep Learning"],
+  "authors": ["Yann LeCun", "Yoshua Bengio", "Geoffrey Hinton"],
+  "venue": "Nature 521, 436–444 (2015)",
+  "tags": ["Representation Learning", "Backpropagation", "Survey"],
   "content": {
     "sections": [
       {
         "type": "heading",
-        "id": "abstract",
-        "value": "Abstract"
+        "id": "why-it-matters",
+        "value": "Why this paper matters"
       },
       {
         "type": "text",
-        "value": "Papers use a single scrollable page. The table of contents is built from `heading` sections with a unique `id` (anchors like `#abstract`).\n\nReplace this placeholder with your abstract."
+        "value": "This is the review three of the field's central figures wrote for Nature, aimed at scientists who were not machine-learning researchers. It is worth reading now less as a technical reference — the specifics have aged — than as a record of how the field explained itself at the moment it stopped being a niche and became the default.\n\nThe organising claim is that conventional machine learning was limited by hand-engineered features, and that the useful thing about deep networks is not depth for its own sake but that they learn the representation and the task together."
       },
       {
         "type": "heading",
-        "id": "method",
-        "value": "Method"
+        "id": "representation-learning",
+        "value": "Representation learning as the central idea"
       },
       {
         "type": "text",
-        "value": "Describe your method here."
+        "value": "The argument runs: each layer transforms the representation at one level into a slightly more abstract one, and a composition of enough such transformations can learn very complex functions. Crucially, those layers are not designed by a human — they are learned from data by a general-purpose procedure.\n\nThe authors are careful to frame this as a shift in where the human effort goes, not as its elimination. Feature engineering becomes architecture and objective design."
       },
       {
-        "type": "image",
-        "value": "/content/foundation/media/deep_learning.webp",
-        "alt": "Figure"
+        "type": "heading",
+        "id": "backpropagation",
+        "value": "Backpropagation, and the local-minima worry"
+      },
+      {
+        "type": "text",
+        "value": "The mechanism section is a compact restatement of the chain rule applied to a layered function, and it is clear. More interesting is the passage addressing a concern that dominated the preceding two decades: that gradient descent on a non-convex objective would get trapped in poor local minima.\n\nThe answer given is that in high-dimensional parameter spaces the problematic critical points are overwhelmingly saddle points rather than local minima, and that most local minima turn out to have very similar objective values. This is the paper quietly closing an argument that had kept neural networks out of favour."
+      },
+      {
+        "type": "heading",
+        "id": "convnets-rnns",
+        "value": "The two workhorses"
+      },
+      {
+        "type": "text",
+        "value": "Convolutional networks are presented through their four structural ideas — local connections, shared weights, pooling, and many layers — motivated by the statistics of natural signals rather than by biology.\n\nRecurrent networks get a more hedged treatment. The authors describe them as powerful but difficult to train, and present LSTM as the practical fix for long-range dependencies. Reading this a decade later, the section on attention-augmented memory networks is the one that points where the field actually went."
+      },
+      {
+        "type": "heading",
+        "id": "what-they-got-right",
+        "value": "What they predicted, and what they missed"
+      },
+      {
+        "type": "text",
+        "value": "Right: that unsupervised learning would become far more important than it was in 2015; that vision and language systems would increasingly be trained end to end; that representation learning would replace feature engineering across domains.\n\nUnderweighted: the sheer returns to scale. The paper anticipates better algorithms and more data, but not that scaling a comparatively simple architecture would itself be the dominant source of capability gains. Attention appears only as a mechanism bolted onto recurrent models, two years before it replaced them outright."
       }
     ]
   }

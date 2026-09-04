@@ -1,249 +1,51 @@
+/* The reading page. One hero template shared by posts, projects, papers and
+   book chapters; one prose container; one owner for the section title. */
 (function () {
   'use strict';
 
+  var esc = TL.escapeHtml;
+
   var path = window.location.pathname.replace(/\/index\.html$/i, '').replace(/\/$/, '') || '/';
-  var postMatch = path.match(/^\/post\/([^/]+)$/);
-  var projectMatch = path.match(/^\/project\/([^/]+)$/);
-  var foundationBookMatch = path.match(/^\/foundation\/book\/([^/]+)$/);
-  var foundationPaperMatch = path.match(/^\/foundation\/paper\/([^/]+)$/);
+  var ROUTES = [
+    { re: /^\/post\/([^/]+)$/, kind: 'post', kicker: 'Essay', base: '/content/posts', back: '/?tab=posts', backLabel: 'Writing', readingTime: true },
+    { re: /^\/project\/([^/]+)$/, kind: 'project', kicker: 'Project', base: '/content/projects', back: '/?tab=projects', backLabel: 'Projects' },
+    { re: /^\/foundation\/book\/([^/]+)$/, kind: 'book', kicker: 'Book', base: '/content/foundation/books', back: '/?tab=foundation', backLabel: 'Foundation' },
+    { re: /^\/foundation\/paper\/([^/]+)$/, kind: 'paper', kicker: 'Paper', base: '/content/foundation/papers', back: '/?tab=foundation', backLabel: 'Foundation' }
+  ];
 
-  var slug;
-  var baseUrl;
-  var showReadingTime;
-  var isFoundationBook = !!foundationBookMatch;
-  var isFoundationPaper = !!foundationPaperMatch;
-  var isFoundation = isFoundationBook || isFoundationPaper;
-
-  var backLinkEl = document.querySelector('.back-link');
-  if (postMatch) {
-    slug = decodeURIComponent(postMatch[1]);
-    baseUrl = '/content/posts';
-    showReadingTime = true;
-    if (backLinkEl) {
-      backLinkEl.setAttribute('href', '/?tab=posts');
-      backLinkEl.textContent = '← Back to Posts';
-    }
-  } else if (projectMatch) {
-    slug = decodeURIComponent(projectMatch[1]);
-    baseUrl = '/content/projects';
-    showReadingTime = false;
-    if (backLinkEl) {
-      backLinkEl.setAttribute('href', '/?tab=projects');
-      backLinkEl.textContent = '← Back to Projects';
-    }
-  } else if (foundationBookMatch) {
-    slug = decodeURIComponent(foundationBookMatch[1]);
-    baseUrl = '/content/foundation/books';
-    showReadingTime = false;
-    if (backLinkEl) {
-      backLinkEl.setAttribute('href', '/?tab=foundation');
-      backLinkEl.textContent = '← Back to Foundation';
-    }
-  } else if (foundationPaperMatch) {
-    slug = decodeURIComponent(foundationPaperMatch[1]);
-    baseUrl = '/content/foundation/papers';
-    showReadingTime = false;
-    if (backLinkEl) {
-      backLinkEl.setAttribute('href', '/?tab=foundation');
-      backLinkEl.textContent = '← Back to Foundation';
-    }
+  var route = null, slug = null;
+  for (var i = 0; i < ROUTES.length; i++) {
+    var m = path.match(ROUTES[i].re);
+    if (m) { route = ROUTES[i]; slug = decodeURIComponent(m[1]); break; }
   }
 
-  var titleEl = document.getElementById('viewer-title');
-  var metaEl = document.getElementById('viewer-meta');
-  var contentEl = document.getElementById('viewer-content');
-  var tagsEl = document.getElementById('viewer-tags');
-  var errorEl = document.getElementById('viewer-error');
-  var articleEl = document.getElementById('article');
-  var viewerShell = document.getElementById('viewer-shell');
-  var foundationTocEl = document.getElementById('foundation-toc');
-  var foundationChapterLabel = document.getElementById('foundation-chapter-label');
-  var foundationChapterNav = document.getElementById('foundation-chapter-nav');
-  var foundationChapterPrev = document.getElementById('foundation-chapter-prev');
-  var foundationChapterNext = document.getElementById('foundation-chapter-next');
+  var el = {
+    title: document.getElementById('viewer-title'),
+    kicker: document.getElementById('viewer-kicker'),
+    sub: document.getElementById('foundation-chapter-label'),
+    meta: document.getElementById('viewer-meta'),
+    content: document.getElementById('viewer-content'),
+    tags: document.getElementById('viewer-tags'),
+    error: document.getElementById('viewer-error'),
+    article: document.getElementById('article'),
+    shell: document.getElementById('viewer-shell'),
+    toc: document.getElementById('foundation-toc'),
+    nav: document.getElementById('foundation-chapter-nav'),
+    prev: document.getElementById('foundation-chapter-prev'),
+    next: document.getElementById('foundation-chapter-next'),
+    back: document.getElementById('viewer-back'),
+    rail: document.getElementById('viewer-rail'),
+    footerYear: document.getElementById('footer-year')
+  };
 
-  function escapeHtml(s) {
-    if (!s) return '';
-    var div = document.createElement('div');
-    div.textContent = s;
-    return div.innerHTML;
+  if (el.footerYear) el.footerYear.textContent = new Date().getFullYear();
+
+  if (route && el.back) {
+    el.back.setAttribute('href', route.back);
+    el.back.textContent = '← ' + route.backLabel;
   }
 
-  function formatDate(iso) {
-    if (!iso) return '';
-    // new Date('2026-09-03') is UTC midnight, which prints as the day before
-    // anywhere west of Greenwich, so read a plain date as a local one.
-    var ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
-    var d = ymd ? new Date(+ymd[1], +ymd[2] - 1, +ymd[3]) : new Date(iso);
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-
-  /** Keep the original (possibly relative) URL, but only for schemes we serve. */
-  function safeUrl(raw) {
-    var s = String(raw == null ? '' : raw).trim();
-    if (!s) return '';
-    var resolved;
-    try {
-      resolved = new URL(s, window.location.href);
-    } catch (e) {
-      return '';
-    }
-    if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:' && resolved.protocol !== 'mailto:') return '';
-    return s;
-  }
-
-  function isExternal(url) {
-    try {
-      return new URL(url, window.location.href).origin !== window.location.origin;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  var mdBookDepsLoaded = false;
-
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      var s = document.createElement('script');
-      s.src = src;
-      s.crossOrigin = 'anonymous';
-      s.onload = resolve;
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-
-  function loadCss(href) {
-    return new Promise(function (resolve, reject) {
-      var l = document.createElement('link');
-      l.rel = 'stylesheet';
-      l.href = href;
-      l.crossOrigin = 'anonymous';
-      l.onload = resolve;
-      l.onerror = reject;
-      document.head.appendChild(l);
-    });
-  }
-
-  function loadMarkdownDeps() {
-    if (mdBookDepsLoaded) return Promise.resolve();
-    if (window.marked && window.DOMPurify && typeof window.renderMathInElement === 'function') {
-      mdBookDepsLoaded = true;
-      return Promise.resolve();
-    }
-    return loadCss('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css')
-      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js'); })
-      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js'); })
-      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js'); })
-      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js'); })
-      .then(function () { mdBookDepsLoaded = true; });
-  }
-
-  function renderMarkdownTocHtml(tocTree, currentSectionId) {
-    var base = window.location.pathname;
-    function href(sec) {
-      return base + '?section=' + encodeURIComponent(sec.id);
-    }
-    function link(sec) {
-      var cur = sec.id === currentSectionId ? ' aria-current="page"' : '';
-      return (
-        '<li class="foundation-toc-item">' +
-        '<a href="' + href(sec) + '"' + cur + '>' + escapeHtml(sec.number + ' ' + sec.title) + '</a>' +
-        '</li>'
-      );
-    }
-    var out = [];
-    out.push('<h2 class="foundation-toc-heading">Contents</h2>');
-    out.push('<div class="foundation-toc-scroll">');
-    (tocTree.prelude && tocTree.prelude.chapters ? tocTree.prelude.chapters : []).forEach(function (ch) {
-      out.push(
-        '<div class="toc-block">' +
-        '<div class="toc-chapter-heading">' + escapeHtml(ch.number + ' ' + ch.title) + '</div>' +
-        '<ul class="foundation-toc-list">'
-      );
-      (ch.sections || []).forEach(function (sec) {
-        out.push(link(sec));
-      });
-      out.push('</ul></div>');
-    });
-    (tocTree.parts || []).forEach(function (part) {
-      out.push('<div class="toc-block toc-part"><div class="toc-part-title">' + escapeHtml(part.title) + '</div>');
-      (part.chapters || []).forEach(function (ch) {
-        out.push(
-          '<div class="toc-chapter-block">' +
-          '<div class="toc-chapter-heading">' + escapeHtml(ch.number + ' ' + ch.title) + '</div>' +
-          '<ul class="foundation-toc-list">'
-        );
-        (ch.sections || []).forEach(function (sec) {
-          out.push(link(sec));
-        });
-        out.push('</ul></div>');
-      });
-      out.push('</div>');
-    });
-    out.push('</div>');
-    return out.join('');
-  }
-
-  function renderSection(section) {
-    var type = section.type || 'text';
-    var value = section.value || section.url || '';
-    if (type === 'heading') {
-      var hid = section.id || '';
-      var level = section.level === 3 ? 3 : 2;
-      var tag = level === 3 ? 'h3' : 'h2';
-      var idAttr = hid ? ' id="' + escapeHtml(hid) + '"' : '';
-      return '<' + tag + ' class="article-heading"' + idAttr + '>' + escapeHtml(value) + '</' + tag + '>';
-    }
-    if (type === 'text') {
-      return '<p>' + escapeHtml(value).replace(/\n/g, '</p><p>') + '</p>';
-    }
-    if (type === 'image') {
-      var imgSrc = safeUrl(value);
-      if (!imgSrc) return '';
-      var alt = section.alt || '';
-      return mediaFigure(
-        '<img src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(alt) + '" loading="lazy" decoding="async">',
-        section.caption
-      );
-    }
-    if (type === 'video') {
-      var videoSrc = safeUrl(value);
-      if (!videoSrc) return '';
-      // A looping muted clip is an animated screenshot, so it plays itself and
-      // hides the controls; anything else behaves like a normal video.
-      var isClip = !!section.loop && !!section.autoplay;
-      var attrs = isClip
-        ? ' autoplay loop muted preload="metadata"'
-        : ' controls preload="metadata"';
-      var poster = safeUrl(section.poster);
-      if (poster) attrs += ' poster="' + escapeHtml(poster) + '"';
-      return mediaFigure(
-        '<video src="' + escapeHtml(videoSrc) + '"' + attrs + ' playsinline></video>',
-        section.caption
-      );
-    }
-    if (type === 'embed') {
-      var embedSrc = safeUrl(value);
-      if (!embedSrc) return '';
-      return mediaFigure(
-        '<iframe src="' + escapeHtml(embedSrc) + '" loading="lazy" allowfullscreen></iframe>',
-        section.caption
-      );
-    }
-    if (type === 'links') {
-      return renderLinks(Array.isArray(value) ? value : []);
-    }
-    return '';
-  }
-
-  function mediaFigure(mediaHtml, caption) {
-    if (!caption) return '<div class="media-wrap">' + mediaHtml + '</div>';
-    return (
-      '<figure class="media-wrap media-wrap--captioned">' + mediaHtml +
-      '<figcaption class="media-caption">' + escapeHtml(caption) + '</figcaption></figure>'
-    );
-  }
+  /* ------------------------------------------------------------- sections */
 
   var EXTERNAL_ICON =
     '<svg class="article-link-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -251,358 +53,442 @@
     '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' +
     '<polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
 
+  function mediaFigure(html, caption) {
+    if (!caption) return '<div class="media-wrap">' + html + '</div>';
+    return '<figure class="media-wrap media-wrap--captioned">' + html +
+      '<figcaption class="media-caption">' + esc(caption) + '</figcaption></figure>';
+  }
+
   function renderLinks(links) {
     var html = links.map(function (link) {
-      var url = safeUrl(link && (link.url || link.href));
-      var label = (link && link.label) || url;
+      var url = TL.safeUrl(link && (link.url || link.href));
       if (!url) return '';
-      var cls = 'article-link' + (link.primary ? ' article-link--primary' : '');
-      var external = isExternal(url);
-      return (
-        '<a class="' + cls + '" href="' + escapeHtml(url) + '"' +
+      var label = (link && link.label) || url;
+      var external = TL.isExternal(url);
+      return '<a class="article-link' + (link.primary ? ' article-link--primary' : '') +
+        '" href="' + esc(url) + '"' +
         (external ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
-        escapeHtml(label) + (external ? EXTERNAL_ICON : '') +
-        '</a>'
-      );
+        esc(label) + (external ? EXTERNAL_ICON : '') + '</a>';
     }).join('');
     return html ? '<div class="article-links">' + html + '</div>' : '';
   }
 
-  function normalizeBookChapters(data) {
-    if (data.content && data.content.chapters && data.content.chapters.length) {
-      return data.content.chapters.map(function (ch, i) {
-        return {
-          id: ch.id || ('ch' + (i + 1)),
-          title: ch.title || ch.id || ('Chapter ' + (i + 1)),
-          sections: ch.sections || []
-        };
-      });
+  function renderSection(section) {
+    var type = section.type || 'text';
+    var value = section.value || section.url || '';
+
+    if (type === 'heading') {
+      var level = section.level === 3 ? 3 : 2;
+      var tag = 'h' + level;
+      var id = section.id ? ' id="' + esc(section.id) + '"' : '';
+      return '<' + tag + ' class="article-heading"' + id + '>' + esc(value) + '</' + tag + '>';
     }
-    var sections = (data.content && data.content.sections) || [];
-    return [{ id: 'main', title: 'Overview', sections: sections }];
+    if (type === 'text') {
+      return String(value).split(/\n+/).map(function (p) {
+        return '<p>' + esc(p) + '</p>';
+      }).join('');
+    }
+    if (type === 'image') {
+      var src = TL.safeUrl(value);
+      if (!src) return '';
+      return mediaFigure('<img src="' + esc(src) + '" alt="' + esc(section.alt || '') +
+        '" loading="lazy" decoding="async">', section.caption);
+    }
+    if (type === 'video') {
+      var vsrc = TL.safeUrl(value);
+      if (!vsrc) return '';
+      /* A looping muted clip is an animated screenshot: it plays itself and
+         hides the controls. Anything else is a normal video. */
+      var clip = !!section.loop && !!section.autoplay;
+      var attrs = clip ? ' autoplay loop muted preload="metadata"' : ' controls preload="metadata"';
+      var poster = TL.safeUrl(section.poster);
+      if (poster) attrs += ' poster="' + esc(poster) + '"';
+      return mediaFigure('<video src="' + esc(vsrc) + '"' + attrs + ' playsinline></video>', section.caption);
+    }
+    if (type === 'embed') {
+      var esrc = TL.safeUrl(value);
+      if (!esrc) return '';
+      return mediaFigure('<iframe src="' + esc(esrc) + '" loading="lazy" allowfullscreen></iframe>', section.caption);
+    }
+    if (type === 'links') {
+      return renderLinks(Array.isArray(value) ? value : []);
+    }
+    return '';
   }
 
-  function buildMetaLine(data) {
-    var metaParts = [];
-    if (data.date) metaParts.push('Date: ' + formatDate(data.date));
-    if (showReadingTime && data.readingTime) metaParts.push(data.readingTime);
-    if (data.authors && data.authors.length) metaParts.push(data.authors.join(', '));
-    else if (data.author) metaParts.push('Author: ' + data.author);
-    return metaParts.join(' | ');
+  /* ----------------------------------------------------------------- hero */
+
+  function setKicker(text, href) {
+    if (!el.kicker) return;
+    if (!text) { el.kicker.classList.add('hidden'); return; }
+    el.kicker.classList.remove('hidden');
+    el.kicker.innerHTML = href
+      ? '<a href="' + esc(href) + '">' + esc(text) + '</a>'
+      : esc(text);
   }
 
-  function setNavActive() {
-    var navLinks = document.querySelectorAll('.site-header .nav a');
-    navLinks.forEach(function (a) {
-      a.classList.remove('active');
+  function setMeta(parts) {
+    if (!el.meta) return;
+    var clean = parts.filter(Boolean);
+    el.meta.textContent = clean.join('  ·  ');
+    el.meta.classList.toggle('hidden', clean.length === 0);
+  }
+
+  /* Posts, projects and papers put their metadata in the sticky rail, so the
+     margin is populated for the article's full length. Books do not: their
+     rail belongs to the table of contents. */
+  function fillRail(rows, tags) {
+    if (!el.rail) return;
+    var kindWords = ['book', 'paper', 'post', 'project', 'essay'];
+    var keep = (tags || []).filter(function (t) {
+      return kindWords.indexOf(String(t).toLowerCase()) === -1;
     });
-    if (isFoundation) {
-      var f = document.querySelector('.site-header .nav a[href*="tab=foundation"]');
-      if (f) f.classList.add('active');
-    } else if (postMatch) {
-      var p = document.querySelector('.site-header .nav a[data-tab="posts"], .site-header .nav a[href="/"]');
-      if (p) p.classList.add('active');
-    } else if (projectMatch) {
-      var pr = document.querySelector('.site-header .nav a[href*="tab=projects"]');
-      if (pr) pr.classList.add('active');
-    }
-  }
 
-  function renderBookToc(chapters, activeIndex) {
-    var base = window.location.pathname;
-    var items = chapters.map(function (ch, i) {
-      var isActive = i === activeIndex;
-      var href = base + '?chapter=' + encodeURIComponent(ch.id);
-      return (
-        '<li class="foundation-toc-item">' +
-        '<a href="' + href + '"' + (isActive ? ' aria-current="page"' : '') + '>' + escapeHtml(ch.title) + '</a>' +
-        '</li>'
-      );
-    }).join('');
-    return (
-      '<h2 class="foundation-toc-heading">Contents</h2>' +
-      '<ol class="foundation-toc-list">' + items + '</ol>'
-    );
-  }
-
-  function renderPaperTocFromSections(sections) {
-    var items = [];
-    sections.forEach(function (sec) {
-      if ((sec.type || 'text') === 'heading' && sec.id) {
-        items.push({ id: sec.id, title: sec.value || sec.id });
-      }
+    var backTab = route.kind === 'post' ? 'posts' : route.kind === 'project' ? 'projects' : 'foundation';
+    var html = ['<dl>'];
+    rows.filter(function (r) { return r[1]; }).forEach(function (r) {
+      html.push('<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>');
     });
-    if (!items.length) {
-      return (
-        '<h2 class="foundation-toc-heading">Contents</h2>' +
-        '<ol class="foundation-toc-list"><li class="foundation-toc-item"><a href="#paper-top">Full paper</a></li></ol>'
-      );
+    if (keep.length) {
+      html.push('<div><dt>Tags</dt><dd class="rail-tags">' + keep.map(function (t) {
+        return '<a href="/?tab=' + backTab + '">' + esc(t) + '</a>';
+      }).join('') + '</dd></div>');
     }
-    var lis = items.map(function (item) {
-      return (
-        '<li class="foundation-toc-item">' +
-        '<a href="#' + escapeHtml(item.id) + '">' + escapeHtml(item.title) + '</a>' +
-        '</li>'
-      );
+    html.push('</dl>');
+
+    el.rail.innerHTML = html.join('');
+    el.rail.classList.remove('hidden');
+
+    /* The hero copies are now redundant. */
+    if (el.meta) el.meta.classList.add('hidden');
+    if (el.tags) el.tags.classList.add('hidden');
+  }
+
+  /* A tag that merely repeats the item's own kind is noise on the page that
+     already says what kind it is. */
+  function renderTags(tags) {
+    if (!el.tags) return;
+    var kindWords = ['book', 'paper', 'post', 'project', 'essay'];
+    var keep = (tags || []).filter(function (t) {
+      return kindWords.indexOf(String(t).toLowerCase()) === -1;
+    });
+    el.tags.innerHTML = keep.map(function (t) {
+      return '<span class="chip">' + esc(t) + '</span>';
     }).join('');
-    return '<h2 class="foundation-toc-heading">Contents</h2><ol class="foundation-toc-list">' + lis + '</ol>';
+    el.tags.classList.toggle('hidden', keep.length === 0);
   }
 
-  function applyFoundationShell(showToc) {
-    if (viewerShell) viewerShell.classList.toggle('viewer-shell--has-toc', !!showToc);
-    if (foundationTocEl) {
-      foundationTocEl.classList.toggle('hidden', !showToc);
-      if (showToc && foundationTocEl._tocHtml) {
-        foundationTocEl.innerHTML = foundationTocEl._tocHtml;
-      } else if (!showToc) {
-        foundationTocEl.innerHTML = '';
-      }
-    }
+  function byline(data) {
+    var people = TL.authors(data).filter(function (a) { return a !== TL.OWNER; });
+    return people.length ? people.join(', ') : '';
   }
 
-  function renderMarkdownFoundationBook(data, tocTree) {
-    var flat = tocTree.flatSections || [];
-    if (!flat.length) {
-      contentEl.innerHTML = '<p class="md-missing">Table of contents is empty.</p>';
+  /* --------------------------------------------------------- markdown deps */
+
+  var depsLoaded = false;
+
+  function loadScript(src) {
+    return new Promise(function (res, rej) {
+      var s = document.createElement('script');
+      s.src = src; s.crossOrigin = 'anonymous'; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  function loadCss(href) {
+    return new Promise(function (res, rej) {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet'; l.href = href; l.crossOrigin = 'anonymous';
+      l.onload = res; l.onerror = rej;
+      document.head.appendChild(l);
+    });
+  }
+
+  function loadMarkdownDeps() {
+    if (depsLoaded) return Promise.resolve();
+    if (window.marked && window.DOMPurify && typeof window.renderMathInElement === 'function') {
+      depsLoaded = true;
       return Promise.resolve();
     }
-    var params = new URLSearchParams(window.location.search);
-    var sectionId = params.get('section') || flat[0].id;
-    var idx = flat.findIndex(function (s) { return s.id === sectionId; });
-    if (idx === -1) idx = 0;
-    var current = flat[idx];
-    var root = (data.contentRoot || '').replace(/\/$/, '') + '/';
+    return loadCss('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css')
+      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js'); })
+      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js'); })
+      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js'); })
+      .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js'); })
+      .then(function () { depsLoaded = true; });
+  }
 
-    if (foundationTocEl) {
-      foundationTocEl._tocHtml = renderMarkdownTocHtml(tocTree, current.id);
+  function typesetMath(node) {
+    if (typeof window.renderMathInElement !== 'function') return;
+    try {
+      window.renderMathInElement(node, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        throwOnError: false
+      });
+    } catch (e) { }
+  }
+
+  /* Tables need a scroll container or a wide one gives the whole page a
+     horizontal scrollbar. */
+  function wrapTables(node) {
+    node.querySelectorAll('table').forEach(function (t) {
+      if (t.parentElement && t.parentElement.classList.contains('table-wrap')) return;
+      var w = document.createElement('div');
+      w.className = 'table-wrap';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  }
+
+  /* ------------------------------------------------------------- renderers */
+
+  function renderStandard(data) {
+    applyToc(false);
+    document.title = (data.title || 'Page') + ' — Tatra Labs';
+    setKicker(route.kicker, null);
+    el.title.textContent = data.title || '';
+    if (el.sub) el.sub.classList.add('hidden');
+    if (el.nav) el.nav.classList.add('hidden');
+
+    renderTags(data.tags);
+    fillRail([
+      ['Published', TL.formatDate(data.date)],
+      ['Reading', route.readingTime && data.readingTime ? data.readingTime : ''],
+      ['By', byline(data)]
+    ], data.tags);
+
+    var sections = (data.content && data.content.sections) || [];
+    el.content.innerHTML = sections.map(renderSection).join('');
+    wrapTables(el.content);
+  }
+
+  function renderPaper(data) {
+    applyToc(false);
+    document.title = (data.title || 'Paper') + ' — Tatra Labs';
+    setKicker(route.kicker, null);
+    el.title.textContent = data.title || '';
+
+    if (el.sub) {
+      var people = TL.authors(data).filter(function (a) { return a !== TL.OWNER; });
+      var line = [people.join(', '), data.venue].filter(Boolean).join('  ·  ');
+      el.sub.textContent = line;
+      el.sub.classList.toggle('hidden', !line);
     }
-    applyFoundationShell(!!foundationTocEl);
+    if (el.nav) el.nav.classList.add('hidden');
 
-    titleEl.textContent = data.title || '';
-    if (foundationChapterLabel) {
-      foundationChapterLabel.textContent = current.number + ' ' + current.title;
-      foundationChapterLabel.classList.remove('hidden');
+    renderTags(data.tags);
+    fillRail([
+      ['Notes', TL.formatDate(data.date)],
+      ['By', TL.OWNER]
+    ], data.tags);
+
+    var sections = (data.content && data.content.sections) || [];
+    el.content.innerHTML = sections.map(renderSection).join('');
+    wrapTables(el.content);
+  }
+
+  /* THE FIX: the section identity used to be printed four times on one
+     screen by four independent paths — the meta line, the chapter label, the
+     markdown H1, and the page title. Now there is exactly one owner:
+       h1  = the section  (the section is the page)
+       kicker = the book, linked to its root
+       sub = the chapter
+     and a leading markdown H1 repeating the section title is stripped. */
+  function renderBookSection(data, toc) {
+    var flat = (toc && toc.flatSections) || [];
+    if (!flat.length) {
+      applyToc(false);
+      el.content.innerHTML = '<p class="md-missing">This book has no table of contents yet.</p>';
+      return Promise.resolve();
     }
 
-    if (foundationChapterNav) {
-      var showNav = flat.length > 1;
-      foundationChapterNav.classList.toggle('hidden', !showNav);
-      foundationChapterNav.classList.remove('foundation-chapter-nav--only-next', 'foundation-chapter-nav--only-prev');
-      var pathBase = window.location.pathname;
-      if (showNav && foundationChapterPrev && foundationChapterNext) {
-        if (idx > 0) {
-          foundationChapterPrev.href = pathBase + '?section=' + encodeURIComponent(flat[idx - 1].id);
-          foundationChapterPrev.classList.remove('hidden');
-        } else {
-          foundationChapterPrev.classList.add('hidden');
-        }
-        if (idx < flat.length - 1) {
-          foundationChapterNext.href = pathBase + '?section=' + encodeURIComponent(flat[idx + 1].id);
-          foundationChapterNext.classList.remove('hidden');
-        } else {
-          foundationChapterNext.classList.add('hidden');
-        }
-        if (idx === 0 && flat.length > 1) {
-          foundationChapterNav.classList.add('foundation-chapter-nav--only-next');
-        } else if (idx === flat.length - 1 && flat.length > 1) {
-          foundationChapterNav.classList.add('foundation-chapter-nav--only-prev');
-        }
-      }
+    var wanted = new URLSearchParams(window.location.search).get('section');
+    var idx = 0;
+    for (var i = 0; i < flat.length; i++) if (flat[i].id === wanted) { idx = i; break; }
+    var cur = flat[idx];
+    var heading = (cur.number ? cur.number + ' ' : '') + cur.title;
+
+    document.title = heading + ' · ' + (data.title || 'Book') + ' — Tatra Labs';
+    setKicker('Book · ' + (data.title || ''), '/foundation/book/' + encodeURIComponent(slug));
+    el.title.textContent = heading;
+
+    if (el.sub) {
+      var chapter = chapterOf(toc, cur.id);
+      el.sub.textContent = chapter || '';
+      el.sub.classList.toggle('hidden', !chapter);
     }
 
-    var tags = data.tags || [];
-    tagsEl.innerHTML = tags.map(function (t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('');
+    setMeta([TL.formatDate(data.date), 'Notes by ' + TL.OWNER]);
+    renderTags(data.tags);
 
-    return fetch(root + current.file)
-      .then(function (r) {
-        if (!r.ok) return null;
-        return r.text();
-      })
+    if (el.toc) {
+      el.toc._html = renderBookToc(toc, cur.id, idx, flat.length);
+      applyToc(true);
+    }
+    renderChapterNav(flat, idx);
+
+    var root = String(data.contentRoot || '').replace(/\/$/, '') + '/';
+    return fetch(root + cur.file)
+      .then(function (r) { return r.ok ? r.text() : null; })
       .then(function (md) {
-        var html;
-        if (md && window.marked) {
+        if (md == null) {
+          el.content.innerHTML =
+            '<p class="md-missing"><strong>Not written yet.</strong> ' +
+            'These notes are being written section by section; this one is still ahead of me.</p>';
+          return;
+        }
+        var html = md;
+        if (window.marked) {
           if (typeof marked.setOptions === 'function') {
             marked.setOptions({ gfm: true, mangle: false, headerIds: true });
           }
           html = marked.parse(md);
-          if (window.DOMPurify) {
-            html = DOMPurify.sanitize(html);
-          }
-        } else {
-          html =
-            '<div class="md-missing">' +
-            '<p><strong>No Markdown file yet.</strong> Create:</p>' +
-            '<p><code>' + escapeHtml(root + current.file) + '</code></p>' +
-            '<p>See <code>content/README.md</code> for how sections are organized.</p>' +
-            '</div>';
+          if (window.DOMPurify) html = DOMPurify.sanitize(html);
         }
-        contentEl.innerHTML = html;
-        if (typeof window.renderMathInElement === 'function') {
-          try {
-            window.renderMathInElement(contentEl, {
-              delimiters: [
-                { left: '$$', right: '$$', display: true },
-                { left: '$', right: '$', display: false },
-                { left: '\\(', right: '\\)', display: false },
-                { left: '\\[', right: '\\]', display: true }
-              ],
-              throwOnError: false
-            });
-          } catch (e) {}
-        }
-        metaEl.textContent = buildMetaLine(data) + ' | ' + current.number + ' ' + current.title;
-        document.title =
-          current.number + ' ' + current.title + ' · ' + (data.title || 'Book') + ' – Tatra Labs';
+        el.content.innerHTML = html;
+        stripDuplicateHeading(el.content, heading, cur.title);
+        wrapTables(el.content);
+        typesetMath(el.content);
       });
   }
 
-  function renderFoundationBook(data) {
-    var chapters = normalizeBookChapters(data);
-    var params = new URLSearchParams(window.location.search);
-    var requestedId = params.get('chapter');
-    var idx = 0;
-    if (requestedId) {
-      var found = chapters.findIndex(function (c) { return c.id === requestedId; });
-      if (found !== -1) idx = found;
-    }
-    var current = chapters[idx];
-    var sections = current.sections || [];
-
-    if (foundationTocEl) {
-      foundationTocEl._tocHtml = renderBookToc(chapters, idx);
-    }
-    applyFoundationShell(!!foundationTocEl);
-
-    if (foundationChapterLabel) {
-      foundationChapterLabel.textContent = chapters.length > 1 ? current.title : '';
-      foundationChapterLabel.classList.toggle('hidden', chapters.length <= 1);
-    }
-
-    if (foundationChapterNav) {
-      var showNav = chapters.length > 1;
-      foundationChapterNav.classList.toggle('hidden', !showNav);
-      foundationChapterNav.classList.remove('foundation-chapter-nav--only-next', 'foundation-chapter-nav--only-prev');
-      var base = window.location.pathname;
-      if (showNav && foundationChapterPrev && foundationChapterNext) {
-        if (idx > 0) {
-          foundationChapterPrev.href = base + '?chapter=' + encodeURIComponent(chapters[idx - 1].id);
-          foundationChapterPrev.classList.remove('hidden');
-        } else {
-          foundationChapterPrev.classList.add('hidden');
-        }
-        if (idx < chapters.length - 1) {
-          foundationChapterNext.href = base + '?chapter=' + encodeURIComponent(chapters[idx + 1].id);
-          foundationChapterNext.classList.remove('hidden');
-        } else {
-          foundationChapterNext.classList.add('hidden');
-        }
-        if (idx === 0 && chapters.length > 1) {
-          foundationChapterNav.classList.add('foundation-chapter-nav--only-next');
-        } else if (idx === chapters.length - 1 && chapters.length > 1) {
-          foundationChapterNav.classList.add('foundation-chapter-nav--only-prev');
-        }
-      }
-    }
-
-    titleEl.textContent = data.title || '';
-    metaEl.textContent = buildMetaLine(data);
-    contentEl.innerHTML = sections.map(renderSection).join('');
-    var tags = data.tags || [];
-    tagsEl.innerHTML = tags.map(function (t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('');
-
-    var sub = chapters.length > 1 ? current.title : '';
-    document.title = (sub ? sub + ' · ' : '') + (data.title || 'Book') + ' – Tatra Labs';
+  /* The markdown source opens with its own "# 1.1 Who Should Read This
+     Book?", which would render a second copy of the page title. Remove it
+     only when it actually matches — additive, invalidates no content file. */
+  function stripDuplicateHeading(node, heading, bareTitle) {
+    var first = node.firstElementChild;
+    if (!first || first.tagName !== 'H1') return;
+    var norm = function (s) { return String(s).replace(/\s+/g, ' ').trim().toLowerCase(); };
+    var t = norm(first.textContent);
+    if (t === norm(heading) || t === norm(bareTitle)) first.remove();
   }
 
-  function renderFoundationPaper(data) {
-    var sections = (data.content && data.content.sections) || [];
-
-    if (foundationTocEl) {
-      foundationTocEl._tocHtml = renderPaperTocFromSections(sections);
+  function chapterOf(toc, sectionId) {
+    var found = '';
+    function scan(chapters, partTitle) {
+      (chapters || []).forEach(function (ch) {
+        (ch.sections || []).forEach(function (s) {
+          if (s.id === sectionId) {
+            found = (ch.number ? 'Chapter ' + ch.number + ' · ' : '') + (ch.title || '');
+            if (partTitle) found = partTitle + '  ·  ' + found;
+          }
+        });
+      });
     }
-    applyFoundationShell(!!foundationTocEl);
-
-    if (foundationChapterLabel) foundationChapterLabel.classList.add('hidden');
-    if (foundationChapterNav) foundationChapterNav.classList.add('hidden');
-
-    titleEl.textContent = data.title || '';
-    metaEl.textContent = buildMetaLine(data);
-    var bodyHtml = sections.map(renderSection).join('');
-    contentEl.innerHTML = '<div id="paper-top" class="paper-top-anchor"></div>' + bodyHtml;
-    var tags = data.tags || [];
-    tagsEl.innerHTML = tags.map(function (t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('');
-
-    document.title = (data.title || 'Paper') + ' – Tatra Labs';
+    scan(toc.prelude && toc.prelude.chapters, '');
+    (toc.parts || []).forEach(function (p) { scan(p.chapters, p.title); });
+    return found;
   }
 
-  function renderStandard(data) {
-    applyFoundationShell(false);
-    if (foundationChapterLabel) foundationChapterLabel.classList.add('hidden');
-    if (foundationChapterNav) foundationChapterNav.classList.add('hidden');
+  /* Chapters collapse to <details> with only the current one open, so a
+     keyboard user reaches the text in one keystroke instead of 164. */
+  function renderBookToc(toc, currentId, idx, total) {
+    var base = window.location.pathname;
+    var out = ['<p class="foundation-toc-heading">Contents</p>'];
+    out.push('<p class="toc-progress">Section ' + (idx + 1) + ' / ' + total + '</p>');
 
-    document.title = (data.title || 'Post') + ' – Tatra Labs';
-    titleEl.textContent = data.title || '';
-    metaEl.textContent = buildMetaLine(data);
-    var sections = (data.content && data.content.sections) || [];
-    contentEl.innerHTML = sections.map(renderSection).join('');
-    var tags = data.tags || [];
-    tagsEl.innerHTML = tags.map(function (t) { return '<span class="tag">' + escapeHtml(t) + '</span>'; }).join('');
+    function leaf(sec) {
+      var cur = sec.id === currentId;
+      return '<li class="foundation-toc-item"><a href="' + base + '?section=' +
+        encodeURIComponent(sec.id) + '"' + (cur ? ' aria-current="page"' : '') + '>' +
+        esc((sec.number ? sec.number + ' ' : '') + sec.title) + '</a></li>';
+    }
+
+    function chapter(ch) {
+      var has = (ch.sections || []).some(function (s) { return s.id === currentId; });
+      return '<details class="toc-chapter"' + (has ? ' open' : '') + '>' +
+        '<summary>' + esc((ch.number ? ch.number + ' ' : '') + ch.title) + '</summary>' +
+        '<ul class="foundation-toc-list">' + (ch.sections || []).map(leaf).join('') + '</ul>' +
+        '</details>';
+    }
+
+    (toc.prelude && toc.prelude.chapters ? toc.prelude.chapters : []).forEach(function (ch) {
+      out.push(chapter(ch));
+    });
+    (toc.parts || []).forEach(function (part) {
+      out.push('<p class="toc-part-title">' + esc(part.title) + '</p>');
+      (part.chapters || []).forEach(function (ch) { out.push(chapter(ch)); });
+    });
+    return out.join('');
   }
 
-  if (!slug) {
-    articleEl.classList.add('hidden');
-    if (viewerShell) viewerShell.classList.add('hidden');
-    errorEl.classList.remove('hidden');
-    errorEl.textContent = 'Page not found.';
-    document.title = 'Not Found – Tatra Labs';
-    return;
+  function renderChapterNav(flat, idx) {
+    if (!el.nav || !el.prev || !el.next) return;
+    if (flat.length < 2) { el.nav.classList.add('hidden'); return; }
+    el.nav.classList.remove('hidden');
+    el.nav.classList.remove('foundation-chapter-nav--only-next');
+    var base = window.location.pathname;
+
+    if (idx > 0) {
+      el.prev.href = base + '?section=' + encodeURIComponent(flat[idx - 1].id);
+      el.prev.textContent = '← ' + (flat[idx - 1].number || 'Previous');
+      el.prev.classList.remove('hidden');
+    } else {
+      el.prev.classList.add('hidden');
+      el.nav.classList.add('foundation-chapter-nav--only-next');
+    }
+
+    if (idx < flat.length - 1) {
+      el.next.href = base + '?section=' + encodeURIComponent(flat[idx + 1].id);
+      el.next.textContent = (flat[idx + 1].number || 'Next') + ' →';
+      el.next.classList.remove('hidden');
+    } else {
+      el.next.classList.add('hidden');
+    }
   }
 
-  var jsonUrl = baseUrl + '/' + encodeURIComponent(slug) + '.json';
-  if (isFoundationBook) {
-    jsonUrl = baseUrl + '/' + encodeURIComponent(slug) + '/book.json';
+  function applyToc(show) {
+    if (el.shell) el.shell.classList.toggle('viewer-shell--has-toc', !!show);
+    if (!el.toc) return;
+    el.toc.classList.toggle('hidden', !show);
+    el.toc.innerHTML = show && el.toc._html ? el.toc._html : '';
   }
 
-  fetch(jsonUrl)
-    .then(function (r) {
-      if (!r.ok) throw new Error('Not found');
-      return r.json();
-    })
+  /* ------------------------------------------------------------------ boot */
+
+  function fail() {
+    if (el.article) el.article.classList.add('hidden');
+    if (el.shell) el.shell.classList.add('hidden');
+    if (el.error) {
+      el.error.classList.remove('hidden');
+      el.error.textContent = 'Page not found.';
+    }
+    document.title = 'Not found — Tatra Labs';
+  }
+
+  if (!route) { fail(); return; }
+
+  document.querySelectorAll('.nav a[data-tab]').forEach(function (a) {
+    var want = route.kind === 'post' ? 'posts' : route.kind === 'project' ? 'projects' : 'foundation';
+    if (a.getAttribute('data-tab') === want) a.classList.add('active');
+  });
+
+  var url = route.kind === 'book'
+    ? route.base + '/' + encodeURIComponent(slug) + '/book.json'
+    : route.base + '/' + encodeURIComponent(slug) + '.json';
+
+  fetch(url)
+    .then(function (r) { if (!r.ok) throw new Error('404'); return r.json(); })
     .then(function (data) {
-      setNavActive();
-      errorEl.classList.add('hidden');
-      articleEl.classList.remove('hidden');
-      if (viewerShell) viewerShell.classList.remove('hidden');
+      if (el.error) el.error.classList.add('hidden');
+      if (el.article) el.article.classList.remove('hidden');
+      if (el.shell) el.shell.classList.remove('hidden');
 
-      if (isFoundationBook && data.reader === 'markdown-toc') {
-        var tocUrl = data.tocFile || baseUrl + '/' + encodeURIComponent(slug) + '/toc.json';
+      if (route.kind === 'book') {
+        var tocUrl = data.tocFile || (route.base + '/' + encodeURIComponent(slug) + '/toc.json');
         return fetch(tocUrl)
-          .then(function (r) {
-            if (!r.ok) throw new Error('toc');
-            return r.json();
-          })
-          .then(function (tocTree) {
-            return loadMarkdownDeps().then(function () {
-              return renderMarkdownFoundationBook(data, tocTree);
-            });
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (toc) {
+            return loadMarkdownDeps().then(function () { return renderBookSection(data, toc || {}); });
           });
       }
-
-      if (isFoundationBook) {
-        renderFoundationBook(data);
-        return;
-      }
-      if (isFoundationPaper) {
-        renderFoundationPaper(data);
-        return;
-      }
+      if (route.kind === 'paper') { renderPaper(data); return; }
       renderStandard(data);
     })
-    .catch(function () {
-      articleEl.classList.add('hidden');
-      if (viewerShell) viewerShell.classList.add('hidden');
-      errorEl.classList.remove('hidden');
-      errorEl.textContent = 'Page not found.';
-      document.title = 'Not Found – Tatra Labs';
-    });
+    .catch(fail);
 })();

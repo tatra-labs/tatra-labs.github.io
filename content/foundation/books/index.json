@@ -1,11 +1,12 @@
 [
   {
     "slug": "deep-learning",
-    "title": "Deep Learning (Book)",
+    "title": "Deep Learning",
     "icon": "/content/foundation/media/deep_learning.webp",
-    "iconAlt": "Deep learning book cover",
+    "iconAlt": "Cover of Deep Learning by Goodfellow, Bengio and Courville",
     "date": "2025-02-08",
-    "authors": ["Tatra Labs"],
-    "summary": "A short overview of deep learning foundations and key concepts. Replace this summary with your real book blurb."
+    "authors": ["Ian Goodfellow", "Yoshua Bengio", "Aaron Courville"],
+    "status": "in-progress",
+    "summary": "The standard graduate reference for the field, in three parts: the applied mathematics and machine-learning background, the deep networks themselves, and the research frontier of generative and probabilistic models. These are my section-by-section notes as I work through it."
   }
 ]

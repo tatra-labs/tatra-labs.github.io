@@ -13,15 +13,6 @@
       },
       {
         "type": "text",
-        "value": "The diagram below illustrates the typical RAG workflow: from user query to retrieval, context assembly, and final answer generation."
-      },
-      {
-        "type": "image",
-        "value": "/assets/images/workflow-of-RAG.png",
-        "alt": "RAG workflow diagram showing retrieval and generation pipeline"
-      },
-      {
-        "type": "text",
         "value": "Key steps include: (1) encoding the query into an embedding, (2) searching a vector store for relevant chunks, (3) combining retrieved passages with the query, and (4) generating a response using the LLM conditioned on that context. Fine-tuning retrieval and generation jointly can further improve end-to-end quality."
       }
     ]

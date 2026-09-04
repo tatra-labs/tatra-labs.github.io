@@ -4,122 +4,168 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tatra Labs – Blog & Projects</title>
-  <meta name="description" content="Lightweight blog and projects. Filter by tags, fast and responsive.">
+  <title>Tatra Labs — AI/ML engineering & research</title>
+  <meta name="description"
+    content="Projects, writing and reading notes from Tatra Labs — LLM agents, retrieval, and the evaluation methods that tell you whether any of it works.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap">
   <link rel="stylesheet" href="/css/style.css">
   <script>
-    (function () { var t = localStorage.getItem('theme'); var d = window.matchMedia('(prefers-color-scheme:dark)').matches; if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); else document.documentElement.setAttribute('data-theme', d ? 'dark' : 'light'); })();
+    (function () {
+      var t; try { t = localStorage.getItem('theme'); } catch (e) { }
+      var r = document.documentElement;
+      if (t === 'light' || t === 'dark') { r.setAttribute('data-theme', t); r.setAttribute('data-theme-pref', t); }
+      else { r.setAttribute('data-theme-pref', 'system'); }
+    })();
   </script>
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="header-brand">
-      <h1 class="site-title"><a href="/">Tatra Labs</a></h1>
-      <div class="header-links">
-        <a href="https://github.com/tatra-labs" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-          class="header-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path
-              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-          </svg>
-        </a>
-        <a href="https://x.com/tatralabs" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"
-          class="header-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path
-              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
-        </a>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="spread">
+      <div class="u-wide masthead-row">
+        <p class="site-title"><a href="/">Tatra Labs</a></p>
+        <div class="masthead-nav">
+          <ul class="nav">
+            <li><a href="/?tab=projects" data-tab="projects">Projects</a></li>
+            <li><a href="/?tab=posts" data-tab="posts">Writing</a></li>
+            <li><a href="/?tab=foundation" data-tab="foundation">Foundation</a></li>
+          </ul>
+          <span class="masthead-div" aria-hidden="true"></span>
+          <div class="header-links">
+            <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Theme: system">
+              <svg class="theme-icon theme-icon-system" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="3" width="20" height="14" rx="0" />
+                <path d="M8 21h8M12 17v4" />
+              </svg>
+              <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+              </svg>
+              <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+              </svg>
+            </button>
+            <a href="https://github.com/tatra-labs" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+              class="header-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+            </a>
+            <a href="https://x.com/tatralabs" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"
+              class="header-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
-    <nav>
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme"
-        title="Toggle theme">
-        <span class="theme-icon theme-icon-moon" aria-hidden="true">🌙</span>
-        <span class="theme-icon theme-icon-sun" aria-hidden="true">☀️</span>
-      </button>
-      <ul class="nav">
-        <li><a href="/?tab=foundation" data-tab="foundation">Foundation</a></li>
-        <li><a href="/" class="active" data-tab="posts">Posts</a></li>
-        <li><a href="/?tab=projects" data-tab="projects">Projects</a></li>
-      </ul>
-    </nav>
   </header>
 
-  <main class="main">
-    <div class="content-grid">
-      <aside class="left-sidebar" aria-label="Sidebar">
-        <section class="welcome" aria-label="Introduction">
-          <h1>Welcome to Tatra Labs</h1>
-          <p>Write, Share, Grow</p>
-        </section>
+  <main id="main">
+    <!-- ========================================================================
+         IDENTITY BAND — EDIT THIS.
+         Everything between here and the closing comment is a DRAFT written
+         from what the repo evidences (the two projects, the RAG post, the
+         reading notes). Replace the name, the lede and the bio with your own
+         words. No email is published here on purpose — add one to
+         .identity-links only if you want it public and scrapeable.
+         ===================================================================== -->
+    <section class="spread identity">
+      <div class="u-wide identity-inner">
+        <p class="u-label identity-eyebrow">AI / ML Engineer &middot; Researcher</p>
+        <h1 class="identity-name">Tatra Labs</h1>
+        <p class="identity-lede">
+          I build AI systems that combine language models with explicit inference and search &mdash;
+          and I measure whether the combination actually earns its keep.
+        </p>
+        <p class="identity-bio">
+          Most of my work sits where a model's output meets a constraint it has to satisfy: a crossword
+          grid that must agree with itself, a labour-market chart that must not claim a difference its
+          own margins of error cannot support. I care about calibration, honest evaluation, and saying
+          plainly what a result does not show. Everything here is source-available and reproducible.
+        </p>
+        <ul class="identity-links">
+          <li><a href="https://github.com/tatra-labs" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://x.com/tatralabs" target="_blank" rel="noopener noreferrer">X</a></li>
+          <!-- <li><a href="/cv.pdf">CV</a></li> -->
+        </ul>
+        <dl class="identity-index" id="identity-index"></dl>
+      </div>
+    </section>
+    <!-- ===================== end identity band ============================= -->
 
-        <div class="foundation-sidebar-details hidden" id="foundation-sidebar-details" aria-label="Selected book or paper">
-          <div class="foundation-details">
-            <div class="foundation-details-top">
-              <h3 class="foundation-details-title" id="foundation-details-title">Select an item</h3>
-              <p class="foundation-details-meta" id="foundation-details-meta"></p>
-            </div>
-            <div class="foundation-details-summary-wrap">
-              <p class="foundation-details-summary" id="foundation-details-summary"></p>
-            </div>
-          </div>
+    <div class="spread controls">
+      <div class="u-wide control-bar">
+        <div class="chips" id="tag-filter-list" role="group" aria-label="Filter by tag"></div>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <label for="search-input" class="visually-hidden">Search all content</label>
+          <input type="search" id="search-input" placeholder="Search" aria-label="Search all content"
+            autocomplete="off">
         </div>
-
-        <div class="tag-filter-box collapsed">
-          <button type="button" class="tag-filter-header" id="tag-filter-toggle" aria-expanded="false"
-            aria-controls="tag-filter-list">
-            <span>Tags</span>
-            <span class="tag-filter-chevron" aria-hidden="true">▼</span>
-          </button>
-          <div class="tag-filter-list" id="tag-filter-list" role="group" aria-label="Filter by tag">
-            <!-- Filled by JS -->
-          </div>
-        </div>
-      </aside>
-
-      <div class="main-content">
-        <div class="filter-bar filter-bar-top" aria-label="Search">
-          <div class="search-wrap">
-            <label for="search-input" class="visually-hidden">Search</label>
-            <input type="search" id="search-input" placeholder="Search" aria-label="Search posts and projects"
-              autocomplete="off">
-          </div>
-        </div>
-
-        <section class="list-section" id="posts-section">
-          <h2>Posts</h2>
-          <div class="card-list" id="posts-list"></div>
-          <p id="posts-empty" class="hidden">No posts match the current filter.</p>
-        </section>
-
-        <section class="list-section hidden" id="projects-section">
-          <h2>Projects</h2>
-          <div class="card-list" id="projects-list"></div>
-          <p id="projects-empty" class="hidden">No projects match the current filter.</p>
-        </section>
-
-        <section class="list-section hidden" id="foundation-section">
-          <h2>Foundation</h2>
-          <p id="foundation-empty" class="hidden">No books or papers match your search.</p>
-          <div class="foundation-layout" aria-label="Foundation catalog">
-            <div class="foundation-categories" id="foundation-categories" aria-label="Books and Papers">
-              <section class="foundation-category" aria-label="Books">
-                <h3>Books</h3>
-                <div class="foundation-icon-grid" id="foundation-books-list"></div>
-              </section>
-              <section class="foundation-category" aria-label="Papers">
-                <h3>Papers</h3>
-                <div class="foundation-icon-grid" id="foundation-papers-list"></div>
-              </section>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
+
+    <section class="spread list-section" id="projects-section">
+      <div class="u-wide section-head">
+        <h2>Projects</h2>
+        <span class="section-count" id="projects-count"></span>
+      </div>
+      <ol class="u-wide register" id="projects-list"></ol>
+      <p class="u-wide empty hidden" id="projects-empty">No projects match the current filter.</p>
+    </section>
+
+    <section class="spread list-section" id="posts-section">
+      <div class="u-wide section-head">
+        <h2>Writing</h2>
+        <span class="section-count" id="posts-count"></span>
+      </div>
+      <ol class="u-wide register" id="posts-list"></ol>
+      <p class="u-wide empty hidden" id="posts-empty">No posts match the current filter.</p>
+    </section>
+
+    <section class="spread list-section" id="foundation-section">
+      <div class="u-wide section-head">
+        <h2>Foundation</h2>
+        <span class="section-count" id="foundation-count"></span>
+      </div>
+      <ol class="u-wide register" id="foundation-list"></ol>
+      <p class="u-wide empty hidden" id="foundation-empty">No books or papers match your search.</p>
+    </section>
+
+    <p class="spread" aria-live="polite" id="result-status">
+      <span class="visually-hidden u-wide"></span>
+    </p>
   </main>
 
+  <footer class="site-footer spread">
+    <div class="u-wide footer-inner">
+      <span>&copy; <span id="footer-year">2026</span> Tatra Labs</span>
+      <span class="footer-links">
+        <a href="https://github.com/tatra-labs" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://x.com/tatralabs" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="/">Index</a>
+      </span>
+    </div>
+  </footer>
+
+  <script src="/js/util.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/theme.js"></script>
 </body>
