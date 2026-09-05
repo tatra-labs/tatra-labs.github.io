@@ -354,7 +354,16 @@
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (toc) {
           if (!toc || !toc.flatSections) return;
-          s.extent = '1 / ' + toc.flatSections.length + ' sections written';
+          var total = toc.flatSections.length;
+          /* `written` is stamped into toc.json by tools/update_book_extent.py,
+             which counts the section files that actually exist. A toc declares
+             sections that may not be written yet, so the total alone cannot
+             tell us how much of the book is real. */
+          var done = typeof toc.written === 'number' ? toc.written : total;
+          var noun = total === 1 ? ' section' : ' sections';
+          s.extent = done >= total
+            ? total + noun
+            : done + ' / ' + total + noun + ' written';
           render();
         })
         .catch(function () { });

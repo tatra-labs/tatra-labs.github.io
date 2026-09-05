@@ -1,0 +1,10 @@
+{
+  "slug": "sutskevers-list",
+  "title": "Sutskever's List",
+  "date": "2026-09-05",
+  "author": "Tatra Labs",
+  "tags": ["Book", "Deep Learning", "Reading List"],
+  "reader": "markdown-toc",
+  "contentRoot": "/content/foundation/books/sutskevers-list/sections",
+  "tocFile": "/content/foundation/books/sutskevers-list/toc.json"
+}

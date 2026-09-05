@@ -1,5 +1,13 @@
 [
   {
+    "slug": "sutskevers-list",
+    "title": "Sutskever's List",
+    "date": "2026-09-05",
+    "authors": ["Reading list attributed to Ilya Sutskever"],
+    "status": "complete",
+    "summary": "The ~30 works Ilya Sutskever reportedly handed John Carmack, with the line \"if you really learn all of these, you'll know 90% of what matters today\". The provenance is contested; the syllabus is excellent either way. Twenty-seven works, regrouped into five chapters that follow the argument, each with the mechanism explained and an honest note on what did not survive."
+  },
+  {
     "slug": "deep-learning",
     "title": "Deep Learning",
     "icon": "/content/foundation/media/deep_learning.webp",
