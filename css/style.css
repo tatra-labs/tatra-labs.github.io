@@ -6,9 +6,12 @@
       alignment. The single exception is --r-plate (2px) on media frames.
    2. Exactly TWO stroke weights: 1px var(--rule) for separation,
       2px var(--rule-strong) or var(--accent) for emphasis and active state.
-   3. Exactly ONE filled surface on the site: .btn--primary. --accent must
-      never fill a background elsewhere, never colour an input border, never
-      mark a validation state. --accent-quiet is a tint, not a fill.
+   3. Exactly ONE filled component surface: .article-link--primary. Beyond it
+      --accent may appear only as a stroke or as a mark under 6px — today the
+      2px heading bar (.article-content h2::before) and the 5px live dot
+      (.entry-flag::before), and nothing else. --accent must never fill a
+      panel, never colour an input border, never mark a validation state.
+      --accent-quiet is a tint, not a fill.
    4. NO colour literal outside the token block. No hex, no rgba(), no colour
       baked into a data-URI, anywhere else in this file.
 
@@ -75,7 +78,7 @@
     --text-muted:   #A9A190;   /*  6.9:1  AAA                               */
     --text-faint:   #8E8778;   /*  5.0:1  AA                                */
     --rule:         #464038;
-    --rule-strong:  #6B6356;
+    --rule-strong:  #726A5C;  /*  3.3:1  meets 1.4.11 for a UI boundary       */
     --rule-ink:     #EDE7DA;
     --accent:       #8CC0A0;   /* 8.6:1 on --bg  AAA                        */
     --accent-hover: #A8D4B8;
@@ -88,7 +91,7 @@
 :root[data-theme="dark"] {
   --bg: #1A1815;  --surface: #232019;  --sunken: #131210;
   --text: #EDE7DA;  --text-muted: #A9A190;  --text-faint: #8E8778;
-  --rule: #464038;  --rule-strong: #6B6356;  --rule-ink: #EDE7DA;
+  --rule: #464038;  --rule-strong: #726A5C;  --rule-ink: #EDE7DA;
   --accent: #8CC0A0;  --accent-hover: #A8D4B8;  --accent-quiet: #1E2A22;
   --on-accent: #1A1815;  --focus: #7FA6FF;
 }
@@ -438,7 +441,10 @@ main { flex: 1 0 auto; }
   padding-bottom: var(--s-1);
   color: var(--text-faint);
 }
-.search-wrap:focus-within { border-bottom: 2px solid var(--accent); padding-bottom: 1px; }
+/* Focus is blue here like everywhere else: --accent on an input border would
+   read as a brand or validation state, which is the confusion the focus token
+   exists to prevent. */
+.search-wrap:focus-within { border-bottom: 2px solid var(--focus); padding-bottom: 1px; }
 .search-wrap svg { flex: none; width: 14px; height: 14px; }
 .search-wrap input {
   flex: 1;
@@ -452,7 +458,12 @@ main { flex: 1 0 auto; }
   padding: var(--s-1) 0;
 }
 .search-wrap input::placeholder { color: var(--text-faint); }
+/* A bare `outline: none` here would win on specificity (0,2,1) against the
+   global :where(...):focus-visible ring (0,1,0) and silently remove the
+   keyboard indicator from the site's only text input. Suppress it for mouse
+   focus only, and restate the ring for keyboard focus. */
 .search-wrap input:focus { outline: none; }
+.search-wrap input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* ============================================================================
    THE REGISTER — one list component for posts, projects and sources.
@@ -1139,4 +1150,16 @@ h3.article-heading {
   .control-bar { align-items: stretch; flex-direction: column; }
   .search-wrap { width: 100%; }
   .identity { padding-block: var(--s-6) var(--s-5); }
+
+  /* Nav + divider + three icons measured 358px inside a 339px band at 375px,
+     which pushed the document 1px wide. Tighten the gaps and let both groups
+     wrap instead of holding one line. */
+  .masthead-row { gap: var(--s-3); }
+  .masthead-nav {
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    justify-content: flex-start;
+    min-width: 0;
+  }
+  .nav { flex-wrap: wrap; gap: var(--s-4); min-width: 0; }
 }
