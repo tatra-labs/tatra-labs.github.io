@@ -34,6 +34,9 @@ Both posts and projects use `content.sections`. Every type takes a `value`; medi
 | `video` | Video URL. | `caption`, `poster`, and `autoplay` + `loop` together to make it a silent, controls-free animated screenshot |
 | `embed` | Iframe URL (e.g. a YouTube embed). | `caption` |
 | `links` | An **array** of `{ label, url }`. | `primary: true` on one of them for the filled button |
+| `markdown` | A markdown string: tables, code fences, lists, blockquotes and `$…$` / `$$…$$` math. | — |
+
+**On `markdown`:** it is the right choice for anything technical — a comparison table or a code block is far clearer than the same content flattened into `text` paragraphs. It reuses the parser, sanitiser and KaTeX that the book reader already loads, and **only a document that actually contains one pays for them**, so a plain JSON post still ships zero extra bytes. Output is sanitised through DOMPurify, wide tables get a scroll container, and the prose stylesheet already styles every element it can emit. Start headings at `##` — `#` is the page title, and a stray markdown `h1` is defensively restyled as an `h2` anyway.
 
 ```json
 { "type": "links", "value": [

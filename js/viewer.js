@@ -59,6 +59,25 @@
       '<figcaption class="media-caption">' + esc(caption) + '</figcaption></figure>';
   }
 
+  /* A markdown section lets a post carry tables, code blocks, lists and math
+     without a build step. The parser, sanitiser and KaTeX are the same ones
+     the book reader already loads; a document containing one of these
+     preloads them before rendering (see the fetch chain at the foot). */
+  function mdToHtml(md) {
+    if (!window.marked) return '<p>' + esc(md) + '</p>';
+    if (typeof marked.setOptions === 'function') {
+      marked.setOptions({ gfm: true, mangle: false, headerIds: true });
+    }
+    var html = marked.parse(String(md));
+    return window.DOMPurify ? DOMPurify.sanitize(html) : html;
+  }
+
+  function hasMarkdown(data) {
+    return ((data && data.content && data.content.sections) || []).some(function (s) {
+      return s && s.type === 'markdown';
+    });
+  }
+
   function renderLinks(links) {
     var html = links.map(function (link) {
       var url = TL.safeUrl(link && (link.url || link.href));
@@ -112,6 +131,9 @@
     }
     if (type === 'links') {
       return renderLinks(Array.isArray(value) ? value : []);
+    }
+    if (type === 'markdown') {
+      return mdToHtml(value);
     }
     return '';
   }
@@ -265,6 +287,7 @@
     var sections = (data.content && data.content.sections) || [];
     el.content.innerHTML = sections.map(renderSection).join('');
     wrapTables(el.content);
+    typesetMath(el.content);
   }
 
   function renderPaper(data) {
@@ -487,8 +510,14 @@
             return loadMarkdownDeps().then(function () { return renderBookSection(data, toc || {}); });
           });
       }
-      if (route.kind === 'paper') { renderPaper(data); return; }
-      renderStandard(data);
+      var draw = function () {
+        if (route.kind === 'paper') renderPaper(data);
+        else renderStandard(data);
+      };
+      /* Only a document that actually uses a markdown section pays for the
+         parser + KaTeX; a plain JSON post still ships zero extra bytes. */
+      if (hasMarkdown(data)) return loadMarkdownDeps().then(draw);
+      draw();
     })
     .catch(fail);
 })();

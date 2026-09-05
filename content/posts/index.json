@@ -1,29 +1,30 @@
 [
   {
+    "slug": "where-to-spend-the-bits",
+    "title": "Where to Spend the Bits",
+    "excerpt": "Every numeric format in deep learning — FP16, BF16, FP8, INT8 — is one decision made differently: how many bits buy range, and how many buy precision. Get that and the whole zoo makes sense.",
+    "date": "2026-09-05",
+    "readingTime": "8 min",
+    "tags": [
+      "Numerics",
+      "GPU",
+      "Quantization",
+      "Deep Learning",
+      "Hardware"
+    ],
+    "author": "Tatra Labs"
+  },
+  {
     "slug": "rag-workflow",
     "title": "Workflow of RAG",
     "excerpt": "Retrieval-Augmented Generation (RAG) combines retrieval with generation to ground LLM outputs in external knowledge.",
     "date": "2025-02-08",
     "readingTime": "4 min",
-    "tags": ["RAG", "NLP", "Deep Learning"],
-    "author": "Tatra Labs"
-  },
-  {
-    "slug": "welcome-post",
-    "title": "Welcome to Tatra Labs",
-    "excerpt": "A lightweight blog for notes and projects. This site is built for speed and clarity—minimal CSS, no heavy frameworks, and content you can filter by tags.",
-    "date": "2025-02-08",
-    "readingTime": "2 min",
-    "tags": ["meta", "blog", "NLP"],
-    "author": "Tatra Labs"
-  },
-  {
-    "slug": "getting-started",
-    "title": "Getting Started with the Blog",
-    "excerpt": "How to add new posts, use tags, and keep the site fast. Each post supports text, images, and video with automatic tag-based filtering.",
-    "date": "2025-02-07",
-    "readingTime": "5 min",
-    "tags": ["meta", "guide", "Deep Learning", "RAG", "Hallucination", "GAN"],
+    "tags": [
+      "RAG",
+      "NLP",
+      "Deep Learning"
+    ],
     "author": "Tatra Labs"
   }
 ]
