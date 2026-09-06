@@ -130,25 +130,34 @@ The script copies `jobs/site/` verbatim and injects one "← Tatra Labs" link in
 
 **`.nojekyll`** at the repo root keeps GitHub Pages from running these vendored files through Jekyll.
 
-## The three reader shells
+## The reader shells
 
-`404.html` is the viewer shell GitHub Pages serves for `/post/…` and `/project/…`. Two byte-identical copies live at `foundation/book/deep-learning/index.html` and `foundation/paper/deep-learning-paper/index.html` so those known routes return **HTTP 200** instead of a 404 status.
+`404.html` is the viewer shell GitHub Pages serves for `/post/…` and `/project/…`. Byte-identical copies live under `foundation/book/<slug>/index.html` (and `foundation/paper/<slug>/` if a paper exists) so those known routes return **HTTP 200** instead of a 404 status.
 
-**Every markup change to the reader must land in all three**, or two of the three routes regress. Don't do it by hand:
+**Every markup change to the reader must land in all of them**, or those routes regress. Don't do it by hand — the script derives the shell list from `content/foundation/`, so adding a book or paper is enough to get one:
 
 ```bash
-python tools/sync_shells.py            # mirror 404.html into both
+python tools/sync_shells.py            # mirror 404.html into every shell
 python tools/sync_shells.py --check    # exits non-zero if they drift
 ```
+
+It also warns about a shell left behind by a deleted book or paper; delete that directory when it does.
 
 ### Foundation: books and papers
 
 **URLs** in the browser (slug = folder / filename, not the long title):
 
-- Book: `/foundation/book/deep-learning` → loads **`content/foundation/books/deep-learning/book.json`**
-- Paper: `/foundation/paper/deep-learning-paper` → **`content/foundation/papers/deep-learning-paper.json`**
+- Book: `/foundation/book/<slug>` → loads **`content/foundation/books/<slug>/book.json`**
+- Paper: `/foundation/paper/<slug>` → **`content/foundation/papers/<slug>.json`**
 
-**Lists for the home page:** **`content/foundation/books/index.json`** and **`content/foundation/papers/index.json`** (same `slug` values as above).
+**Lists for the home page:** **`content/foundation/books/index.json`** and **`content/foundation/papers/index.json`** (same `slug` values as above). Either list may be empty (`[]`) — a group with no items is hidden, header included. There are currently two books and no papers.
+
+After adding or removing a section file, restamp how much of a book is written:
+
+```bash
+python tools/update_book_extent.py            # counts sections/*.md into toc.json
+python tools/update_book_extent.py --check    # exits non-zero if out of date
+```
 
 **Books (Markdown + TOC)** – The Deep Learning book uses **`content/foundation/books/deep-learning/book.json`** with `"reader": "markdown-toc"`, **`toc.json`** (generated), and **`sections/*.md`**. The viewer loads Marked + DOMPurify + KaTeX from a CDN. Sidebar links use `?section=sec-X-Y`.
 
