@@ -219,6 +219,45 @@ a { color: var(--text); text-decoration: none; }
 }
 .skip-link:focus { top: var(--s-4); }
 
+/* ============================================================================
+   BACK TO TOP — floating chrome, on the .skip-link recipe: a surface, a 1px
+   --rule-strong boundary, no radius and no shadow. Deliberately NOT the
+   conventional filled accent circle: rule 3 gives the site exactly one filled
+   component surface (.article-link--primary) and this is not it.
+   Appears past one viewport of scroll; js/totop.js owns that threshold.
+   ============================================================================ */
+.to-top {
+  position: fixed;
+  right: var(--pad);
+  bottom: var(--pad);
+  z-index: 45;             /* over the page, under .skip-link (50) */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  color: var(--text-muted);
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;      /* keeps it out of the tab order while hidden */
+  /* visibility is deliberately NOT transitioned. Delaying it until an opacity
+     fade finishes makes the hidden state depend on an animation completing —
+     which leaves the button focusable, and visible, anywhere frames are not
+     being produced. It flips instantly; only the fade-in is animated. */
+  transition: opacity var(--t) var(--ease),
+              color var(--t) var(--ease),
+              border-color var(--t) var(--ease);
+}
+.to-top--on { opacity: 1; visibility: visible; }
+.to-top:hover { color: var(--accent); border-color: var(--accent); }
+.to-top svg { flex: none; }
+
+@media print { .to-top { display: none; } }
+
 /* The one uppercase-label recipe: eyebrows, kickers, rail dates, chips. */
 .u-label {
   font-family: var(--font-sans);

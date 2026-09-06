@@ -200,9 +200,21 @@
     </div>
   </footer>
 
+  <!-- Appears past one viewport of scroll; js/totop.js owns the threshold.
+       position: fixed, so it is out of flow and does not disturb the body
+       flex column. -->
+  <button type="button" class="to-top" id="to-top" aria-label="Back to top">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+    <span>Top</span>
+  </button>
+
   <script src="/js/util.js"></script>
   <script src="/project/agents/app.js"></script>
   <script src="/js/theme.js"></script>
+  <script src="/js/totop.js"></script>
 </body>
 
 </html>
