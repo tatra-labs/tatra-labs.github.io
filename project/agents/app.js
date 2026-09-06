@@ -1,6 +1,6 @@
-/* The Agent Register: a numbered catalogue of agents, and one specimen sheet
-   per record. Both views render from content/agents/registry.json, which is
-   fetched once — every transition after first paint is zero-network.
+/* The Agent Hub: the list of agents, and one detail page per agent. Both
+   views render from content/agents/registry.json, which is fetched once —
+   every transition after first paint is zero-network.
 
    Two views, one document, one URL grammar:
      ./                      the register
@@ -75,7 +75,6 @@
     chips: document.getElementById('pattern-chips'),
     searchWrap: document.getElementById('search-wrap'),
     search: document.getElementById('search-input'),
-    legend: document.getElementById('pattern-legend'),
     gloss: document.getElementById('pattern-gloss'),
     status: document.getElementById('reg-status'),
     holdingsHead: document.getElementById('holdings-h'),
@@ -83,7 +82,6 @@
     holdingsNote: document.getElementById('holdings-note'),
     holdingsList: document.getElementById('holdings-list'),
     holdingsEmpty: document.getElementById('holdings-empty'),
-    colophon: document.getElementById('reg-colophon'),
 
     back: document.getElementById('sheet-back'),
     rail: document.getElementById('sheet-rail'),
@@ -145,7 +143,7 @@
       return 'Forked from work by ' + p.author + lic + '. The changes are listed under Provenance.';
     }
     return 'Written by ' + p.author + lic +
-      '. Mirrored unmodified and catalogued here — the code is not mine.';
+      '. Mirrored unmodified and listed here — the code is not mine.';
   }
 
   function hasCaveat(e) { return !!(e && e.caveat && String(e.caveat).trim()); }
@@ -279,17 +277,18 @@
       if (a.evaluation && a.evaluation.headline && hasCaveat(a.evaluation)) evaluated++;
     });
 
-    /* "1 original · 1 mirrored" — the register counts itself by provenance in
-       its own summary statistics, before you have read a single row. */
+    /* "1 mine · 1 mirrored" — the page counts itself by provenance up front,
+       before you have read a single row. The total is not repeated here: the
+       Agents section heading already carries it. */
+    var TALLY_WORD = { original: 'mine', fork: 'forked', mirror: 'mirrored' };
     var originParts = [];
     ['original', 'fork', 'mirror'].forEach(function (k) {
-      if (origins[k]) originParts.push(origins[k] + ' ' + ORIGIN_WORD[k].toLowerCase());
+      if (origins[k]) originParts.push(origins[k] + ' ' + TALLY_WORD[k]);
     });
 
     var domains = (data.domains || []).length;
     var cells = [
-      ['Catalogued', all.length],
-      ['Domains', Object.keys(covered).length + ' of ' + domains + ' covered'],
+      ['Domains', Object.keys(covered).length + ' of ' + domains],
       ['Origin', originParts.join(' · ') || '—'],
       ['Evaluated', evaluated + ' of ' + all.length]
     ];
@@ -332,7 +331,7 @@
 
     el.scheduleBody.innerHTML = rows.join('');
     el.schemeCount.textContent =
-      (data.domains || []).length + ' domains · ' + held + ' with holdings';
+      held + ' of ' + (data.domains || []).length + ' with an agent';
   }
 
   function renderControls(patterns, text) {
@@ -340,8 +339,10 @@
     agents().forEach(function (a) {
       (a.patterns || []).forEach(function (p) { inUse[p] = (inUse[p] || 0) + 1; });
     });
+    /* Only patterns something actually uses get a chip. A declared-but-unused
+       pattern gets nothing at all — a chip that filters to zero is a dead
+       control, and a line announcing it is page furniture. */
     var used = (data.patterns || []).filter(function (p) { return inUse[p.id]; });
-    var unused = (data.patterns || []).filter(function (p) { return !inUse[p.id]; });
 
     var showChips = used.length >= CHIP_MIN_PATTERNS;
     searchShown = searchShown || agents().length >= SEARCH_MIN_RECORDS || !!text ||
@@ -356,17 +357,6 @@
 
     el.searchWrap.classList.toggle('hidden', !showSearch);
     el.controls.classList.toggle('hidden', !showChips && !showSearch);
-
-    /* An empty DOMAIN is a gap in the portfolio and must be shown. An unused
-       PATTERN is only a technique nothing has needed yet, so it gets a line
-       rather than a chip that would filter to nothing. */
-    if (unused.length) {
-      el.legend.textContent = 'Declared, not yet used: ' +
-        unused.map(function (p) { return p.name; }).join(', ') + '.';
-      el.legend.classList.remove('hidden');
-    } else {
-      el.legend.classList.add('hidden');
-    }
 
     /* A pattern's gloss lives in title=, which touch and keyboard-only users
        never see. When exactly one pattern is pressed, print its definition. */
@@ -432,7 +422,6 @@
 
     var reg = data.register || {};
     if (el.lede) el.lede.textContent = reg.scope || '';
-    if (el.colophon) el.colophon.textContent = reg.policy || '';
     /* register.opened and register.updated are authored but never rendered:
        no date reaches any page on this site. The checker still uses `updated`
        to catch a register dated before its own newest record. */
@@ -451,7 +440,7 @@
     var all = agents();
     var shown = all.filter(function (a) { return matches(a, patterns, domain, text); });
 
-    el.holdingsHead.textContent = domain ? domainName(domain) : 'Holdings';
+    el.holdingsHead.textContent = domain ? domainName(domain) : 'Agents';
 
     var filtered = !!(domain || patterns.length || text);
     if (!all.length) {
@@ -459,9 +448,7 @@
     } else if (filtered) {
       el.holdingsCount.textContent = shown.length + ' of ' + all.length;
     } else {
-      el.holdingsCount.textContent = all.length === 1
-        ? 'No. ' + acc(all[0].no)
-        : 'Nos. ' + acc(all[0].no) + '–' + acc(all[all.length - 1].no);
+      el.holdingsCount.textContent = all.length;
     }
 
     /* Filtering to a domain with nothing in it is unreachable from the page —
@@ -480,15 +467,15 @@
     el.holdingsEmpty.classList.toggle('hidden', shown.length > 0);
     if (!shown.length) {
       el.holdingsEmpty.textContent = domain
-        ? 'The register holds no agent in ' + domainName(domain) + ' yet.'
-        : 'No record matches the current filter.';
+        ? 'Nothing in ' + domainName(domain) + ' yet.'
+        : 'Nothing matches the current filter.';
     }
 
     /* The site's own live-region idiom (index.html #result-status, written by
        js/main.js): the count and the empty state change silently otherwise. */
     if (el.status) {
       el.status.firstElementChild.textContent = filtered
-        ? shown.length + ' of ' + all.length + ' records match'
+        ? shown.length + ' of ' + all.length + ' agents match'
         : '';
     }
 
@@ -505,7 +492,7 @@
     var p = a.provenance || {};
     var b = a.budget;
     var rows = [
-      ['Accession', acc(a.no)],
+      ['No.', acc(a.no)],
       ['Domain', domainName(a.domain)],
       ['Status', STATUS_WORD[a.status] || a.status || ''],
       ['Origin', ORIGIN_WORD[p.origin] || 'MISSING'],
@@ -658,14 +645,17 @@
     el.back.setAttribute('href', buildUrl(back));
     el.back.textContent = q.get('domain')
       ? '← ' + domainName(q.get('domain'))
-      : '← Register';
+      : '← All agents';
 
     el.rail.innerHTML = railRows(a);
 
     el.kicker.innerHTML = '<a href="./?domain=' + encodeURIComponent(a.domain) +
       '" data-domain="' + esc(a.domain) + '">' + esc(domainName(a.domain)) +
       '</a> · No. ' + esc(acc(a.no));
-    el.title.textContent = a.title;
+    /* The record's title links to the record on its own — the canonical link
+       to copy, without whatever filter you happened to arrive through. */
+    el.title.innerHTML = '<a href="./?agent=' + encodeURIComponent(a.slug) +
+      '" data-agent="' + esc(a.slug) + '">' + esc(a.title) + '</a>';
     el.sub.textContent = a.oneLine || '';
     el.sub.classList.toggle('hidden', !a.oneLine);
 
@@ -800,6 +790,14 @@
         return;
       }
 
+      /* The register's own title: clears every filter. */
+      var home = t.closest('[data-register-home]');
+      if (home) {
+        e.preventDefault();
+        go(new URLSearchParams(), true);
+        return;
+      }
+
       var toAgent = t.closest('[data-agent]');
       if (toAgent) {
         e.preventDefault();
@@ -882,7 +880,7 @@
         if (y0) window.scrollTo(0, y0);
       })
       .catch(function () {
-        fail('The register could not be loaded. Its source is content/agents/registry.json.');
+        fail('This page could not load its data. The source is content/agents/registry.json.');
       });
   }
 

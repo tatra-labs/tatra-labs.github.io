@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agent Hub — Tatra Labs</title>
   <meta name="description"
-    content="Every agent built at Tatra Labs, by domain: what it does, the pattern it uses, how it was evaluated, and who wrote it.">
+    content="The agents I have built, and the ones I have studied closely — what each one does, how it was evaluated, and who wrote it.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
@@ -80,32 +80,35 @@
            write-up is rendered by the same client-side viewer as every other
            article here, so it is not a fallback — say so rather than sending
            someone to a second blank page. -->
-      <p class="spread"><span class="u-wide">The register renders from a JSON file in the
-        browser. Without JavaScript, read the registry itself at
+      <p class="spread"><span class="u-wide">This page renders from a JSON file in the
+        browser. Without JavaScript, read that file directly at
         <a href="/content/agents/registry.json">/content/agents/registry.json</a>, or the
         source at <a href="https://github.com/tatra-labs">github.com/tatra-labs</a>. The
         write-up at <code>/project/agent-hub</code> needs JavaScript too.</span></p>
     </noscript>
 
     <!-- ====================================================================
-         THE REGISTER. One .spread holds every region; each region is .u-wide
+         THE HUB. One .spread holds every region; each region is .u-wide
          so it spans rail + main, exactly as the home page's list sections do.
          Nothing here is a direct child of .spread without a grid-column.
          ================================================================= -->
     <div class="spread" id="register-view">
 
       <header class="u-wide identity-inner reg-head">
-        <p class="u-label identity-eyebrow">Register</p>
-        <h1 class="identity-name">Agent Register</h1>
+        <p class="u-label identity-eyebrow">Agents</p>
+        <!-- Links to "./" so it clears an active domain or pattern filter and
+             returns to the whole register. -->
+        <h1 class="identity-name"><a href="./" data-register-home="1">Agent Hub</a></h1>
         <p class="identity-lede" id="reg-lede"></p>
         <dl class="identity-index" id="reg-index"></dl>
       </header>
 
-      <!-- The scheme is authored, not derived: it is the map of where agents
-           go, and it exists whether or not anything has been built there. -->
+      <!-- The domain list is authored, not derived from the agents: a domain
+           exists whether or not anything has been built in it, which is what
+           makes an empty one a stated gap rather than an empty filter. -->
       <section class="u-wide list-section" aria-labelledby="scheme-h">
         <div class="section-head">
-          <h2 id="scheme-h">Scheme</h2>
+          <h2 id="scheme-h">Domains</h2>
           <span class="section-count" id="scheme-count"></span>
         </div>
         <div class="schedule-wrap">
@@ -113,8 +116,8 @@
             <thead>
               <tr>
                 <th scope="col">Domain</th>
-                <th scope="col">Held</th>
-                <th scope="col">Scope note</th>
+                <th scope="col">Agents</th>
+                <th scope="col">Notes</th>
               </tr>
             </thead>
             <tbody id="schedule-body"></tbody>
@@ -124,7 +127,7 @@
 
       <section class="u-wide list-section" aria-labelledby="holdings-h">
         <div class="section-head">
-          <h2 id="holdings-h">Holdings</h2>
+          <h2 id="holdings-h">Agents</h2>
           <span class="section-count" id="holdings-count"></span>
         </div>
 
@@ -136,13 +139,12 @@
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
-            <label for="search-input" class="visually-hidden">Search the register</label>
+            <label for="search-input" class="visually-hidden">Search the agents</label>
             <input type="search" id="search-input" placeholder="Search" autocomplete="off">
           </div>
         </div>
 
         <p class="reg-legend hidden" id="pattern-gloss"></p>
-        <p class="reg-legend hidden" id="pattern-legend"></p>
         <p class="reg-note hidden" id="holdings-note"></p>
 
         <!-- The site's own live-region idiom (see #result-status on the home
@@ -153,8 +155,6 @@
         <ol class="register" id="holdings-list"></ol>
         <p class="empty hidden" id="holdings-empty"></p>
       </section>
-
-      <p class="u-wide empty reg-colophon" id="reg-colophon"></p>
     </div>
 
     <!-- ====================================================================
@@ -163,7 +163,7 @@
          apply unchanged: back-link in row 1, rail and #article in row 2.
          ================================================================= -->
     <div class="spread viewer-shell agents-sheet hidden" id="sheet-view">
-      <a class="back-link u-wide" id="sheet-back" href="./">&larr; Register</a>
+      <a class="back-link u-wide" id="sheet-back" href="./">&larr; All agents</a>
 
       <aside class="article-rail" id="sheet-rail" aria-label="Record details"></aside>
 

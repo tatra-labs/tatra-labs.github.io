@@ -13,18 +13,5 @@
       "Hardware"
     ],
     "author": "Tatra Labs"
-  },
-  {
-    "slug": "rag-workflow",
-    "title": "Workflow of RAG",
-    "excerpt": "Retrieval-Augmented Generation (RAG) combines retrieval with generation to ground LLM outputs in external knowledge.",
-    "date": "2025-02-08",
-    "readingTime": "4 min",
-    "tags": [
-      "RAG",
-      "NLP",
-      "Deep Learning"
-    ],
-    "author": "Tatra Labs"
   }
 ]

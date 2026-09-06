@@ -140,6 +140,13 @@
 
   /* ----------------------------------------------------------------- hero */
 
+  /* Every page's title links to that page — a stable canonical link to copy,
+     and the same rule the list pages use to clear their filter state. */
+  function setTitle(text, href) {
+    if (!el.title) return;
+    el.title.innerHTML = '<a href="' + esc(href) + '">' + esc(text) + '</a>';
+  }
+
   function setKicker(text, href) {
     if (!el.kicker) return;
     if (!text) { el.kicker.classList.add('hidden'); return; }
@@ -273,7 +280,7 @@
     applyToc(false);
     document.title = (data.title || 'Page') + ' — Tatra Labs';
     setKicker(route.kicker, null);
-    el.title.textContent = data.title || '';
+    setTitle(data.title || '', path);
     if (el.sub) el.sub.classList.add('hidden');
     if (el.nav) el.nav.classList.add('hidden');
 
@@ -294,7 +301,7 @@
     applyToc(false);
     document.title = (data.title || 'Paper') + ' — Tatra Labs';
     setKicker(route.kicker, null);
-    el.title.textContent = data.title || '';
+    setTitle(data.title || '', path);
 
     if (el.sub) {
       var people = TL.authors(data).filter(function (a) { return a !== TL.OWNER; });
@@ -337,7 +344,7 @@
 
     document.title = heading + ' · ' + (data.title || 'Book') + ' — Tatra Labs';
     setKicker('Book · ' + (data.title || ''), '/foundation/book/' + encodeURIComponent(slug));
-    el.title.textContent = heading;
+    setTitle(heading, path + '?section=' + encodeURIComponent(cur.id));
 
     if (el.sub) {
       var chapter = chapterOf(toc, cur.id);

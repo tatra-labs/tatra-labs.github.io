@@ -39,7 +39,7 @@ The stylesheet is token-driven and states its own rules at the top of `css/style
 - **No dates** – Publication dates are **never displayed**. Every content file still carries `date` (and the register its `added`/`updated`), and those still order the lists — nothing renders them. `js/util.js` has no date helpers at all; that is deliberate, and its header says so. Posts still show reading time.
 - **Sticky masthead** – The nav is `position: sticky` at the top of the viewport, so the three tabs stay reachable from the middle of a long article or a 164-section book. Anything that positions against the viewport top clears it via the `--masthead-h` token: the sticky article rail and book TOC, and `scroll-margin-top` on anchored headings.
 - **Content** – Posts and projects support **text**, **images**, and **video** (including embeds).
-- **Agent Register** – A numbered catalogue of agents at `/project/agents/`, rendered from `content/agents/registry.json`: a published domain scheme beside the holdings, a derived provenance byline on every record, and one specimen sheet per agent at `?agent={slug}`.
+- **Agent Hub** – Every agent, at `/project/agents/`, rendered from `content/agents/registry.json`: an authored domain list beside the agents themselves, a derived provenance byline on every one, and a detail page per agent at `?agent={slug}`.
 - **Foundation** – Books and papers use `/foundation/book/{slug}` and `/foundation/paper/{slug}` with a **table of contents** (Markdown sections for books; heading anchors for papers). The viewer reuses the same site header as the home page.
 
 ## How to run locally
@@ -112,7 +112,7 @@ Projects usually want a **`links`** section for "open the live thing" and "read 
 
 ### New agent
 
-The **Agent Register** at [`/project/agents/`](https://tatra-labs.github.io/project/agents/) renders from a single file. Adding an agent is one JSON object in **`content/agents/registry.json`** (plus a bump of `register.updated` to at least the new record's date) — no new page, no HTML, no build step:
+The **Agent Hub** at [`/project/agents/`](https://tatra-labs.github.io/project/agents/) renders from a single file. Adding an agent is one JSON object in **`content/agents/registry.json`** (plus a bump of `register.updated` to at least the new record's date) — no new page, no HTML, no build step:
 
 ```bash
 $EDITOR content/agents/registry.json
@@ -123,7 +123,7 @@ The field contract is documented in **`content/README.md`**. Three things about 
 
 1. **`provenance.author` and `.origin` are required on every record; `.licence` is required whenever the work is not yours**, and its absence on your own work is reported as a note (the byline then reads "licence not stated"). The byline shown on each row is *derived* from these by a fixed map in `project/agents/app.js` (`author · licence · {original work | forked, changes listed | mirrored unmodified}`), so it is not a field anyone can author — no record can soften or omit its own attribution. When the work is not yours, `upstream.url` and `contribution` are required too.
 2. **A result may not appear without its caveat.** If `evaluation.headline` is set and `evaluation.caveat` is empty, the renderer *suppresses the numbers*. Fix the record rather than ship a suppressed result.
-3. **`domains[]` and `patterns[]` are a closed, authored vocabulary.** A record's `domain` must resolve, because a typo there would silently drop it out of its own schedule row — the one failure the page cannot show you.
+3. **`domains[]` and `patterns[]` are a closed, authored vocabulary.** A record's `domain` must resolve, because a typo there would silently drop it out of its own row in the domain table — the one failure the page cannot show you.
 
 A domain with no agents is not a bug and must not be hidden: it renders as an open row whose scope note states the **standard** an agent there would have to meet. The checker rejects "coming soon", "planned", "work in progress", "WIP", "roadmap" and "TBD" in a scope note, and rejects any string beginning `TODO`.
 
@@ -136,7 +136,7 @@ Currently hosted:
 | URL | App | Source | Kind |
 |-----|-----|--------|------|
 | [`/project/jobs/`](https://tatra-labs.github.io/project/jobs/) | US Job Market Visualizer + Remote Job Explorer (write-up at `/project/us-job-market`) | [tatra-labs/jobs](https://github.com/tatra-labs/jobs) | vendored |
-| [`/project/agents/`](https://tatra-labs.github.io/project/agents/) | The **Agent Register** (write-up at `/project/agent-hub`) | this repo | authored here |
+| [`/project/agents/`](https://tatra-labs.github.io/project/agents/) | The **Agent Hub** (write-up at `/project/agent-hub`) | this repo | authored here |
 
 **The two kinds are different and the distinction matters.** `project/jobs/` is *vendored* from another repo and must not be hand-edited (see the sync script below). `project/agents/` is *authored in this repo*: edit it directly, and note that it deliberately loads `/css/style.css` and follows the design law rather than shipping a palette of its own, so it reads as a page of the site and not as a bolted-on app.
 

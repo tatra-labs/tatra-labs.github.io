@@ -115,14 +115,6 @@
   color: var(--text-muted);
 }
 
-/* Two sentences of catalogue policy, in .empty's serif-italic voice. */
-.reg-colophon {
-  margin-top: var(--s-7);
-  padding-top: var(--s-4);
-  border-top: 1px solid var(--rule);
-  max-width: var(--measure);
-}
-
 /* ---- the specimen sheet ------------------------------------------------- */
 /* The sheet deliberately does NOT widen --main past .viewer-shell's 35rem:
    .article-content caps itself at --measure regardless, so a wider band would
@@ -207,7 +199,7 @@
     text-transform: uppercase;
     margin-bottom: var(--s-1);
   }
-  .schedule-n::after { content: " held"; }
+  .schedule-n::before { content: "Agents: "; }
 }
 
 /* ---- print -------------------------------------------------------------- */

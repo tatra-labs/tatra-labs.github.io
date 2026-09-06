@@ -1,8 +1,8 @@
 [
   {
     "slug": "agent-hub",
-    "title": "Agent Hub — the Agent Register",
-    "excerpt": "A numbered catalogue of every agent I build, across healthcare, finance, go-to-market and e-commerce. Its scheme is published beside its holdings, so an empty domain states the bar it has not cleared — and every record carries a derived byline, so the one that is Anthropic's code says so in the same slot as the one that is mine.",
+    "title": "Agent Hub",
+    "excerpt": "One page for every agent I build, across healthcare, finance, go-to-market and e-commerce. Each one shows what it does, what its tools can change, and what I measured — and says plainly who wrote it, including the one I only studied.",
     "date": "2026-09-06",
     "tags": ["LLM Agents", "Agent Patterns", "Provenance", "Evaluation"],
     "author": "Tatra Labs",

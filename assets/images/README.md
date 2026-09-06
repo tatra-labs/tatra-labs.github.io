@@ -2,8 +2,6 @@
 
 Place image files here and reference them in posts with path `/assets/images/filename.png`.
 
-For the RAG workflow post: download your diagram from Google Drive and save it as **workflow-of-RAG.png** in this folder.
-
 ## `projects/`
 
 Screenshots and clips for the Projects tab. Each project card in `content/projects/index.json` points its `image` at one of these, and the write-up reuses it as the page's hero.

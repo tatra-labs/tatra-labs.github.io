@@ -369,6 +369,17 @@ main { flex: 1 0 auto; }
   letter-spacing: var(--ls-display);
 }
 
+/* A page's title links to that page. On a view that carries filter state in
+   the query string — the home tabs and tag chips, the register's domain and
+   pattern filters — that link is how you get back to the unfiltered view;
+   elsewhere it is a stable canonical link to copy. It must not read as a link
+   in prose, so it inherits the ink and moves only on hover, like the
+   wordmark. */
+.identity-name a,
+.article-title a { color: inherit; }
+.identity-name a:hover,
+.article-title a:hover { color: var(--accent); }
+
 .identity-lede {
   margin: var(--s-3) 0 0;
   max-width: var(--measure);

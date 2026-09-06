@@ -2,50 +2,49 @@
   "register": {
     "opened": "2026",
     "updated": "2026-09-06",
-    "scope": "Agents I have built, deployed, or read closely enough to describe. Every record states who wrote it and under what licence — including the ones I did not write.",
-    "policy": "Accession numbers are permanent. A withdrawn agent keeps its number and is marked withdrawn; numbers are never reused. Every record states its author and licence, including the ones that are not mine."
+    "scope": "The agents I've built, and the ones I've studied closely."
   },
 
   "domains": [
     {
       "id": "puzzles",
       "name": "Puzzles & games",
-      "note": "Constraint-shaped problems where an answer can be checked exactly. The cheapest place to measure whether scaffolding earns its keep, because the ground truth is free."
+      "note": "Constraint problems where I can check the answer exactly — the cheapest place to test whether scaffolding earns its keep."
     },
     {
       "id": "e-commerce",
       "name": "E-commerce",
-      "note": "Agents that read a catalogue and act on a cart, an order or a listing. The interesting failure here is not a wrong sentence, it is a real purchase or a real price change."
+      "note": "Agents that act on a cart, an order or a listing, where a mistake costs money rather than face."
     },
     {
       "id": "healthcare",
       "name": "Healthcare",
-      "note": "Open. The bar is a citation on every clinical claim and a human approval before anything is written to a record. I will not put an unevaluated agent here."
+      "note": "Open. I want a citation on every clinical claim and a human approval before anything reaches a record."
     },
     {
       "id": "finance",
       "name": "Finance",
-      "note": "Open. Reconciliation and filing extraction are the honest first targets: both have ground truth to score against, so a claim about accuracy can be checked rather than asserted."
+      "note": "Open. Reconciliation and filing extraction first — both have ground truth I can score against."
     },
     {
       "id": "gtm",
       "name": "Go-to-market",
-      "note": "Open. Research-and-draft is easy to demo and hard to evaluate. An entry here needs a held-out set of accounts and a rubric scored blind, not a screenshot of a good answer."
+      "note": "Open. Research-and-draft demos easily and evaluates badly; I'd want a held-out set of accounts, not a screenshot."
     },
     {
       "id": "ops",
       "name": "Operations",
-      "note": "Open. Staged writes with human approval is the only pattern I would ship into a system of record, so an entry here has to carry an approval surface, not just a tool loop."
+      "note": "Open. Staged writes with human approval is the only pattern I'd ship into a system of record."
     },
     {
       "id": "research",
       "name": "Research & retrieval",
-      "note": "Open. Retrieval is the easy half; the hard half is saying what the answer does not support. An entry here needs an abstention rate, not just a hit rate."
+      "note": "Open. Retrieval is the easy half; I'd want an abstention rate, not just a hit rate."
     },
     {
       "id": "devtools",
       "name": "Developer tools",
-      "note": "Open. An entry here has to beat the editor or CLI a developer already has, on a task with a measurable pass rate — nothing yet is distinct enough to deserve its own number."
+      "note": "Open. Nothing yet that beats the tools I already reach for."
     }
   ],
 
@@ -271,7 +270,7 @@
           "commit": "fd4d59224ab96b43c6dc6888207c67b3bd5a24cf"
         },
         "changes": [],
-        "contribution": "Mirrored unmodified and read closely. The record on this page is mine; the code is not. I catalogue it here because it is the clearest worked example I know of the pattern I care about — an agent whose dangerous operations are staged rather than executed."
+        "contribution": "Mirrored unmodified and read closely. The record on this page is mine; the code is not. I list it here because it is the clearest worked example I know of the pattern I care about — an agent whose dangerous operations are staged rather than executed."
       },
 
       "links": [
