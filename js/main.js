@@ -137,20 +137,14 @@
 
   /* --------------------------------------------------------------- entries */
 
-  /* The year prints only when it differs from the row above: at two 2025
-     posts it appears once, and at forty entries the list silently
-     self-groups into years with no headings added. */
-  function renderEntry(item, prevYear) {
-    var year = TL.year(item.date);
-    var showYear = year && year !== prevYear;
-
+  /* Publication dates are deliberately not rendered anywhere on the site.
+     `date` is still authored in every index.json and still orders the lists —
+     it is simply never shown, so the rail carries only the kind and, for a
+     post, its reading time. */
+  function renderEntry(item) {
     var rail = ['<div class="entry-rail">'];
     if (item.kind === 'book' || item.kind === 'paper') {
       rail.push('<span class="entry-meta entry-kind">' + esc(item.kind) + '</span>');
-    }
-    rail.push('<span class="entry-year">' + (showYear ? esc(year) : '') + '</span>');
-    if (item.kind !== 'book' && item.kind !== 'paper') {
-      rail.push('<span class="entry-meta">' + esc(TL.railDate(item.date)) + '</span>');
     }
     if (item.readingTime) rail.push('<span class="entry-meta">' + esc(item.readingTime) + '</span>');
     rail.push('</div>');
@@ -224,13 +218,7 @@
       var items = collections[s.key].filter(matches);
       total += items.length;
 
-      var prevYear = '';
-      s.list.innerHTML = items.map(function (item) {
-        var html = renderEntry(item, prevYear);
-        var y = TL.year(item.date);
-        if (y) prevYear = y;
-        return html;
-      }).join('');
+      s.list.innerHTML = items.map(renderEntry).join('');
 
       s.count.textContent = items.length ? items.length : '';
       s.empty.classList.toggle('hidden', items.length > 0);
@@ -243,20 +231,16 @@
     }
   }
 
+  /* Counts only. The "Updated <month year>" cell was the last place a
+     publication date reached the page. */
   function renderIndex() {
     if (!els.index) return;
-    var updated = [].concat(collections.projects, collections.posts, collections.foundation)
-      .map(function (i) { return i.date; })
-      .filter(Boolean)
-      .sort()
-      .pop();
 
     var cells = [
       ['Projects', collections.projects.length],
       ['Writing', collections.posts.length],
       ['Foundation', collections.foundation.length]
     ];
-    if (updated) cells.push(['Updated', TL.formatDate(updated, { year: 'numeric', month: 'short' })]);
 
     els.index.innerHTML = cells.map(function (c) {
       return '<div><dt class="u-label">' + esc(c[0]) + '</dt><dd>' + esc(c[1]) + '</dd></div>';

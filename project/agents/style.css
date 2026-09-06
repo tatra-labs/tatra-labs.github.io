@@ -1,0 +1,235 @@
+/* ============================================================================
+   AGENT REGISTER — the hub's own styles.
+
+   This page is a page of the site, not a detached app: it loads /css/style.css
+   first and reuses .spread, .register/.entry, .identity-*, .chips, .control-bar,
+   .viewer-shell and the whole .article-* reader. This file holds only what the
+   site had no component for — the domain schedule table, two register
+   footnotes, and the sheet's provenance block.
+
+   THE FOUR RULES OF css/style.css HOLD HERE WITHOUT EXCEPTION:
+   1. No border-radius, no box-shadow. Nothing below declares either.
+   2. Two stroke weights only: 1px var(--rule), 2px var(--rule-strong)/--accent.
+   3. One filled component surface on the site, .article-link--primary, which
+      this page reuses and never duplicates. Nothing below sets a background
+      except var(--sunken) on the provenance block — a recessed surface, the
+      same use .article-content pre already makes of it.
+   4. No colour literal. Every colour below is a var() into the token block,
+      so all three theme states follow for free.
+
+   ONE MORE, SPECIFIC TO THIS PAGE: origin is never ranked chromatically.
+   The domain gets .entry-kind (accent); "Original" and "Mirrored" both get
+   plain .entry-meta at --text-faint. Do not accent one and mute the other —
+   the register states authorship, it does not grade it.
+   ============================================================================ */
+
+/* ---- register head ------------------------------------------------------ */
+/* Mirrors .identity's own padding-block; the band itself is .identity-inner. */
+.reg-head { padding-block: var(--s-8) var(--s-6); }
+
+/* ---- the scheme (domain schedule) --------------------------------------- */
+/* .article-content already carries the site's table voice, but it is scoped to
+   prose and caps itself at the 66-character measure. The schedule is front
+   matter running the full band, so it restates those declarations rather than
+   borrowing a class that would narrow it to a reading column. */
+.schedule-wrap { overflow-x: auto; }
+
+.schedule {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  font-variant-numeric: tabular-nums;
+}
+.schedule th[scope="col"] {
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  border-bottom: 2px solid var(--rule-ink);
+  padding: .4rem .85rem .4rem 0;
+}
+.schedule td,
+.schedule th[scope="row"] {
+  border-bottom: 1px solid var(--rule);
+  padding: .55rem .85rem .55rem 0;
+  text-align: left;
+  vertical-align: baseline;
+}
+.schedule tr:last-child td,
+.schedule tr:last-child th[scope="row"] { border-bottom: 0; }
+
+.schedule th[scope="row"] {
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.schedule th[scope="row"] a {
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+}
+.schedule th[scope="row"] a:hover { color: var(--accent); border-bottom-width: 2px; }
+
+/* A domain with nothing in it is not a link and must not look like one: no
+   anchor, no hover, no pointer, and no count cell inventing a shape for
+   information that does not exist. The difference between "there is work here"
+   and "there is not" is legible from the cursor alone, with no badge. */
+.schedule-row--open th[scope="row"] { font-weight: 400; color: var(--text-muted); }
+
+.schedule-n { color: var(--text-faint); white-space: nowrap; }
+.schedule-note { color: var(--text-muted); line-height: var(--lh-ui); }
+
+/* ---- holdings ----------------------------------------------------------- */
+.reg-controls { margin-top: var(--s-5); }
+
+/* A control appears only when it would do work: the pattern chips below three
+   distinct patterns, and the search field below eight records, are furniture on
+   a page whose whole argument is that nothing on it is a placeholder. app.js
+   owns the thresholds; this is only their spacing. */
+.reg-legend {
+  margin: var(--s-4) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+}
+
+/* The evaluation line on a register row. One authored sentence carrying the
+   number AND its qualification together, so a result cannot be skimmed off its
+   caveat — and "Not evaluated." where there is nothing to report, which is why
+   this line prints on every row rather than only on the evaluated ones. */
+.entry-eval {
+  position: relative;
+  margin: var(--s-2) 0 0;
+  max-width: var(--measure);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-faint);
+}
+
+.reg-note {
+  margin: var(--s-4) 0 0;
+  max-width: var(--measure);
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  line-height: var(--lh-lede);
+  color: var(--text-muted);
+}
+
+/* Two sentences of catalogue policy, in .empty's serif-italic voice. */
+.reg-colophon {
+  margin-top: var(--s-7);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+  max-width: var(--measure);
+}
+
+/* ---- the specimen sheet ------------------------------------------------- */
+/* The sheet deliberately does NOT widen --main past .viewer-shell's 35rem:
+   .article-content caps itself at --measure regardless, so a wider band would
+   only stretch the provenance paragraph past a readable line. Wide tables get
+   the site's existing answer instead — .article-content .table-wrap scrolls. */
+
+/* The standing-paragraph convention (.article-content > p:first-of-type at
+   --fs-lg) belongs to an essay that opens with prose. A specimen sheet opens
+   with a heading, so that selector would enlarge whatever paragraph happened to
+   fall first — today the loop's closing note, mid-document. Reset it. */
+.agents-sheet .article-content > p:first-of-type {
+  font-size: inherit;
+  line-height: var(--lh-body);
+}
+
+/* The upstream's own statement of authorship, set in the recipe
+   .article-content pre already uses, so it reads as quoted foreign material
+   rather than as one more paragraph in my voice. */
+.sheet-prov {
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--rule-strong);
+  background: var(--sunken);
+  padding: var(--s-4) var(--s-5);
+  font-size: var(--fs-base);
+  line-height: var(--lh-lede);
+  color: var(--text-muted);
+}
+.sheet-prov > *:first-child { margin-top: 0; }
+.sheet-prov > *:last-child { margin-bottom: 0; }
+.sheet-prov dl { margin: var(--s-3) 0 0; display: grid; gap: var(--s-1); }
+.sheet-prov dt {
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.sheet-prov dd {
+  margin: 0 0 var(--s-2);
+  font-size: var(--fs-sm);
+  word-break: break-word;
+}
+.sheet-prov code { font-family: var(--font-mono); font-size: .875em; }
+
+/* An unevaluated record keeps its heading and says so; the heading is never
+   suppressed, because a suppressed heading would let an unevaluated agent look
+   the same as an evaluated one. Same rule for a missing tools table. */
+.sheet-absent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-faint);
+}
+
+/* ---- responsive --------------------------------------------------------- */
+/* Three columns and a long scope note do not survive a phone. Below 40rem the
+   schedule becomes one block per domain: name, then the count as a label, then
+   the note. The header row is hidden, so the count restates its own column. */
+@media (max-width: 40rem) {
+  .schedule thead {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .schedule tr {
+    display: block;
+    border-bottom: 1px solid var(--rule);
+    padding-block: var(--s-3);
+  }
+  .schedule tr:last-child { border-bottom: 0; }
+  .schedule td,
+  .schedule th[scope="row"] {
+    display: block;
+    border: 0;
+    padding: 0;
+    white-space: normal;
+  }
+  .schedule th[scope="row"] { margin-bottom: var(--s-1); }
+  .schedule-n {
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    margin-bottom: var(--s-1);
+  }
+  .schedule-n::after { content: " held"; }
+}
+
+/* ---- print -------------------------------------------------------------- */
+/* A record printed as a one-page spec, with its provenance byline intact. The
+   register view is already display:none when a sheet is open, so nothing needs
+   hiding but the chrome. */
+@media print {
+  .masthead-nav,
+  .site-footer,
+  .skip-link,
+  .back-link,
+  .reg-controls { display: none; }
+  .article-rail { position: static; }
+
+  /* Browsers drop backgrounds when printing but keep borders, so the site's
+     one filled surface would print its --on-accent label onto unprinted paper
+     inside a visible box. On paper it degrades to the stroke-only treatment
+     every other .article-link already uses. Rule 3 is intact: the filled
+     surface still exists exactly once, on screen. */
+  .article-link--primary {
+    background: none;
+    color: var(--text);
+    border-color: var(--rule-strong);
+  }
+}

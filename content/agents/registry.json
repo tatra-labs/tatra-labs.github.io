@@ -1,0 +1,289 @@
+{
+  "register": {
+    "opened": "2026",
+    "updated": "2026-09-06",
+    "scope": "Agents I have built, deployed, or read closely enough to describe. Every record states who wrote it and under what licence — including the ones I did not write.",
+    "policy": "Accession numbers are permanent. A withdrawn agent keeps its number and is marked withdrawn; numbers are never reused. Every record states its author and licence, including the ones that are not mine."
+  },
+
+  "domains": [
+    {
+      "id": "puzzles",
+      "name": "Puzzles & games",
+      "note": "Constraint-shaped problems where an answer can be checked exactly. The cheapest place to measure whether scaffolding earns its keep, because the ground truth is free."
+    },
+    {
+      "id": "e-commerce",
+      "name": "E-commerce",
+      "note": "Agents that read a catalogue and act on a cart, an order or a listing. The interesting failure here is not a wrong sentence, it is a real purchase or a real price change."
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare",
+      "note": "Open. The bar is a citation on every clinical claim and a human approval before anything is written to a record. I will not put an unevaluated agent here."
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "note": "Open. Reconciliation and filing extraction are the honest first targets: both have ground truth to score against, so a claim about accuracy can be checked rather than asserted."
+    },
+    {
+      "id": "gtm",
+      "name": "Go-to-market",
+      "note": "Open. Research-and-draft is easy to demo and hard to evaluate. An entry here needs a held-out set of accounts and a rubric scored blind, not a screenshot of a good answer."
+    },
+    {
+      "id": "ops",
+      "name": "Operations",
+      "note": "Open. Staged writes with human approval is the only pattern I would ship into a system of record, so an entry here has to carry an approval surface, not just a tool loop."
+    },
+    {
+      "id": "research",
+      "name": "Research & retrieval",
+      "note": "Open. Retrieval is the easy half; the hard half is saying what the answer does not support. An entry here needs an abstention rate, not just a hit rate."
+    },
+    {
+      "id": "devtools",
+      "name": "Developer tools",
+      "note": "Open. An entry here has to beat the editor or CLI a developer already has, on a task with a measurable pass rate — nothing yet is distinct enough to deserve its own number."
+    }
+  ],
+
+  "patterns": [
+    {
+      "id": "generate-verify",
+      "name": "Generate & verify",
+      "gloss": "The model proposes ranked candidates; a non-model verifier decides which survive."
+    },
+    {
+      "id": "critique-reask",
+      "name": "Critique & re-ask",
+      "gloss": "The agent scores its own output, finds the weak parts, and re-queries only those — conditioned on what the first pass established."
+    },
+    {
+      "id": "tool-loop",
+      "name": "Tool loop",
+      "gloss": "The model calls tools in a loop until a stop condition, with the loop owned by a runtime rather than by the prompt."
+    },
+    {
+      "id": "skills-routing",
+      "name": "Skills on demand",
+      "gloss": "Flows live in separate skill files the model loads through a tool, so a prompt carries the request classes it needs and not all of them."
+    },
+    {
+      "id": "staged-writes",
+      "name": "Staged writes",
+      "gloss": "Every side effect is proposed, shown, and applied only on an explicit approval — the write path and the approval path are different calls."
+    },
+    {
+      "id": "planner",
+      "name": "Planner / executor",
+      "gloss": "A plan is produced and shown first, then executed step by step against it."
+    }
+  ],
+
+  "agents": [
+    {
+      "no": 1,
+      "slug": "crossword-puzzle-agent",
+      "title": "Crossword Puzzle Agent",
+      "domain": "puzzles",
+      "status": "live",
+      "added": "2026-09-02",
+      "updated": "2026-09-02",
+
+      "oneLine": "Solves crosswords by pairing an LLM that reads clues with belief propagation and search that force the grid to agree with itself — then re-asking only the entries it doubts.",
+
+      "patterns": ["generate-verify", "critique-reask"],
+
+      "autonomy": "Fully autonomous. It runs to a filled grid with no human in the loop, and nothing it does leaves the process except billed model calls.",
+
+      "loop": {
+        "steps": [
+          "Ask the model for several ranked candidates per clue with probabilities, keeping explicit mass on \"the answer is in none of these\" — the piece that stops a confident-but-wrong guess corrupting every entry that crosses it.",
+          "Run loopy belief propagation over the grid so every entry's distribution is tempered by what its crossings believe.",
+          "Search for the highest-scoring set of real words that mutually fit.",
+          "Score the filled grid, pick the weakest entries, and re-ask only those clues — now handing the model the crossing letters it has become confident about."
+        ],
+        "note": "Step 4 is what makes it an agent rather than a prompt: the second pass is conditioned on what the first pass established. It is also how people solve — the clue you could not get becomes easy once three of its letters are filled in."
+      },
+
+      "stack": {
+        "runtime": "Python",
+        "models": ["claude-sonnet-5"],
+        "key": [
+          "loopy belief propagation over the grid",
+          "constrained search over candidate sets",
+          "FastAPI studio with a live model-call trace"
+        ]
+      },
+
+      "interfaces": [
+        "Web studio — puzzle library, grid, clue list, and a step-by-step trace of every model call",
+        "Batch evaluation harness over an archive of real puzzles"
+      ],
+
+      "tools": {
+        "note": "One model-facing call. Belief propagation and search are ordinary local code, not tools — which is the point: the model supplies beliefs, the solver supplies agreement. The rail's cost and latency are for a 7×7; a 5×5 solves in about eight seconds and a 15×15 in a couple of minutes.",
+        "rows": [
+          {
+            "name": "Clue → ranked candidates",
+            "does": "Returns several answers per clue with probabilities, plus explicit mass on \"none of these\"",
+            "effect": "Billed model call. No other external effect."
+          }
+        ]
+      },
+
+      "budget": {
+        "latency": "8.7s per 7×7",
+        "cost": "~1¢ per 7×7",
+        "calls": "2 per 7×7"
+      },
+
+      "evaluation": {
+        "short": "7 of 14 NYT puzzles solved exactly against 0 of 14 for the same model prompted directly — but n = 14, the interval is 57 points wide, and every puzzle predates 2019.",
+        "headline": "7 of 14 NYT puzzles solved exactly — 96.8% cell accuracy, 94.1% word accuracy.",
+        "baseline": "Same model, top answer per clue, no inference layer: 0 of 14 (71.2% cell, 49.3% word).",
+        "method": "14 real New York Times puzzles, stratified two per weekday so Saturdays count as much as Mondays. McNemar's exact test on the seven discordant puzzles gives p = 0.016.",
+        "caveat": "n = 14 is a demonstration that the harness works on real data, not a benchmark result: the confidence interval on the solve rate is 57 points wide, and a defensible ablation claim would need around 150 puzzles. Every puzzle in the archive predates 2019 and has been on the public web for years, so these numbers are an upper bound against fresh puzzles."
+      },
+
+      "provenance": {
+        "origin": "original",
+        "author": "Tatra Labs",
+        "licence": "MIT",
+        "note": "The ten puzzles bundled with the repo are original and CC0-1.0.",
+        "upstream": null,
+        "changes": [],
+        "contribution": null
+      },
+
+      "links": [
+        { "rel": "demo", "label": "Try the live demo", "url": "https://crossword-puzzle-agent.vercel.app/", "primary": true },
+        { "rel": "source", "label": "Source on GitHub", "url": "https://github.com/tatra-labs/crossword-puzzle-agent" },
+        { "rel": "writeup", "label": "Read the write-up", "url": "/project/crossword-puzzle-agent" }
+      ],
+
+      "media": {
+        "plate": "/assets/images/projects/crossword-studio.webp",
+        "alt": "The studio UI: puzzle library and sessions on the left, a solved 7×7 grid and its clue list in the middle, the agent's model-call trace on the right"
+      },
+
+      "limits": "It solves the grid, not the meta: no rebus handling and no themed-entry reasoning beyond what the clue text itself carries. The whole pipeline is testable offline — 390 tests in about four seconds with no API key and no network — because the clue-answering component accepts an injected fake client.",
+
+      "tags": ["Belief Propagation", "Evaluation", "Python"]
+    },
+
+    {
+      "no": 2,
+      "slug": "commerce-agents",
+      "title": "Commerce Agents",
+      "domain": "e-commerce",
+      "status": "study",
+      "added": "2026-09-06",
+      "updated": "2026-09-06",
+
+      "oneLine": "Two agents on Claude over one set of libraries: a shopping agent a business embeds for its customers, and a merchant agent its staff use to run the back office, where every write is staged until a person approves it.",
+
+      "patterns": ["tool-loop", "skills-routing", "staged-writes"],
+
+      "autonomy": "Supervised where it matters. On the shopping side the cart methods are the only writes and checkout charges nothing — it renders the cart for the host to complete. On the merchant side the stage_* tools record a proposal without touching live state, and apply_change is the only method that mutates it, behind provenance, guardrail and approval checks.",
+
+      "loop": {
+        "steps": [
+          "Open the turn with a static prompt and tool list that are the same bytes every time; per-request data goes in a fenced block after the cache breakpoint, so the prefix stays cacheable.",
+          "Let the model load one of five skills per role through a load_skill tool, so the prompt carries the request classes in play rather than all of them.",
+          "Run tool calls against the deployment's own backend — StorefrontBackend declares 11 required methods, MerchantBackend declares 16 — with the host's credential, server-side.",
+          "Return every backend result inside a labelled fence (storefront_data, merchant_data) whose notice tells the model that an instruction found inside it is something to report, never something to follow.",
+          "Render UI as a presentation tool call, validated and filled in on the server and streamed to the host as a ui event.",
+          "On the merchant side, take a write as a stage_* call that records a proposal, and apply it only through apply_change — which checks change-id provenance, re-runs the guardrails under the config in force at apply time, and then requires the operator's approval."
+        ],
+        "note": "The same prompt, skills and tool contracts run on three paths — the Messages API loop, the Claude Agent SDK, and Managed Agents — and the gates are enforced inside the tool call, so they hold on all three rather than being re-implemented per runtime."
+      },
+
+      "stack": {
+        "runtime": "Python 3.11+; Next.js and TypeScript web apps",
+        "models": ["Claude"],
+        "key": [
+          "Claude Messages API",
+          "Claude Agent SDK",
+          "Managed Agents",
+          "pydantic tool schemas",
+          "MCP servers, loopback-only by default"
+        ]
+      },
+
+      "interfaces": [
+        "Storefront chat embedded in a host app",
+        "Merchant portal where a staged change is approved on its own card",
+        "SDK consoles for both roles, the merchant one approving with y/N",
+        "Storefront and merchant MCP servers, plus a scheduled merchant digest"
+      ],
+
+      "tools": {
+        "note": "Counts are the default configuration; a business that lacks a system turns its enable_* switch off, which removes that tool, its prompt lines and its grounding rule on every path.",
+        "rows": [
+          {
+            "name": "Shopping — 14 model-facing tools",
+            "does": "Search, product details, cart, preferences, orders, policies, fulfilment, memory, and load_skill",
+            "effect": "Reads, except the three cart writes and save_memory. No tool places an order or moves money."
+          },
+          {
+            "name": "Shopping — 7 presentation tools",
+            "does": "present_products, present_comparison, present_plan, present_guide, present_order_status, present_suggestions, checkout",
+            "effect": "Render UI only. checkout renders the cart for the host to complete."
+          },
+          {
+            "name": "Merchant — 8 reads",
+            "does": "Snapshot, metrics, campaign performance, listing search and detail, inventory alerts, order issues, pricing context",
+            "effect": "Read-only."
+          },
+          {
+            "name": "Merchant — 5 stage_* tools",
+            "does": "Stage a listing update, price update, inventory action, promotion or campaign",
+            "effect": "Records a proposal. Live state is untouched."
+          },
+          {
+            "name": "Merchant — apply_change",
+            "does": "Commits one staged change",
+            "effect": "The only call that mutates live state — gated on provenance, guardrails, and the operator's approval."
+          }
+        ]
+      },
+
+      "budget": null,
+
+      "evaluation": {
+        "headline": null,
+        "baseline": null,
+        "method": "No published task-level evaluation of agent behaviour. Correctness is held structurally instead: 83 test files defining 776 test functions, plus ten consistency checks in scripts/check.py, run in CI on Python 3.11 and 3.12.",
+        "caveat": "Tests and consistency checks are not an evaluation. Nothing in the repo reports how often either agent gets a real customer or merchant task right, so no accuracy claim can be made from it — including by me."
+      },
+
+      "provenance": {
+        "origin": "mirror",
+        "author": "Anthropic PBC",
+        "licence": "Apache-2.0",
+        "note": "213 Python files carry the header \"Copyright 2026 Anthropic PBC\" with SPDX-License-Identifier: Apache-2.0.",
+        "upstream": {
+          "url": "https://github.com/anthropics/commerce-agents",
+          "mirror": "https://github.com/tatra-labs/commerce-agents",
+          "commit": "fd4d59224ab96b43c6dc6888207c67b3bd5a24cf"
+        },
+        "changes": [],
+        "contribution": "Mirrored unmodified and read closely. The record on this page is mine; the code is not. I catalogue it here because it is the clearest worked example I know of the pattern I care about — an agent whose dangerous operations are staged rather than executed."
+      },
+
+      "links": [
+        { "rel": "upstream", "label": "Anthropic's reference implementation", "url": "https://github.com/anthropics/commerce-agents", "primary": true },
+        { "rel": "source", "label": "Mirror on GitHub", "url": "https://github.com/tatra-labs/commerce-agents" }
+      ],
+
+      "media": null,
+
+      "limits": "A reference implementation, not a product. Its own README says it is not maintained and does not accept contributions; the four example verticals have no authentication, both MCP servers refuse to bind off loopback, and every company, brand and product in it is fictional. Nothing places an order, charges a card, or changes a live listing.",
+
+      "tags": ["Agentic Commerce", "Claude", "Tool Use", "Reference Implementation"]
+    }
+  ]
+}

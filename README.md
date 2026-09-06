@@ -9,8 +9,8 @@ A minimal, fast blog and project site. No build step, no heavy frameworks. Optim
 | **Authoring** | **`content/`** | All posts, projects, foundation lists, book/paper JSON, Markdown sections, and shared foundation images. Start with **`content/README.md`** for the full map. |
 | **Optional assets** | **`assets/images/`** | Extra images referenced from JSON posts (e.g. diagrams) and project screenshots under `assets/images/projects/`. Not required for foundation. |
 | **App shell** | **`index.html`**, **`404.html`**, **`css/`**, **`js/`**, **`foundation/`** | Pages and scripts. `foundation/book/.../index.html` is optional for local static servers. |
-| **Hosted apps** | **`project/<name>/`** | Self-contained static apps served from this site, vendored from their own repos. See [Hosting a project here](#hosting-a-project-here). |
-| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator and the hosted-app sync script. |
+| **Hosted apps** | **`project/<name>/`** | Self-contained static apps served from this site — `project/jobs/` is vendored from its own repo, `project/agents/` is authored here. See [Hosting a project here](#hosting-a-project-here). |
+| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator, the book-extent stamper, the hosted-app sync script, the reader-shell mirror, and the agent-registry checker. |
 
 There is **no** separate `data/` folder—everything you edit for the site is under **`content/`** so you only look in one place.
 
@@ -36,8 +36,10 @@ The stylesheet is token-driven and states its own rules at the top of `css/style
 - **Posts & Projects** – Switch between blog posts and projects from the same list view.
 - **Tags** – Every post/project has tags; the tag cloud is built automatically. Click a tag to filter.
 - **Search** – Filter by typing in the search box (matches title, excerpt, and tags).
-- **Date** – Each item shows “Date written” (and reading time for posts).
+- **No dates** – Publication dates are **never displayed**. Every content file still carries `date` (and the register its `added`/`updated`), and those still order the lists — nothing renders them. `js/util.js` has no date helpers at all; that is deliberate, and its header says so. Posts still show reading time.
+- **Sticky masthead** – The nav is `position: sticky` at the top of the viewport, so the three tabs stay reachable from the middle of a long article or a 164-section book. Anything that positions against the viewport top clears it via the `--masthead-h` token: the sticky article rail and book TOC, and `scroll-margin-top` on anchored headings.
 - **Content** – Posts and projects support **text**, **images**, and **video** (including embeds).
+- **Agent Register** – A numbered catalogue of agents at `/project/agents/`, rendered from `content/agents/registry.json`: a published domain scheme beside the holdings, a derived provenance byline on every record, and one specimen sheet per agent at `?agent={slug}`.
 - **Foundation** – Books and papers use `/foundation/book/{slug}` and `/foundation/paper/{slug}` with a **table of contents** (Markdown sections for books; heading anchors for papers). The viewer reuses the same site header as the home page.
 
 ## How to run locally
@@ -108,15 +110,35 @@ This site uses clean URLs such as `/foundation/book/deep-learning`. If your loca
 
 Projects usually want a **`links`** section for "open the live thing" and "read the source" — see the section-type table in **`content/README.md`**.
 
+### New agent
+
+The **Agent Register** at [`/project/agents/`](https://tatra-labs.github.io/project/agents/) renders from a single file. Adding an agent is one JSON object in **`content/agents/registry.json`** (plus a bump of `register.updated` to at least the new record's date) — no new page, no HTML, no build step:
+
+```bash
+$EDITOR content/agents/registry.json
+python tools/check_agents.py            # exits non-zero on a record that cuts corners
+```
+
+The field contract is documented in **`content/README.md`**. Three things about it are load-bearing rather than stylistic, and the checker enforces all three:
+
+1. **`provenance.author` and `.origin` are required on every record; `.licence` is required whenever the work is not yours**, and its absence on your own work is reported as a note (the byline then reads "licence not stated"). The byline shown on each row is *derived* from these by a fixed map in `project/agents/app.js` (`author · licence · {original work | forked, changes listed | mirrored unmodified}`), so it is not a field anyone can author — no record can soften or omit its own attribution. When the work is not yours, `upstream.url` and `contribution` are required too.
+2. **A result may not appear without its caveat.** If `evaluation.headline` is set and `evaluation.caveat` is empty, the renderer *suppresses the numbers*. Fix the record rather than ship a suppressed result.
+3. **`domains[]` and `patterns[]` are a closed, authored vocabulary.** A record's `domain` must resolve, because a typo there would silently drop it out of its own schedule row — the one failure the page cannot show you.
+
+A domain with no agents is not a bug and must not be hidden: it renders as an open row whose scope note states the **standard** an agent there would have to meet. The checker rejects "coming soon", "planned", "work in progress", "WIP", "roadmap" and "TBD" in a scope note, and rejects any string beginning `TODO`.
+
 ## Hosting a project here
 
 A project that is a **static** site (no server, relative asset paths) can be served from this one at `/project/<name>/`, alongside its write-up at `/project/<slug>`. Real files win over the `404.html` fallback, so the two do not collide — but the app directory name and the write-up slug must differ.
 
 Currently hosted:
 
-| URL | App | Source |
-|-----|-----|--------|
-| [`/project/jobs/`](https://tatra-labs.github.io/project/jobs/) | US Job Market Visualizer + Remote Job Explorer (write-up at `/project/us-job-market`) | [tatra-labs/jobs](https://github.com/tatra-labs/jobs) |
+| URL | App | Source | Kind |
+|-----|-----|--------|------|
+| [`/project/jobs/`](https://tatra-labs.github.io/project/jobs/) | US Job Market Visualizer + Remote Job Explorer (write-up at `/project/us-job-market`) | [tatra-labs/jobs](https://github.com/tatra-labs/jobs) | vendored |
+| [`/project/agents/`](https://tatra-labs.github.io/project/agents/) | The **Agent Register** (write-up at `/project/agent-hub`) | this repo | authored here |
+
+**The two kinds are different and the distinction matters.** `project/jobs/` is *vendored* from another repo and must not be hand-edited (see the sync script below). `project/agents/` is *authored in this repo*: edit it directly, and note that it deliberately loads `/css/style.css` and follows the design law rather than shipping a palette of its own, so it reads as a page of the site and not as a bolted-on app.
 
 `project/jobs/` is **vendored**, not a submodule — do not hand-edit it. Refresh it from a local checkout of the source repo:
 

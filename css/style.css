@@ -58,6 +58,13 @@
 
   --rail:      8.5rem;   /* 136px metadata gutter                           */
   --rail-gap:  2rem;
+
+  /* The masthead is sticky, so everything that positions itself against the
+     top of the viewport has to clear it: the sticky rail and TOC above 56rem,
+     and scroll-margin-top on every anchor target. 4.5rem is .masthead-row's
+     min-height and the 1px is the masthead's own bottom rule — re-measure this
+     if the masthead's contents change. */
+  --masthead-h: calc(4.5rem + 1px);
   --main:      42rem;    /* 672px  list + home                              */
   --toc:      15rem;     /* 240px  reader only                              */
   --pad:       1.5rem;
@@ -108,6 +115,13 @@
 
 @media (max-width: 56rem) {
   :root { --pad: 1.125rem; --rail: 0px; --rail-gap: 0px; }
+}
+
+/* Below 40rem the masthead wraps to two rows. Nothing sticky depends on this
+   value — the rail and the TOC are static by then — but anchor targets still
+   need to clear it. */
+@media (max-width: 40rem) {
+  :root { --masthead-h: 5.625rem; }
 }
 
 /* ---- type scale: 9 steps, no adjacent pair a rounding accident --------- */
@@ -242,7 +256,18 @@ a { color: var(--text); text-decoration: none; }
    MASTHEAD
    ============================================================================ */
 
-.masthead { border-bottom: 1px solid var(--rule-ink); }
+/* Sticky: the tabs are the control every visitor uses most, and on a long
+   article or a 164-section book they were a full scroll away. It needs its own
+   background — the page scrolls underneath it, not behind a transparent bar —
+   and a z-index above the stretched .entry-link (1) and .entry-tags (2), but
+   below .skip-link (50), which must still be able to cover it. */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule-ink);
+}
 
 .masthead-row {
   display: flex;
@@ -470,7 +495,7 @@ main { flex: 1 0 auto; }
    Deliberate at 2 entries and at 40.
    ============================================================================ */
 
-.list-section { padding-block: var(--s-7) 0; scroll-margin-top: var(--s-5); }
+.list-section { padding-block: var(--s-7) 0; scroll-margin-top: calc(var(--masthead-h) + var(--s-5)); }
 
 .section-head {
   display: flex;
@@ -530,8 +555,10 @@ main { flex: 1 0 auto; }
   line-height: 1;
   color: var(--text-muted);
 }
-/* Blank when the year repeats: at two 2025 posts the year prints once, and
-   at forty entries the list self-groups by year with no headings added. */
+/* The big serif slot in the rail. It used to hold the year; dates are no
+   longer displayed anywhere, and its one remaining caller is the Agent
+   Register, where it holds the accession number ("001"). Kept collapsible
+   because a rail with nothing in that slot must not reserve its line height. */
 .entry-year:empty { min-height: 0; }
 .entry-meta { font-size: var(--fs-2xs); letter-spacing: var(--ls-label); text-transform: uppercase; font-weight: 600; }
 .entry-kind { color: var(--accent); }
@@ -697,7 +724,7 @@ main { flex: 1 0 auto; }
   grid-row: 2;
   align-self: start;
   position: sticky;
-  top: var(--s-5);
+  top: calc(var(--masthead-h) + var(--s-5));
   text-align: right;
   padding-right: var(--s-4);
   color: var(--text-faint);
@@ -849,6 +876,11 @@ h3.article-heading {
   font-weight: 600;
 }
 
+/* An anchored heading would otherwise land underneath the sticky masthead:
+   a paper's in-page TOC, and the agent sheet's ?agent=…#evaluation links. */
+.article-content :where(h1, h2, h3, h4)[id],
+.article-heading[id] { scroll-margin-top: calc(var(--masthead-h) + var(--s-4)); }
+
 /* Ink links with accent underlines: a paragraph never rainbows, but every
    link is unmistakable. */
 .article-content a {
@@ -975,8 +1007,8 @@ h3.article-heading {
   grid-column: rail;
   align-self: start;
   position: sticky;
-  top: var(--s-5);
-  max-height: calc(100vh - var(--s-8));
+  top: calc(var(--masthead-h) + var(--s-5));
+  max-height: calc(100vh - var(--masthead-h) - var(--s-7));
   overflow-y: auto;
   padding-right: var(--s-4);
   font-size: var(--fs-sm);

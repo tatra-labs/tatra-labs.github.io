@@ -14,6 +14,7 @@ Screenshots and clips for the Projects tab. Each project card in `content/projec
 | `jobs-what-to-learn.webp`, `jobs-tech-quadrant.webp`, `jobs-remote-states.webp` | `us-job-market` — in-page figures |
 | `crossword-studio.webp` | `crossword-puzzle-agent` — card preview and in-page figure |
 | `crossword-demo.mp4`, `crossword-demo-poster.webp` | `crossword-puzzle-agent` — the looping hero clip and its poster |
+| `agent-hub-register.webp` | `agent-hub` — card preview and hero, and the plate for record 001 in the register itself is `crossword-studio.webp` |
 
 Card previews are cropped to **2:1** by CSS, so keep the subject near the centre.
 

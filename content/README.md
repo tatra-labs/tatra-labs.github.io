@@ -10,6 +10,7 @@ Everything you **author or configure** for the live site lives under **`content/
 | **`content/posts/<slug>.json`** | Full post body (`content.sections`: text, image, video, embed). |
 | **`content/projects/index.json`** | List of projects for the home page. |
 | **`content/projects/<slug>.json`** | Full project JSON (same section types as posts). |
+| **`content/agents/registry.json`** | The Agent Register: the domain scheme, the pattern vocabulary, and one record per agent. Rendered by `/project/agents/`. |
 | **`assets/images/projects/`** | Screenshots and clips used by project cards and pages. |
 | **`content/foundation/books/index.json`** | List of books (cards on Foundation tab). |
 | **`content/foundation/papers/index.json`** | List of papers. |
@@ -53,7 +54,7 @@ Links to another origin get `target="_blank"` and an arrow icon automatically. O
 
 | Field | Effect |
 |-------|--------|
-| `title`, `slug`, `date`, `excerpt`, `tags` | the row itself. The **year prints only when it changes**, so a run of same-year entries shows it once. |
+| `title`, `slug`, `date`, `excerpt`, `tags` | the row itself. **`date` is never displayed** — it orders the list and nothing more. Keep authoring it. |
 | `image` | projects/posts: a 16:9 plate under the excerpt, full width of the band |
 | `readingTime` | posts: shown in the rail |
 | `icon` | foundation: the cover. **Omit it** and an initials plate renders instead — honest, and better than reusing another item's cover. |
@@ -62,6 +63,48 @@ Links to another origin get `target="_blank"` and an arrow icon automatically. O
 | `summary` | foundation: the row's body copy — this is the only prose on a Foundation row, so it carries the section |
 
 Book rows additionally show how much is written (`1 / 164 sections`), read live from that book's `toc.json`. Nothing is hand-maintained.
+
+## The Agent Register — `content/agents/registry.json`
+
+One file. Adding an agent is one object in `agents[]`; the page at `/project/agents/` is rendered from it and nothing outside this file changes — bump `register.updated` to the new record's date while you are in there. Run `python tools/check_agents.py` afterwards; it refuses records that cut corners, and it names which corner.
+
+The file has three top-level parts:
+
+| Key | What it is |
+|-----|-----------|
+| `register` | `scope` is the lede and `policy` the colophon. `opened` and `updated` are authored but **never rendered** — `updated` exists so the checker can catch a register dated before its own newest record. |
+| `domains[]` | `id`, `name`, `note`. **Authored, not derived** — a domain exists whether or not anything has been built in it, which is what makes an empty one a declared slot rather than an empty filter. |
+| `patterns[]` | `id`, `name`, `gloss`. The closed vocabulary the chips filter on. |
+
+### A record
+
+| Field | Notes |
+|-------|-------|
+| `no` | Accession number. Permanent and never reused — a withdrawn agent keeps its number. Renders as `001` in the rail. |
+| `slug` | Lower-case-kebab, unique. It is the `?agent=` key. |
+| `added`, `updated` | ISO dates, **never displayed** (no date is, anywhere on this site). They order nothing today, but `check_agents.py` fails if the later of the two is newer than `register.updated`. |
+| `title`, `oneLine` | The row's title and its only description. |
+| `domain` | Exactly one id, and it **must** resolve in `domains[]`. |
+| `status` | `live`, `study`, `archived`, `withdrawn`, `private`. Lifecycle only. |
+| `patterns[]` | **At least one** id, each of which must resolve in `patterns[]`. |
+| `autonomy` | One sentence: what this agent can change in the world. |
+| `loop.steps` | 3–8 imperative sentences, rendered as an ordered list. Deliberately not free prose, so the step is comparable across records. `loop.note` is optional. |
+| `stack`, `interfaces[]` | `runtime`, `models[]`, `key[]`; and the surfaces it is reached through. |
+| `tools` | `note` plus `rows[]` of `{ name, does, effect }`. **`effect` is the point** — `read-only`, `billed model call`, `staged write, approval before commit`. |
+| `budget` | `latency`, `cost`, `calls`. Keep these **short**: they render in a 136px rail. Put the range in `tools.note`. |
+| `evaluation` | An object or `null`. `null` prints “Not evaluated.” — the heading is never suppressed. If `headline` is set, **`caveat` and `short` are both required**; `short` is the one sentence carrying the number *and* its qualification that the register row prints. |
+| `provenance` | `origin` (`original` \| `fork` \| `mirror`), `author`, `licence` (required unless `origin` is `original`, where its absence is only noted), optional `note`; and when the work is not yours, `upstream.url` (required) plus `contribution` — record `upstream.mirror` and `upstream.commit` too, though the checker does not demand them. A `fork` must also list `changes[]`. |
+| `links[]` | `{ rel, label, url, primary? }`. At most one `primary` — the site has exactly one filled surface. A slug that also has a project write-up must carry a `rel: "writeup"` link. |
+| `media` | `{ plate, alt }` or `null`. The plate must exist on disk. |
+| `limits`, `tags[]` | What it does not do, and the row's chips. |
+
+**Status and origin are two orthogonal axes.** “Mirrored” is not a status; a mirrored agent can be `live` or `study` like any other. The byline under each row title —
+
+```
+author · licence · {original work | forked, changes listed | mirrored unmodified}
+```
+
+— is **derived in `project/agents/app.js` from a fixed map, never authored**. That is the register's one honesty guarantee: no record can soften, shorten or omit its own attribution, because the string is not a field.
 
 ## Rules of thumb
 

@@ -13,32 +13,15 @@
     return d.innerHTML;
   };
 
-  /* new Date('2026-09-03') is UTC midnight, which prints as the day before
-     anywhere west of Greenwich, so read a plain date as a local one. */
-  TL.parseDate = function (iso) {
-    if (!iso) return null;
-    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
-    var d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(iso);
-    return isNaN(d.getTime()) ? null : d;
-  };
-
-  TL.formatDate = function (iso, opts) {
-    var d = TL.parseDate(iso);
-    if (!d) return '';
-    return d.toLocaleDateString('en-US', opts || { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-
-  TL.year = function (iso) {
-    var d = TL.parseDate(iso);
-    return d ? String(d.getFullYear()) : '';
-  };
-
-  /* "SEP 03" for the rail. */
-  TL.railDate = function (iso) {
-    var d = TL.parseDate(iso);
-    if (!d) return '';
-    return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }).toUpperCase();
-  };
+  /* There are deliberately NO date helpers here. Publication dates are not
+     displayed anywhere on the site: `date` (and the register's `added` /
+     `updated`) is still authored in every content file and still orders the
+     lists, but nothing renders it. The formatting helpers that used to live
+     here — parseDate, formatDate, year, railDate — were removed when the last
+     caller went, rather than left behind as dead code. Restore them from git
+     history if a date is ever shown again, and note that a plain ISO date must
+     be parsed as local: new Date('2026-09-03') is UTC midnight, which prints
+     as the day before anywhere west of Greenwich. */
 
   /* Keep the original (possibly relative) URL, but only for schemes we serve. */
   TL.safeUrl = function (raw) {

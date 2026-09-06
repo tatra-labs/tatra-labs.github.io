@@ -1,5 +1,14 @@
 [
   {
+    "slug": "agent-hub",
+    "title": "Agent Hub — the Agent Register",
+    "excerpt": "A numbered catalogue of every agent I build, across healthcare, finance, go-to-market and e-commerce. Its scheme is published beside its holdings, so an empty domain states the bar it has not cleared — and every record carries a derived byline, so the one that is Anthropic's code says so in the same slot as the one that is mine.",
+    "date": "2026-09-06",
+    "tags": ["LLM Agents", "Agent Patterns", "Provenance", "Evaluation"],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/agent-hub-register.webp"
+  },
+  {
     "slug": "us-job-market",
     "title": "US Job Market Visualizer + Remote Job Explorer",
     "excerpt": "An interactive tool for exploring where US jobs are, how far remote work spread, and which technologies remote software postings are asking for — built on BLS, Census, Indeed and Hacker News data, 2018–2026. Hosted here and running in your browser.",

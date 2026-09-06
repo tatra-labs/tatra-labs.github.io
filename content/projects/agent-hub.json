@@ -1,0 +1,57 @@
+{
+  "slug": "agent-hub",
+  "title": "Agent Hub — the Agent Register",
+  "date": "2026-09-06",
+  "tags": ["LLM Agents", "Agent Patterns", "Provenance", "Evaluation"],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/agent-hub-register.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "image",
+        "value": "/assets/images/projects/agent-hub-register.webp",
+        "alt": "The Agent Register: a heading band with four tallies — catalogued 2, domains 2 of 8 covered, origin 1 original and 1 mirrored, evaluated 1 of 2 — above a ruled table of eight domains, two of which have holdings",
+        "caption": "The register at two records. The mass of the page comes from the scheme — the eight domains and the standard each one sets — so a short catalogue reads as a catalogue rather than as a stub."
+      },
+      {
+        "type": "links",
+        "value": [
+          { "label": "Open the register", "url": "/project/agents/", "primary": true },
+          { "label": "The registry it renders", "url": "/content/agents/registry.json" }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "A directory of every agent I build, meant to hold dozens across healthcare, finance, go-to-market, e-commerce and whatever comes after. It has two records in it today, and it is designed so that the honest way to display two is the same as the honest way to display fifty."
+      },
+      {
+        "type": "text",
+        "value": "The temptation with a page like this is a grid of cards, which looks full at three items and looks thin at two. I built a register instead: a numbered catalogue whose classification scheme is published beside its holdings. The scheme is authored data, not derived from what happens to exist, so a domain with nothing in it is a declared slot rather than an accident of an empty filter — and eight ruled rows of scope notes carry the page while the holdings list reports, without inflation, that there are two."
+      },
+      {
+        "type": "text",
+        "value": "Every domain that is open says what an agent would have to satisfy before it could be catalogued there: a citation on every clinical claim in healthcare, ground truth to score against in finance, a held-out set of accounts rather than a screenshot in go-to-market. That is a true statement about how I judge this work, checkable today, and it fabricates nothing. An empty row that says \"here is the bar, and nothing clears it yet\" is a better signal than a filled row would be."
+      },
+      {
+        "type": "text",
+        "value": "The harder problem was provenance. One of the two records is not my code: Anthropic's commerce-agents is a public reference implementation, Apache-2.0, and I mirrored it to read it closely. A portfolio that quietly lists someone else's repository next to its own is worse than one that lists nothing.\nSo authorship is structural rather than confessional. Every row carries a byline in the same slot, at the same weight, in three parts — author, licence, origin — and that string is derived in the renderer from a fixed map. It is not a field anyone can author, so no future record can soften, shorten or omit its own attribution. The register also counts itself by provenance in its own summary line, before you have read a single row: 1 original · 1 mirrored."
+      },
+      {
+        "type": "text",
+        "value": "The same instinct governs numbers. If a record states a result and records no caveat, the renderer suppresses the result rather than printing it — a checker can be skipped, a render rule cannot. The register row for the crossword agent therefore reads \"7 of 14 NYT puzzles solved exactly against 0 of 14 for the same model prompted directly — but n = 14, the interval is 57 points wide, and every puzzle predates 2019\", as one sentence, because a number and its qualification that can be separated will be."
+      },
+      {
+        "type": "markdown",
+        "value": "## Adding an agent\n\nOne JSON object in `content/agents/registry.json`. Nothing else changes — no HTML, no new page, no build step.\n\n```bash\n$EDITOR content/agents/registry.json     # add the record\npython tools/check_agents.py             # refuses the ones that cut corners\n```\n\nThe checker exists because the register makes promises the page can only report as a failure, or cannot see at all:\n\n| It refuses | Because |\n|---|---|\n| A record with no `author` or `origin` | The page would print `PROVENANCE MISSING`. Better to catch it here. |\n| An `evaluation.headline` with no `caveat` | The renderer suppresses the numbers; the record should be fixed, not shipped suppressed. |\n| A `domain` or `pattern` id that is not in the vocabulary | A typo silently drops a record out of its own schedule row — the one failure the page cannot show you. |\n| Any string beginning `TODO` | A `TODO` in a shipped record is a claim nobody checked. |\n| \"Coming soon\", \"planned\", \"work in progress\", \"WIP\", \"roadmap\" or \"TBD\" in a scope note | A scope note states a standard the work must meet, not an intention. |\n| A `register.updated` older than the newest record | The colophon would date the register before its own newest holding. |\n| A `media.plate` that is not on disk, or a second `primary` link | A broken image, and a second filled surface on a site that has exactly one. |\n\nThe fields a record carries:\n\n| Field | What it is |\n|---|---|\n| `no` | Accession number. Permanent, never reused — a withdrawn agent keeps its number. |\n| `domain`, `patterns[]` | Ids that must resolve in the authored `domains[]` and `patterns[]` vocabularies. |\n| `status`, `provenance.origin` | Two orthogonal axes: lifecycle (`live`, `study`, `archived`, `withdrawn`, `private`) and authorship (`original`, `fork`, `mirror`). \"Mirrored\" is not a status. |\n| `loop.steps` | Three to eight imperative sentences. Not free prose — it renders as an ordered list, so it is comparable across records. |\n| `autonomy` | What this agent can change in the world. The first question anyone senior asks. |\n| `tools.rows[]` | Tool, what it does, and its effect — `read-only`, `billed`, `staged write, approval before commit`. |\n| `budget` | Latency, cost and model calls per run, where they are known. |\n| `evaluation` | An object or `null`. `null` prints \"Not evaluated.\" — the heading is never suppressed, because a suppressed heading would let an unevaluated agent look like an evaluated one. |\n| `provenance` | `author`, `licence`, `origin`, and for anything not original: the upstream, the commit it is pinned to, and what part of it is yours. |\n"
+      },
+      {
+        "type": "text",
+        "value": "The page itself is the site's own components: the register list, the marginalia rail, the reader shell, the chip row. It adds one small stylesheet for the schedule table and the provenance block, and it loads no framework and no third-party script — one fetch of one JSON file, after which every filter, every record and every Back is local. A control only appears when it would do work: the pattern chips need three distinct patterns in use and the search field needs eight records. Five patterns are in use today, so the chips are there; the search field is not."
+      },
+      {
+        "type": "text",
+        "value": "What I want it to be in a year is a page where the scheme has not changed much and the holdings have. The numbers are permanent and the bar in each empty row is already written down, which means the register can be checked against itself later — including by me."
+      }
+    ]
+  }
+}

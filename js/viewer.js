@@ -278,8 +278,8 @@
     if (el.nav) el.nav.classList.add('hidden');
 
     renderTags(data.tags);
+    /* No publication date: `date` orders the lists and is never displayed. */
     fillRail([
-      ['Published', TL.formatDate(data.date)],
       ['Reading', route.readingTime && data.readingTime ? data.readingTime : ''],
       ['By', byline(data)]
     ], data.tags);
@@ -306,7 +306,6 @@
 
     renderTags(data.tags);
     fillRail([
-      ['Notes', TL.formatDate(data.date)],
       ['By', TL.OWNER]
     ], data.tags);
 
@@ -346,7 +345,7 @@
       el.sub.classList.toggle('hidden', !chapter);
     }
 
-    setMeta([TL.formatDate(data.date), 'Notes by ' + TL.OWNER]);
+    setMeta(['Notes by ' + TL.OWNER]);
     renderTags(data.tags);
 
     if (el.toc) {
