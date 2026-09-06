@@ -1,0 +1,19 @@
+**Lilian Weng · 2019 · [Lil'Log](https://lilianweng.github.io/posts/2019-06-23-meta-rl/)**
+
+Standard reinforcement learning produces an agent that is good at one task and useless at a neighbouring one. Meta-reinforcement learning trains across a **distribution of tasks** so that the product is not a policy but something closer to a learner: an agent that, dropped into an unfamiliar member of the distribution, works out what it is facing within a few episodes and adapts.
+
+The post is organised around three necessary ingredients — a task distribution, a model with some form of memory, and an outer optimisation over the inner adaptation — and two ways of supplying the third.
+
+**Optimisation-based meta-learning** makes adaptation an explicit gradient step. MAML trains an initialisation from which one or a few gradient steps on a new task yield good performance, by differentiating the outer objective *through* the inner update. It is principled, and it is expensive: second derivatives, an inner loop inside the outer loop, and considerable fragility.
+
+**Recurrent meta-learning** is the idea that has lasted. RL^2 does something that sounds like a trick and is not. Take an ordinary recurrent policy. Feed it the previous action and the previous reward alongside the current observation, and **do not reset the hidden state between episodes** within a task. Train the whole thing across many tasks with an ordinary policy-gradient method. Nothing else is added. The recurrent weights are fixed at deployment, so no learning in the usual sense occurs — and yet the agent explores an unfamiliar task, notices which arm pays or where the goal is, and exploits accordingly.
+
+**The adaptation lives entirely in the activations.** The outer loop, running slowly over gradient steps, has produced weights that implement a learning algorithm; the inner loop, running fast inside the hidden state, executes it. The paper's phrase for this is fast reinforcement learning via slow reinforcement learning, and it is the most conceptually interesting result in the chapter.
+
+> A learning algorithm does not have to be written down and applied to weights; it can be discovered by an outer optimiser and stored in the activations of a network whose parameters never move again.
+
+**What did not survive:** essentially all of the machinery. Nobody trains MAML for reinforcement learning at scale, and explicit meta-RL as a research programme largely dispersed. Its central insight did not merely survive, though — it became the dominant fact about modern AI, and arrived through a door none of these authors were standing at.
+
+**In-context learning is RL^2.** A transformer given a few worked examples in its prompt and then a new problem is doing exactly what the RL^2 agent does: weights frozen, adaptation happening entirely in activations, an inner algorithm learned by an outer loop. The outer loop here is not meta-reinforcement learning across a task distribution but next-token prediction across the internet, which happens to contain an enormous distribution of implicit tasks. Nobody set out to build a meta-learner. Scale delivered one, and the meta-RL literature turns out to be the best available vocabulary for describing what it is.
+
+That reframing has practical consequences worth stating. It predicts that in-context adaptation is bounded by what the outer loop saw — a model adapts quickly to task *types* represented in pretraining and poorly to genuinely novel ones. It explains why an agent improves within a session and forgets at the boundary: the inner loop lives in a context window, so when the window ends the learning is discarded, which is the same limitation RL^2 had with its hidden state. And it frames the current interest in persistent memory and self-improving [harnesses](/foundation/book/wengs-guide?section=sec-5-3) accurately — as attempts to give the inner loop somewhere durable to write.

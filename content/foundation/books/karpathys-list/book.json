@@ -1,0 +1,10 @@
+{
+  "slug": "karpathys-list",
+  "title": "Karpathy's List",
+  "date": "2026-09-06",
+  "author": "Tatra Labs",
+  "tags": ["Book", "LLMs", "Reading List"],
+  "reader": "markdown-toc",
+  "contentRoot": "/content/foundation/books/karpathys-list/sections",
+  "tocFile": "/content/foundation/books/karpathys-list/toc.json"
+}

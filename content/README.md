@@ -17,8 +17,8 @@ Everything you **author or configure** for the live site lives under **`content/
 | **`content/foundation/media/`** | Shared images for foundation cards and Markdown (e.g. `deep_learning.webp`). |
 | **`content/foundation/books/<slug>/`** | One folder per book. |
 | **`content/foundation/books/<slug>/book.json`** | Metadata + `"reader": "markdown-toc"` and paths to TOC + section files. |
-| **`content/foundation/books/<slug>/toc.json`** | Generated table of contents (run `python tools/generate_dl_toc.py`). |
-| **`content/foundation/books/<slug>/toc-source.txt`** | Editable outline before regenerating `toc.json`. |
+| **`content/foundation/books/<slug>/toc.json`** | Table of contents. Deep Learning generates it from `toc-source.txt` (`python tools/generate_dl_toc.py`); the reading lists have no source file and their `toc.json` is authored directly. Either way `flatSections` must mirror the chapters exactly, and `written` is stamped by `tools/update_book_extent.py`. |
+| **`content/foundation/books/<slug>/toc-source.txt`** | Editable outline before regenerating `toc.json`. Deep Learning only. |
 | **`content/foundation/books/<slug>/sections/*.md`** | Markdown for each section (filenames must match `toc.json`). |
 | **`content/foundation/papers/<slug>.json`** | Paper article (JSON sections + optional headings for in-page TOC). |
 | **`content/foundation/overview.json`** | Optional copy for foundation marketing text (if you wire it in the UI). |

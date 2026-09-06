@@ -10,7 +10,7 @@ A minimal, fast blog and project site. No build step, no heavy frameworks. Optim
 | **Optional assets** | **`assets/images/`** | Extra images referenced from JSON posts (e.g. diagrams) and project screenshots under `assets/images/projects/`. Not required for foundation. |
 | **App shell** | **`index.html`**, **`404.html`**, **`css/`**, **`js/`**, **`foundation/`** | Pages and scripts. `foundation/book/.../index.html` is optional for local static servers. |
 | **Hosted apps** | **`project/<name>/`** | Self-contained static apps served from this site — `project/jobs/` is vendored from its own repo, `project/agents/` is authored here. See [Hosting a project here](#hosting-a-project-here). |
-| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator, the book-extent stamper, the hosted-app sync script, the reader-shell mirror, and the agent-registry checker. |
+| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator, the book-extent stamper, the hosted-app sync script, the reader-shell mirror, the agent-registry checker, and the internal-link checker. |
 
 There is **no** separate `data/` folder—everything you edit for the site is under **`content/`** so you only look in one place.
 
@@ -172,7 +172,9 @@ It also warns about a shell left behind by a deleted book or paper; delete that 
 - Book: `/foundation/book/<slug>` → loads **`content/foundation/books/<slug>/book.json`**
 - Paper: `/foundation/paper/<slug>` → **`content/foundation/papers/<slug>.json`**
 
-**Lists for the home page:** **`content/foundation/books/index.json`** and **`content/foundation/papers/index.json`** (same `slug` values as above). Either list may be empty (`[]`) — a group with no items is hidden, header included. There are currently two books and no papers.
+**Lists for the home page:** **`content/foundation/books/index.json`** and **`content/foundation/papers/index.json`** (same `slug` values as above). Either list may be empty (`[]`) — a group with no items is hidden, header included. There are currently four books and no papers.
+
+Three of the four are **reading lists** rather than books — Sutskever's List, Karpathy's List and Weng's Guide. They use the same `markdown-toc` reader and the same folder layout; a "section" is one work rather than one chapter section, and each entry opens with a bold byline (`Authors · Year · [link](url)`) instead of a heading. They cross-reference each other with links of the form `/foundation/book/<slug>?section=<id>`, which `tools/check_links.py` validates.
 
 After adding or removing a section file, restamp how much of a book is written:
 
@@ -180,6 +182,15 @@ After adding or removing a section file, restamp how much of a book is written:
 python tools/update_book_extent.py            # counts sections/*.md into toc.json
 python tools/update_book_extent.py --check    # exits non-zero if out of date
 ```
+
+Then check that the links inside those sections still go somewhere. The reading lists link into each other's sections, and a renumbered section leaves a link that looks fine in the source and lands on a blank page:
+
+```bash
+python tools/check_links.py            # exits non-zero on a broken link
+python tools/check_links.py --list     # also prints every link it found
+```
+
+It resolves `/foundation/book/<slug>?section=<id>` against each book's `toc.json`, and fails on a link into a section that is declared but not yet written.
 
 **Books (Markdown + TOC)** – The Deep Learning book uses **`content/foundation/books/deep-learning/book.json`** with `"reader": "markdown-toc"`, **`toc.json`** (generated), and **`sections/*.md`**. The viewer loads Marked + DOMPurify + KaTeX from a CDN. Sidebar links use `?section=sec-X-Y`.
 

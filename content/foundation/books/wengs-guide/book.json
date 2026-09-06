@@ -1,0 +1,10 @@
+{
+  "slug": "wengs-guide",
+  "title": "Weng's Guide",
+  "date": "2026-09-06",
+  "author": "Tatra Labs",
+  "tags": ["Book", "Reinforcement Learning", "Alignment", "Reading List"],
+  "reader": "markdown-toc",
+  "contentRoot": "/content/foundation/books/wengs-guide/sections",
+  "tocFile": "/content/foundation/books/wengs-guide/toc.json"
+}

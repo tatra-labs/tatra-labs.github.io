@@ -1,9 +1,31 @@
 [
   {
+    "slug": "karpathys-list",
+    "title": "Karpathy's List",
+    "date": "2026-09-06",
+    "authors": [
+      "Talks, code and essays by Andrej Karpathy"
+    ],
+    "status": "complete",
+    "summary": "The reading list that circulates under Andrej Karpathy's name is a listicle with nothing behind it. What he has actually published is better: a from-scratch course, four essays, and an hour-long talk that cites more than thirty works. Thirty-two entries — his own artifacts and the papers he genuinely put on screen — regrouped into seven chapters, each with the mechanism explained and an honest note on what did not survive."
+  },
+  {
+    "slug": "wengs-guide",
+    "title": "Weng's Guide",
+    "date": "2026-09-06",
+    "authors": [
+      "Lil'Log, by Lilian Weng"
+    ],
+    "status": "complete",
+    "summary": "Lil'Log is the closest thing applied reinforcement learning and alignment have to a textbook, but it is a blog: sixty-odd posts in reverse-chronological order with no path through them. Twenty of them, chosen and ordered into a route that runs from policy gradients to reward hacking to self-improving agent harnesses. The curation is mine; the work being read is hers."
+  },
+  {
     "slug": "sutskevers-list",
     "title": "Sutskever's List",
     "date": "2026-09-05",
-    "authors": ["Reading list attributed to Ilya Sutskever"],
+    "authors": [
+      "Reading list attributed to Ilya Sutskever"
+    ],
     "status": "complete",
     "summary": "The ~30 works Ilya Sutskever reportedly handed John Carmack, with the line \"if you really learn all of these, you'll know 90% of what matters today\". The provenance is contested; the syllabus is excellent either way. Twenty-seven works, regrouped into five chapters that follow the argument, each with the mechanism explained and an honest note on what did not survive."
   },
@@ -13,7 +35,11 @@
     "icon": "/content/foundation/media/deep_learning.webp",
     "iconAlt": "Cover of Deep Learning by Goodfellow, Bengio and Courville",
     "date": "2025-02-08",
-    "authors": ["Ian Goodfellow", "Yoshua Bengio", "Aaron Courville"],
+    "authors": [
+      "Ian Goodfellow",
+      "Yoshua Bengio",
+      "Aaron Courville"
+    ],
     "status": "in-progress",
     "summary": "The standard graduate reference for the field, in three parts: the applied mathematics and machine-learning background, the deep networks themselves, and the research frontier of generative and probabilistic models. These are my section-by-section notes as I work through it."
   }
