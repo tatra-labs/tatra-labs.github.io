@@ -4,9 +4,11 @@ Kaplan et al. said: given more compute, buy mostly parameters. Everyone did. Gop
 
 The method is three independent estimates of the same quantity, which is what gives the result its force. **Approach one** fixes a set of model sizes, trains each across a range of token counts, and reads the minimum-loss envelope of the training curves. **Approach two** fixes a compute budget and sweeps model size along it — an IsoFLOP profile — and finds the parabola's minimum. **Approach three** fits a parametric form directly:
 
-`L(N, D) = E + A/N^a + B/D^b`
+$$
+L(N, D) = E + \frac{A}{N^{a}} + \frac{B}{D^{b}}
+$$
 
-where `E` is the irreducible entropy of natural text, and the two terms are the cost of a finite model and a finite dataset. All three approaches agree that the exponents governing `N` and `D` are approximately equal, so **parameters and tokens should be scaled in the same proportion** — double one, double the other — against Kaplan's `N ∝ C^0.73` against `D ∝ C^0.27`. The rule of thumb that came out of it is roughly twenty tokens per parameter.
+where $E$ is the irreducible entropy of natural text, and the two terms are the cost of a finite model and a finite dataset. All three approaches agree that the exponents governing $N$ and $D$ are approximately equal, so **parameters and tokens should be scaled in the same proportion** — double one, double the other — against Kaplan's $N \propto C^{0.73}$ against $D \propto C^{0.27}$. The rule of thumb that came out of it is roughly twenty tokens per parameter.
 
 Then the demonstration, which is what made it stick. **Chinchilla**: `70B` parameters trained on `1.4T` tokens, at the same total compute as Gopher's `280B` on `300B`. A quarter the size, four times the data. It beat Gopher across essentially every benchmark, reaching `67.5%` on MMLU, and beat GPT-3 and MT-NLG `530B` as well — while being far cheaper to serve, because a `70B` model costs a quarter as much per token as a `280B` one forever afterwards.
 

@@ -4,15 +4,21 @@ The RLHF pipeline has four models in memory, a sampling loop inside the training
 
 Start with the objective RLHF actually optimises: maximise expected reward subject to a KL penalty against the reference policy. That constrained problem has a **known closed-form solution**, which is standard result rather than a new one:
 
-`pi_r(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x,y)/beta)`
+$$
+\pi_r(y \mid x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y \mid x) \exp\left( \frac{r(x,y)}{\beta} \right)
+$$
 
 Everyone had written this down. The move is to **read it backwards**. Solve for the reward instead of the policy:
 
-`r(x,y) = beta * log( pi_r(y|x) / pi_ref(y|x) ) + beta * log Z(x)`
+$$
+r(x,y) = \beta \log \frac{\pi_r(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
+$$
 
-Every language model already *is* a reward model, up to that partition function. And the partition function does not matter, because preference data is modelled with Bradley-Terry, which depends only on the **difference** of two rewards for the same prompt — so `beta log Z(x)` appears twice with opposite signs and cancels exactly. Substituting leaves an ordinary binary cross-entropy loss on the policy itself:
+Every language model already *is* a reward model, up to that partition function. And the partition function does not matter, because preference data is modelled with Bradley-Terry, which depends only on the **difference** of two rewards for the same prompt — so $\beta \log Z(x)$ appears twice with opposite signs and cancels exactly. Substituting leaves an ordinary binary cross-entropy loss on the policy itself:
 
-`-log sigma( beta*log(pi(y_w|x)/pi_ref(y_w|x)) - beta*log(pi(y_l|x)/pi_ref(y_l|x)) )`
+$$
+-\log \sigma\left( \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} \right)
+$$
 
 No reward model is trained. No samples are drawn during training. No reinforcement learning happens at all. It is supervised learning on a fixed dataset of preferred and dispreferred pairs, and it optimises the same objective PPO was approximating — this is not a heuristic substitute for RLHF, it is the same problem solved in closed form.
 
