@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate content/agents/registry.json — the file the Agent Register renders.
 
-The register makes three promises on every page it draws, and only two of them
+The register makes four promises on every page it draws, and only two of them
 can be kept by the renderer alone:
 
   1. Every record states its author, its licence and its origin. project/agents/
@@ -13,6 +13,9 @@ can be kept by the renderer alone:
   3. Domains and patterns are a closed, authored vocabulary. A typo in
      `domain` would silently drop a record out of its own schedule row, which
      is the one failure the page cannot show you.
+  4. Every record says what it was built with, and carries a tag naming it.
+     `stack.framework` is required; "None" is an answer, an absent field is
+     not, and a framework nobody can filter for may as well be unrecorded.
 
 It writes nothing. When it finds a problem it names the record, says what is
 wrong, and exits non-zero.
@@ -183,6 +186,30 @@ def check_tools(where: str, a: dict) -> None:
                 bad(where, f"tools.rows[{i}] has no {field!r}")
 
 
+def check_stack(where: str, a: dict) -> None:
+    """What a thing was built with is a fact about the thing, and the one a
+    reader comparing two records reaches for first. `framework` is required —
+    "None" is a real answer and the honest one for an agent whose loop is
+    ordinary code, but silence is not."""
+    stack = a.get("stack")
+    if not isinstance(stack, dict):
+        bad(where, "no stack block. Every record states what it was built with.")
+        return
+
+    framework = (stack.get("framework") or "").strip()
+    if not framework:
+        bad(where, "stack.framework is missing. Name the agent framework, or say "
+                   "'None' and what the loop is written against instead \u2014 an "
+                   "absent field reads as 'not recorded', which is a different claim.")
+        return
+
+    tags = a.get("tags") or []
+    low = framework.lower()
+    if not any((t or "").strip().lower() in low for t in tags):
+        bad(where, f"stack.framework is {framework!r} but no tag names it. The chips "
+                   f"are how a framework is found from the register; add the tag.")
+
+
 def check_media(where: str, a: dict) -> None:
     media = a.get("media")
     if not media:
@@ -292,6 +319,7 @@ def main() -> int:
         check_evaluation(where, a)
         check_links(where, a, writeup_slugs)
         check_tools(where, a)
+        check_stack(where, a)
         check_media(where, a)
 
     register = data.get("register") or {}

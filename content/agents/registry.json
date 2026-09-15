@@ -89,7 +89,7 @@
       "domain": "puzzles",
       "status": "live",
       "added": "2026-09-02",
-      "updated": "2026-09-02",
+      "updated": "2026-09-15",
 
       "oneLine": "Solves crosswords by pairing an LLM that reads clues with belief propagation and search that force the grid to agree with itself — then re-asking only the entries it doubts.",
 
@@ -109,6 +109,7 @@
 
       "stack": {
         "runtime": "Python",
+        "framework": "None — the Anthropic SDK, called directly",
         "models": ["claude-sonnet-5"],
         "key": [
           "loopy belief propagation over the grid",
@@ -170,7 +171,7 @@
 
       "limits": "It solves the grid, not the meta: no rebus handling and no themed-entry reasoning beyond what the clue text itself carries. The whole pipeline is testable offline — 390 tests in about four seconds with no API key and no network — because the clue-answering component accepts an injected fake client.",
 
-      "tags": ["Belief Propagation", "Evaluation", "Python"]
+      "tags": ["Anthropic SDK", "Belief Propagation", "Evaluation", "Python"]
     },
 
     {
@@ -180,7 +181,7 @@
       "domain": "e-commerce",
       "status": "study",
       "added": "2026-09-06",
-      "updated": "2026-09-06",
+      "updated": "2026-09-15",
 
       "oneLine": "Two agents on Claude over one set of libraries: a shopping agent a business embeds for its customers, and a merchant agent its staff use to run the back office, where every write is staged until a person approves it.",
 
@@ -202,10 +203,11 @@
 
       "stack": {
         "runtime": "Python 3.11+; Next.js and TypeScript web apps",
+        "framework": "Claude Agent SDK, Messages API, Managed Agents",
         "models": ["Claude"],
         "key": [
           "Claude Messages API",
-          "Claude Agent SDK",
+          "Claude Agent SDK 0.2.139",
           "Managed Agents",
           "pydantic tool schemas",
           "MCP servers, loopback-only by default"
@@ -282,7 +284,7 @@
 
       "limits": "A reference implementation, not a product. Its own README says it is not maintained and does not accept contributions; the four example verticals have no authentication, both MCP servers refuse to bind off loopback, and every company, brand and product in it is fictional. Nothing places an order, charges a card, or changes a live listing.",
 
-      "tags": ["Agentic Commerce", "Claude", "Tool Use", "Reference Implementation"]
+      "tags": ["Claude Agent SDK", "Agentic Commerce", "Claude", "Tool Use", "Reference Implementation"]
     },
 
     {
@@ -314,6 +316,7 @@
 
       "stack": {
         "runtime": "Python",
+        "framework": "CrewAI",
         "models": ["gpt-4o-mini", "gpt-4o"],
         "key": [
           "CrewAI 1.15.21 flow over five crews",

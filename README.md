@@ -119,11 +119,12 @@ $EDITOR content/agents/registry.json
 python tools/check_agents.py            # exits non-zero on a record that cuts corners
 ```
 
-The field contract is documented in **`content/README.md`**. Three things about it are load-bearing rather than stylistic, and the checker enforces all three:
+The field contract is documented in **`content/README.md`**. Four things about it are load-bearing rather than stylistic, and the checker enforces all four:
 
 1. **`provenance.author` and `.origin` are required on every record; `.licence` is required whenever the work is not yours**, and its absence on your own work is reported as a note (the byline then reads "licence not stated"). The byline shown on each row is *derived* from these by a fixed map in `project/agents/app.js` (`author · licence · {original work | forked, changes listed | mirrored unmodified}`), so it is not a field anyone can author — no record can soften or omit its own attribution. When the work is not yours, `upstream.url` and `contribution` are required too.
 2. **A result may not appear without its caveat.** If `evaluation.headline` is set and `evaluation.caveat` is empty, the renderer *suppresses the numbers*. Fix the record rather than ship a suppressed result.
 3. **`domains[]` and `patterns[]` are a closed, authored vocabulary.** A record's `domain` must resolve, because a typo there would silently drop it out of its own row in the domain table — the one failure the page cannot show you.
+4. **Every record says what it was built with.** `stack.framework` names the agent framework — or `"None"` plus what the loop is written against, which is the honest answer for an agent that is ordinary code around an SDK. One of the record's `tags[]` must name it as well, because the chips are how a framework is found from the register, and a framework nobody can filter for may as well be unrecorded.
 
 A domain with no agents is not a bug and must not be hidden: it renders as an open row whose scope note states the **standard** an agent there would have to meet. The checker rejects "coming soon", "planned", "work in progress", "WIP", "roadmap" and "TBD" in a scope note, and rejects any string beginning `TODO`.
 

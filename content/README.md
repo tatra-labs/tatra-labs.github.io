@@ -89,7 +89,7 @@ The file has three top-level parts:
 | `patterns[]` | **At least one** id, each of which must resolve in `patterns[]`. |
 | `autonomy` | One sentence: what this agent can change in the world. |
 | `loop.steps` | 3–8 imperative sentences, rendered as an ordered list. Deliberately not free prose, so the step is comparable across records. `loop.note` is optional. |
-| `stack`, `interfaces[]` | `runtime`, `models[]`, `key[]`; and the surfaces it is reached through. |
+| `stack`, `interfaces[]` | `runtime`, **`framework`**, `models[]`, `key[]`; and the surfaces it is reached through. `framework` is **required** — name the agent framework, or say `"None"` and what the loop is written against instead, which is the honest answer for an agent that is ordinary code around an SDK. A tag must name it too. |
 | `tools` | `note` plus `rows[]` of `{ name, does, effect }`. **`effect` is the point** — `read-only`, `billed model call`, `staged write, approval before commit`. |
 | `budget` | `latency`, `cost`, `calls`. Keep these **short**: they render in a 136px rail. Put the range in `tools.note`. |
 | `evaluation` | An object or `null`. `null` prints “Not evaluated.” — the heading is never suppressed. If `headline` is set, **`caveat` and `short` are both required**; `short` is the one sentence carrying the number *and* its qualification that the register row prints. |

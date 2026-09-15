@@ -259,7 +259,8 @@
       (a.patterns || []).map(patternName).join(' '),
       domainName(a.domain),
       a.provenance && a.provenance.author,
-      a.stack && a.stack.runtime
+      a.stack && a.stack.runtime,
+      a.stack && a.stack.framework
     ].join(' ').toLowerCase();
     return hay.indexOf(text.toLowerCase()) !== -1;
   }
@@ -496,7 +497,8 @@
       ['Domain', domainName(a.domain)],
       ['Status', STATUS_WORD[a.status] || a.status || ''],
       ['Origin', ORIGIN_WORD[p.origin] || 'MISSING'],
-      ['Licence', p.licence || 'Not stated']
+      ['Licence', p.licence || 'Not stated'],
+      ['Framework', (a.stack || {}).framework]
       /* No "Added" row: publication dates are not shown anywhere on this site.
          `added` and `updated` are still authored and still order the register. */
     ];
@@ -581,6 +583,7 @@
     var s = a.stack || {};
     var rows = [];
     if (s.runtime) rows.push('<p>' + esc(s.runtime) + '</p>');
+    if (s.framework) rows.push('<p>Framework: ' + esc(s.framework) + '</p>');
     if ((s.models || []).length) {
       rows.push('<p>Models: ' + esc(s.models.join(', ')) + '</p>');
     }
