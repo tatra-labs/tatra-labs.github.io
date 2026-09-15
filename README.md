@@ -177,6 +177,8 @@ It also warns about a shell left behind by a deleted book or paper; delete that 
 
 Three of the four are **reading lists** rather than books — Sutskever's List, Karpathy's List and Weng's Guide. They use the same `markdown-toc` reader and the same folder layout; a "section" is one work rather than one chapter section, and each entry opens with a bold byline (`Authors · Year · [link](url)`) instead of a heading. They cross-reference each other with links of the form `/foundation/book/<slug>?section=<id>`, which `tools/check_links.py` validates.
 
+Each of the three opens with **two** front-matter sections rather than one. **`sec-0-1` — "About this list"** states the provenance, which for all three is weaker than the internet suggests. **`sec-0-2` — "Start here"** is the beginner's on-ramp: a short reading path through that book, plus plain-English definitions of the terms its entries lean on. The entries themselves are written to be followed by someone arriving without a background in the field — jargon is explained on first use, and every figure, equation and caveat is kept — so a section runs longer than the Deep Learning notes, typically 600–900 words. None of this is signposted as beginner material on the page: no difficulty badges, no new components, only clearer prose and one extra section in the table of contents.
+
 After adding or removing a section file, restamp how much of a book is written:
 
 ```bash

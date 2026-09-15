@@ -12,6 +12,12 @@
             "number": "",
             "title": "About this list",
             "file": "sec-0-1.md"
+          },
+          {
+            "id": "sec-0-2",
+            "number": "",
+            "title": "Start here",
+            "file": "sec-0-2.md"
           }
         ]
       },
@@ -223,6 +229,12 @@
       "file": "sec-0-1.md"
     },
     {
+      "id": "sec-0-2",
+      "number": "",
+      "title": "Start here",
+      "file": "sec-0-2.md"
+    },
+    {
       "id": "sec-1-1",
       "number": "1.1",
       "title": "Keeping Neural Networks Simple by Minimizing the Description Length of the Weights",
@@ -385,5 +397,5 @@
       "file": "sec-5-3.md"
     }
   ],
-  "written": 28
+  "written": 29
 }

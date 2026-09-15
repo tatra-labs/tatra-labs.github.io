@@ -12,6 +12,12 @@
             "number": "",
             "title": "About this list",
             "file": "sec-0-1.md"
+          },
+          {
+            "id": "sec-0-2",
+            "number": "",
+            "title": "Start here",
+            "file": "sec-0-2.md"
           }
         ]
       },
@@ -267,6 +273,12 @@
       "file": "sec-0-1.md"
     },
     {
+      "id": "sec-0-2",
+      "number": "",
+      "title": "Start here",
+      "file": "sec-0-2.md"
+    },
+    {
       "id": "sec-1-1",
       "number": "1.1",
       "title": "Neural Networks: Zero to Hero",
@@ -459,5 +471,5 @@
       "file": "sec-7-4.md"
     }
   ],
-  "written": 33
+  "written": 34
 }
