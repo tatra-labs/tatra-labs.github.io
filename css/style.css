@@ -66,7 +66,11 @@
      if the masthead's contents change. */
   --masthead-h: calc(4.5rem + 1px);
   --main:      42rem;    /* 672px  list + home                              */
-  --toc:      15rem;     /* 240px  reader only                              */
+  /* 272px reader only, and it is a sum, not a round number: 225px of title
+     text, 16px of air, the 15px scrollbar gutter the rail now reserves
+     permanently, and 16px more air before the article column. Re-derive it
+     if .foundation-toc's padding or margin changes. */
+  --toc:      17rem;
   --pad:       1.5rem;
   --measure:  min(66ch, 35rem);
   --t: 120ms;
@@ -1060,7 +1064,17 @@ h3.article-heading {
   top: calc(var(--masthead-h) + var(--s-5));
   max-height: calc(100vh - var(--masthead-h) - var(--s-7));
   overflow-y: auto;
+  /* The rail is the page's second scroll container, and html already
+     reserves its gutter for the same reason: without this the column
+     silently lost 15px the moment enough chapters were open to overflow,
+     and every title rewrapped. Inert on the phone layout below, which
+     sets overflow: visible. */
+  scrollbar-gutter: stable;
+  /* .spread gives rail and main no gap, so this pair is the whole gutter
+     and the scrollbar sits between them: padding holds the titles off it,
+     margin holds it off the article, which it otherwise touched. */
   padding-right: var(--s-4);
+  margin-right: var(--s-4);
   font-size: var(--fs-sm);
 }
 
@@ -1220,6 +1234,7 @@ h3.article-heading {
     max-height: none;
     overflow: visible;
     padding-right: 0;
+    margin-right: 0;
     margin-bottom: var(--s-5);
     border-bottom: 1px solid var(--rule);
     padding-bottom: var(--s-4);
