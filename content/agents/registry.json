@@ -1,7 +1,7 @@
 {
   "register": {
     "opened": "2026",
-    "updated": "2026-09-06",
+    "updated": "2026-09-15",
     "scope": "The agents I've built, and the ones I've studied closely."
   },
 
@@ -39,7 +39,7 @@
     {
       "id": "research",
       "name": "Research & retrieval",
-      "note": "Open. Retrieval is the easy half; I'd want an abstention rate, not just a hit rate."
+      "note": "Retrieval is the easy half. What I want from a report is that every number in it resolves to a record, and that it says plainly what it could not establish."
     },
     {
       "id": "devtools",
@@ -283,6 +283,114 @@
       "limits": "A reference implementation, not a product. Its own README says it is not maintained and does not accept contributions; the four example verticals have no authentication, both MCP servers refuse to bind off loopback, and every company, brand and product in it is fictional. Nothing places an order, charges a card, or changes a live listing.",
 
       "tags": ["Agentic Commerce", "Claude", "Tool Use", "Reference Implementation"]
+    },
+
+    {
+      "no": 3,
+      "slug": "deep-research-agent",
+      "title": "Deep Research Agent",
+      "domain": "research",
+      "status": "live",
+      "added": "2026-09-15",
+      "updated": "2026-09-15",
+
+      "oneLine": "Writes an investment memo from the public record and a company's own files, and only keeps a finding when neither source could have produced it alone — then refuses to publish any sentence it cannot trace to a record.",
+
+      "patterns": ["planner", "tool-loop", "generate-verify", "critique-reask"],
+
+      "autonomy": "Read-only outside its own directory. It makes billed model calls and fetches public sources over HTTP, writes the memo and its trace to local files, and changes nothing in any external system.",
+
+      "loop": {
+        "steps": [
+          "Turn the question into a typed research brief that names what would count as an answer.",
+          "Run two research legs at once — the public record through search and primary sources, the internal files through deterministic joins and semantic retrieval — and rejoin them.",
+          "Test every candidate finding in code for whether it needs both sources, and drop the ones that survive having either side removed.",
+          "Draft the memo, computing each citation string from the records rather than letting the writer assemble it.",
+          "Audit the draft: resolve every identifier, re-add every figure from the records it cites, and have a separate agent judge whether each record says what the sentence claims.",
+          "Route a failed audit back for one revision rather than publishing with a warning."
+        ],
+        "note": "The orchestration is a deterministic flow, not one autonomous crew — the agents decide what to say, the flow decides what happens next. Arithmetic runs in Python and interpretation runs in the model, because a model asked to total ten retrieved figures got it wrong and once reported a discrepancy between $6,869,000 and $6,869,000."
+      },
+
+      "stack": {
+        "runtime": "Python",
+        "models": ["gpt-4o-mini", "gpt-4o"],
+        "key": [
+          "CrewAI 1.15.21 flow over five crews",
+          "typed contracts between phases, with provenance a required field",
+          "semantic retrieval over chunks rewritten to carry their own citation tag",
+          "response cache committed to the repo, so a clone reproduces a run at no cost"
+        ]
+      },
+
+      "interfaces": [
+        "CLI — one credential, with an --offline mode that replays the committed cache",
+        "Streamlit app — the memo, the findings, the three checks, and the run as a timeline or a live crew graph",
+        "Rendered walkthrough generated frame by frame through the same renderer, so it cannot drift from the repo"
+      ],
+
+      "tools": {
+        "note": "Eleven agent-facing tools, every one of them read-only; the agents cannot write anywhere. Grouped here by what they touch. The sample run made 193 tool calls, 131 of them internal record lookups. Figures come from tools that read the complete files, never from the retrieval snippets, because an agent asked to count from fragments produces confident wrong numbers.",
+        "rows": [
+          {
+            "name": "Internal record lookup and analytics",
+            "does": "Resolves a record identifier, and computes exact totals, segment position, loss reasons and supplier overlap over the complete files",
+            "effect": "Read-only, local files. Returns figures with the record identifiers behind them."
+          },
+          {
+            "name": "Public search and primary sources",
+            "does": "Tiered web search, plus keyless SEC filings, arXiv, Hacker News, Wikipedia and news feeds",
+            "effect": "Read-only outbound HTTP, throttled and cached. Degrades to the committed cache when no key is present."
+          },
+          {
+            "name": "Web page read",
+            "does": "Extracts article text from a URL, replacing the framework's bundled scraper",
+            "effect": "Read-only outbound HTTP. Roughly half the tokens per source."
+          },
+          {
+            "name": "Citation audit",
+            "does": "Resolves every identifier in a draft and re-totals the records cited for each figure",
+            "effect": "Read-only. Blocks publication on failure rather than warning."
+          }
+        ]
+      },
+
+      "budget": {
+        "latency": "149s per memo",
+        "cost": "~$0.44 per run",
+        "calls": "35 model · 193 tool"
+      },
+
+      "evaluation": {
+        "short": "It recovered three of the four cross-source overlaps planted in its own demonstration dataset, with the citation audit passing and no identifier or figure disagreeing with its records — but the dataset is fictional and I planted the overlaps myself, so this measures the pipeline, not the world.",
+        "headline": "Three of four planted cross-source overlaps recovered; citation audit passed with 0 unresolved identifiers and 0 figures disagreeing with the records they cite.",
+        "baseline": "None. There is no ablation against the same pipeline with the both-sources test removed, so the test's contribution is argued rather than measured.",
+        "method": "One offline run over the committed response cache, so it reproduces exactly from a clean clone. The internal corpus is 48 mocked deal rows and supporting files, all entities fictional, containing four planted overlaps that require both an external and an internal fact.",
+        "caveat": "n = 1 run on synthetic data whose answers I planted and whose detector I wrote, which is close to marking my own homework: it shows the machinery works end to end, not that it finds anything on data it has not been shaped around. A defensible claim needs a held-out corpus somebody else built. The domain's standard is an abstention rate rather than a hit rate, and the run states two gaps it could not close — a start, but not yet measured against how many it should have stated."
+      },
+
+      "provenance": {
+        "origin": "original",
+        "author": "Tatra Labs",
+        "licence": null,
+        "note": "No LICENSE file in the repository, so the byline reads 'licence not stated' until one is added. All entities in the bundled internal records are fictional.",
+        "upstream": null,
+        "changes": [],
+        "contribution": null
+      },
+
+      "links": [
+        { "rel": "source", "label": "Source on GitHub", "url": "https://github.com/tatra-labs/deep-research-agent", "primary": true }
+      ],
+
+      "media": {
+        "plate": "/assets/images/projects/deep-research-graph.webp",
+        "alt": "The run drawn as the system: scoping, then public-record and internal-record crews running in parallel, rejoining at cross-check, then write-and-verify, with a failed audit routing back to a revision"
+      },
+
+      "limits": "It does not act on anything it finds, and it is demonstrated on one synthetic corpus — pointing it at real internal records is untested. The memo's quality depends on a search tier that can degrade to a cached snapshot, so an offline run is reproducible but not current. Model tier assignment is reasoned rather than measured.",
+
+      "tags": ["CrewAI", "Multi-Agent", "Retrieval", "Evaluation", "Python"]
     }
   ]
 }
