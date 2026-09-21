@@ -1047,6 +1047,224 @@ h3.article-heading {
 }
 
 /* ============================================================================
+   FIGURES — charts written into a post's markdown as plain HTML.
+
+   Not SVG and not a chart library. Every label here is real text in the page's
+   own type scale, so a figure reflows at 327px instead of scaling its labels
+   down to six pixels, both palettes come for free, and the whole thing costs
+   zero bytes of JavaScript.
+
+   The only per-datum values in the markup are `left` and `width` percentages.
+   Those carry the data; every colour still comes from the token block, so
+   design law rule 4 holds in the markup as well as in here.
+
+   Marks are SQUARES, because rule 1 allows no radius anywhere — the 5px
+   .entry-flag square is the precedent. A data mark is not a component surface,
+   so rule 3 is kept literally: --accent appears below only as a 2px stroke on
+   the Pi mark, as a 2px emphasis rule, and as label ink. It fills nothing.
+   ============================================================================ */
+
+.article-content .fig {
+  margin-block: var(--s-6);
+  margin-inline: 0;                      /* UA default on <figure> is 40px */
+  max-width: none;                       /* the wide band, as .media-wrap */
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+.fig-title {
+  display: block;
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--rule-ink);
+  padding-bottom: var(--s-2);
+}
+
+.fig-sub {
+  display: block;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-faint);
+}
+
+.fig-panel { margin-top: var(--s-5); }
+
+.article-content .fig figcaption {
+  margin-top: var(--s-5);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+  max-width: var(--measure);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-faint);
+}
+
+/* ---- legend ------------------------------------------------------------- */
+.fig-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  margin-top: var(--s-3);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.fig-key > span { display: inline-flex; align-items: center; gap: var(--s-2); }
+
+.fig-m { width: 9px; height: 9px; flex: none; box-sizing: border-box; }
+.fig-m--pi { background: var(--bg); border: 2px solid var(--accent); }
+.fig-m--cx { background: var(--rule-strong); }
+.fig-m--cc { background: var(--text); }
+
+/* ---- a plotted row: name | track | value -------------------------------- */
+.fig-row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr) 4.25rem;
+  align-items: center;
+  gap: var(--s-3);
+  padding-block: var(--s-2);
+  border-top: 1px solid var(--rule);
+}
+.fig-panel > .fig-sub + .fig-row { border-top: 0; }
+
+.fig-name  { font-size: var(--fs-xs); line-height: var(--lh-ui); color: var(--text); }
+.fig-name--hi { color: var(--accent); }
+.fig-val   { font-size: var(--fs-xs); line-height: var(--lh-ui);
+             color: var(--text-muted); text-align: right; }
+
+.fig-track { position: relative; display: block; height: 14px; }
+
+/* the baseline every mark is read against */
+.fig-track::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  border-top: 1px solid var(--rule);
+}
+
+/* min -> max connector, the one 2px emphasis stroke in the row */
+.fig-span {
+  position: absolute;
+  top: 50%; height: 0;
+  margin-top: -1px;
+  border-top: 2px solid var(--rule-strong);
+}
+
+.fig-pt {
+  position: absolute;
+  top: 50%;
+  width: 9px; height: 9px;
+  margin-left: -4.5px; margin-top: -4.5px;
+  box-sizing: border-box;
+}
+.fig-pt--pi { background: var(--bg); border: 2px solid var(--accent); }
+.fig-pt--cx { background: var(--rule-strong); }
+.fig-pt--cc { background: var(--text); }
+
+/* ---- axis --------------------------------------------------------------- */
+.fig-row--scale { border-top: 0; padding-top: 0; align-items: start; }
+.fig-row--scale .fig-track { height: 26px; }   /* room for the tick labels */
+.fig-row--scale .fig-track::before { content: none; }
+.fig-row--scale .fig-val { color: var(--text-faint); }
+
+.fig-tick {
+  position: absolute; top: 0; height: 4px;
+  border-left: 1px solid var(--rule);
+}
+.fig-tlab {
+  position: absolute; top: 6px;
+  transform: translateX(-50%);
+  font-size: var(--fs-2xs);
+  font-style: normal;                    /* these labels are <i> elements */
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* ---- bar rows ----------------------------------------------------------- */
+.fig-row--bar .fig-track { height: 15px; }
+.fig-row--bar .fig-track::before { content: none; }
+
+.fig-bar {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--sunken);
+  border: 1px solid var(--rule);         /* same recipe as a <pre> block */
+  border-right: 2px solid var(--rule-strong);
+}
+.fig-blab {
+  position: absolute; top: 50%;
+  margin: -0.55em 0 0 var(--s-2);
+  font-size: var(--fs-2xs);
+  font-style: normal;
+  line-height: 1.1;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ---- the 6 x 2 outcome grid --------------------------------------------- */
+.fig-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin-top: var(--s-4);
+}
+.fig-cell {
+  background: var(--bg);
+  padding: var(--s-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-muted);
+}
+.fig-cell b  { display: block; font-weight: 600; color: var(--text); }
+.fig-cell em { font-style: normal; color: var(--text-faint); }
+
+.fig-cell--hd {
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.fig-cell--grp {
+  grid-column: 1 / -1;
+  background: var(--sunken);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.fig-cell--row { color: var(--text); }
+
+/* the one thing the grid is asking you to count */
+.fig-cell--alt { border-left: 2px solid var(--accent); }
+.fig-cell--alt b { color: var(--accent); }
+
+.fig-note {
+  margin-top: var(--s-4);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-muted);
+}
+.fig-note b { color: var(--text); font-weight: 600; }
+
+/* Below the rail breakpoint the name column can no longer hold a model name
+   beside a track, so each row becomes two lines: name over track+value. */
+@media (max-width: 34rem) {
+  .fig-row {
+    grid-template-columns: minmax(0, 1fr) 4.25rem;
+    column-gap: var(--s-3);
+    row-gap: var(--s-1);
+  }
+  .fig-row > .fig-name { grid-column: 1 / -1; }
+  .fig-row--scale > span:first-child { display: none; }
+  .fig-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .fig-grid > .fig-cell--hd:first-child { display: none; }
+  .fig-cell--row { grid-column: 1 / -1; background: var(--surface); }
+}
+
+/* ============================================================================
    READER — TOC beside the chapter
    ============================================================================ */
 

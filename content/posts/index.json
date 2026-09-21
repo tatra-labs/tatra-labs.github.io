@@ -1,5 +1,20 @@
 [
   {
+    "slug": "the-harness-tax",
+    "title": "The Harness Tax",
+    "excerpt": "Swap the harness around a coding agent and the task still gets solved about as often — but the bill can move by five times. A Berkeley study measured 21 model–harness pairs, and the cheapest harness on the board offers four tools.",
+    "date": "2026-09-20",
+    "readingTime": "9 min",
+    "tags": [
+      "Agents",
+      "Coding Agents",
+      "Evaluation",
+      "Benchmarks",
+      "Cost"
+    ],
+    "author": "Tatra Labs"
+  },
+  {
     "slug": "where-to-spend-the-bits",
     "title": "Where to Spend the Bits",
     "excerpt": "Every numeric format in deep learning — FP16, BF16, FP8, INT8 — is one decision made differently: how many bits buy range, and how many buy precision. Get that and the whole zoo makes sense.",
