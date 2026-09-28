@@ -1,5 +1,20 @@
 [
   {
+    "slug": "whats-in-a-model-file",
+    "title": "What's in a Model File",
+    "excerpt": "Safetensors or GGUF, Q4_K_M or IQ4_XS, AWQ or FP8: one model can ship in a dozen files that differ eightfold in size and run on different programs — and one kind can take over the machine that opens it. Twenty-one sections on what the formats store, why they differ, what their names mean, what quantization costs, and how to choose, with tools that read real model files in your browser.",
+    "date": "2026-09-28",
+    "readingTime": "1 h 45 min",
+    "tags": [
+      "Model Formats",
+      "Quantization",
+      "Inference",
+      "Security",
+      "GGUF"
+    ],
+    "author": "Tatra Labs"
+  },
+  {
     "slug": "who-closes-the-loop",
     "title": "Who Closes the Loop",
     "excerpt": "A coding agent is a model inside a program that decides what it sees, what it may do and when it is finished. That program — the harness — is where the engineering of AI coding moved. Nineteen sections on its history, its mathematics, what is inside Claude Code and the open harnesses, the hard problems each answers differently, how to measure any of it, and what to do on Monday.",

@@ -73,13 +73,28 @@ JSON `"reader": "markdown-toc"`, a `contentRoot` and a `tocFile`, and put the ch
 `/post/<slug>?section=<id>`, and the page gets the book's contents rail and prev/next links, with the
 kicker reading "Essay" rather than "Book". `readingTime` is shown in the meta line as the whole essay's
 length. `tools/check_links.py` validates `/post/<slug>?section=<id>` links the same way it validates
-book links. Current example: `who-closes-the-loop`.
+book links. Examples: `who-closes-the-loop`, `whats-in-a-model-file`.
 
 Beyond the chart classes, posts can draw structure figures with `.fig-steps` / `.fig-step` /
 `.fig-arr` (a sequence; add `.fig-steps--v` for vertical), `.fig-stack` / `.fig-layer` with
 `.fig-tags` / `.fig-tag` (labelled layers), `.fig-tl` / `.fig-tl-row` / `.fig-tl-era` (a dated
 timeline), and `.fig-scroll` around a `.fig-grid.fig-grid--wide` with `style="--cols:N"` (a matrix that
 scrolls sideways on a phone instead of refolding). `--hi` modifiers carry the one 2px accent stroke.
+`.fig-bytes` / `.fig-byte` (with `--hd` for header regions and `style="--w:N"` for a region's share)
+draws a file's byte layout, and stacks one region per line on a phone.
+
+### Interactive figures
+
+A post (plain or chaptered) can list same-origin scripts under `"widgets"`, e.g.
+`"widgets": ["/js/widgets/model-files.js"]`. After a section renders, the viewer loads them once and
+calls `TL.widgets[name](el)` for every `<div data-widget="name">` in the content; a page with no
+placeholder loads nothing, and only paths under `/js/` are accepted. Attributes on the placeholder
+configure the widget (`data-examples`, `data-samples`, …), and whatever is inside it is the no-JS
+fallback. Widget markup uses the `.pg-*` classes in `css/style.css` (controls, stats, the quantizer
+chart, token boxes, the memory bar, `.pg-heat` grids), which follow the design law like the figures.
+`model-files.js` provides `quantizer`, `name-decoder`, `memory-calculator` and `inspector`; the
+inspector reads model headers from local files or over HTTP range requests (Hugging Face allows them
+cross-origin). Current example: `whats-in-a-model-file`.
 
 ## The Agent Hub — `content/agents/registry.json`
 

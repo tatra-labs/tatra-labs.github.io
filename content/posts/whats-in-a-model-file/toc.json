@@ -1,0 +1,344 @@
+{
+  "prelude": {
+    "title": null,
+    "chapters": [
+      {
+        "id": "ch-0",
+        "number": "",
+        "title": "Front Matter",
+        "sections": [
+          {
+            "id": "sec-0-1",
+            "number": "",
+            "title": "Read this first",
+            "file": "sec-0-1.md"
+          }
+        ]
+      }
+    ]
+  },
+  "parts": [
+    {
+      "title": "Part I — Why There Are So Many",
+      "chapters": [
+        {
+          "id": "ch-1",
+          "number": "1",
+          "title": "The File and Its Jobs",
+          "sections": [
+            {
+              "id": "sec-1-1",
+              "number": "1.1",
+              "title": "What a model file holds",
+              "file": "sec-1-1.md"
+            },
+            {
+              "id": "sec-1-2",
+              "number": "1.2",
+              "title": "Five questions every format answers",
+              "file": "sec-1-2.md"
+            },
+            {
+              "id": "sec-1-3",
+              "number": "1.3",
+              "title": "How we got here, 2014–2026",
+              "file": "sec-1-3.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part II — The Formats",
+      "chapters": [
+        {
+          "id": "ch-2",
+          "number": "2",
+          "title": "Weights Containers",
+          "sections": [
+            {
+              "id": "sec-2-1",
+              "number": "2.1",
+              "title": "Pickle and the PyTorch checkpoint",
+              "file": "sec-2-1.md"
+            },
+            {
+              "id": "sec-2-2",
+              "number": "2.2",
+              "title": "Safetensors",
+              "file": "sec-2-2.md"
+            },
+            {
+              "id": "sec-2-3",
+              "number": "2.3",
+              "title": "GGUF",
+              "file": "sec-2-3.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-3",
+          "number": "3",
+          "title": "Graphs and Engines",
+          "sections": [
+            {
+              "id": "sec-3-1",
+              "number": "3.1",
+              "title": "ONNX, SavedModel and Keras",
+              "file": "sec-3-1.md"
+            },
+            {
+              "id": "sec-3-2",
+              "number": "3.2",
+              "title": "On the device: LiteRT, Core ML, ExecuTorch, MLX",
+              "file": "sec-3-2.md"
+            },
+            {
+              "id": "sec-3-3",
+              "number": "3.3",
+              "title": "Compiled engines: TensorRT and friends",
+              "file": "sec-3-3.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part III — The Numbers Inside",
+      "chapters": [
+        {
+          "id": "ch-4",
+          "number": "4",
+          "title": "Quantization",
+          "sections": [
+            {
+              "id": "sec-4-1",
+              "number": "4.1",
+              "title": "One block of weights",
+              "file": "sec-4-1.md"
+            },
+            {
+              "id": "sec-4-2",
+              "number": "4.2",
+              "title": "GGUF's quant types, decoded",
+              "file": "sec-4-2.md"
+            },
+            {
+              "id": "sec-4-3",
+              "number": "4.3",
+              "title": "FP8, NVFP4, MXFP4 and the GPU formats",
+              "file": "sec-4-3.md"
+            },
+            {
+              "id": "sec-4-4",
+              "number": "4.4",
+              "title": "What quantization costs",
+              "file": "sec-4-4.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part IV — Names, Conversions and Trust",
+      "chapters": [
+        {
+          "id": "ch-5",
+          "number": "5",
+          "title": "Living With Formats",
+          "sections": [
+            {
+              "id": "sec-5-1",
+              "number": "5.1",
+              "title": "Reading a model's name",
+              "file": "sec-5-1.md"
+            },
+            {
+              "id": "sec-5-2",
+              "number": "5.2",
+              "title": "Converting between formats",
+              "file": "sec-5-2.md"
+            },
+            {
+              "id": "sec-5-3",
+              "number": "5.3",
+              "title": "What a model file can do to your machine",
+              "file": "sec-5-3.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part V — Choosing",
+      "chapters": [
+        {
+          "id": "ch-6",
+          "number": "6",
+          "title": "In Practice",
+          "sections": [
+            {
+              "id": "sec-6-1",
+              "number": "6.1",
+              "title": "Choosing a format and an engine",
+              "file": "sec-6-1.md"
+            },
+            {
+              "id": "sec-6-2",
+              "number": "6.2",
+              "title": "The playground",
+              "file": "sec-6-2.md"
+            },
+            {
+              "id": "sec-6-3",
+              "number": "6.3",
+              "title": "Where formats are going",
+              "file": "sec-6-3.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-7",
+          "number": "7",
+          "title": "Back Matter",
+          "sections": [
+            {
+              "id": "sec-7-1",
+              "number": "7.1",
+              "title": "References",
+              "file": "sec-7-1.md"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "flatSections": [
+    {
+      "id": "sec-0-1",
+      "number": "",
+      "title": "Read this first",
+      "file": "sec-0-1.md"
+    },
+    {
+      "id": "sec-1-1",
+      "number": "1.1",
+      "title": "What a model file holds",
+      "file": "sec-1-1.md"
+    },
+    {
+      "id": "sec-1-2",
+      "number": "1.2",
+      "title": "Five questions every format answers",
+      "file": "sec-1-2.md"
+    },
+    {
+      "id": "sec-1-3",
+      "number": "1.3",
+      "title": "How we got here, 2014–2026",
+      "file": "sec-1-3.md"
+    },
+    {
+      "id": "sec-2-1",
+      "number": "2.1",
+      "title": "Pickle and the PyTorch checkpoint",
+      "file": "sec-2-1.md"
+    },
+    {
+      "id": "sec-2-2",
+      "number": "2.2",
+      "title": "Safetensors",
+      "file": "sec-2-2.md"
+    },
+    {
+      "id": "sec-2-3",
+      "number": "2.3",
+      "title": "GGUF",
+      "file": "sec-2-3.md"
+    },
+    {
+      "id": "sec-3-1",
+      "number": "3.1",
+      "title": "ONNX, SavedModel and Keras",
+      "file": "sec-3-1.md"
+    },
+    {
+      "id": "sec-3-2",
+      "number": "3.2",
+      "title": "On the device: LiteRT, Core ML, ExecuTorch, MLX",
+      "file": "sec-3-2.md"
+    },
+    {
+      "id": "sec-3-3",
+      "number": "3.3",
+      "title": "Compiled engines: TensorRT and friends",
+      "file": "sec-3-3.md"
+    },
+    {
+      "id": "sec-4-1",
+      "number": "4.1",
+      "title": "One block of weights",
+      "file": "sec-4-1.md"
+    },
+    {
+      "id": "sec-4-2",
+      "number": "4.2",
+      "title": "GGUF's quant types, decoded",
+      "file": "sec-4-2.md"
+    },
+    {
+      "id": "sec-4-3",
+      "number": "4.3",
+      "title": "FP8, NVFP4, MXFP4 and the GPU formats",
+      "file": "sec-4-3.md"
+    },
+    {
+      "id": "sec-4-4",
+      "number": "4.4",
+      "title": "What quantization costs",
+      "file": "sec-4-4.md"
+    },
+    {
+      "id": "sec-5-1",
+      "number": "5.1",
+      "title": "Reading a model's name",
+      "file": "sec-5-1.md"
+    },
+    {
+      "id": "sec-5-2",
+      "number": "5.2",
+      "title": "Converting between formats",
+      "file": "sec-5-2.md"
+    },
+    {
+      "id": "sec-5-3",
+      "number": "5.3",
+      "title": "What a model file can do to your machine",
+      "file": "sec-5-3.md"
+    },
+    {
+      "id": "sec-6-1",
+      "number": "6.1",
+      "title": "Choosing a format and an engine",
+      "file": "sec-6-1.md"
+    },
+    {
+      "id": "sec-6-2",
+      "number": "6.2",
+      "title": "The playground",
+      "file": "sec-6-2.md"
+    },
+    {
+      "id": "sec-6-3",
+      "number": "6.3",
+      "title": "Where formats are going",
+      "file": "sec-6-3.md"
+    },
+    {
+      "id": "sec-7-1",
+      "number": "7.1",
+      "title": "References",
+      "file": "sec-7-1.md"
+    }
+  ]
+}

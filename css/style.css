@@ -1008,6 +1008,7 @@ h3.article-heading {
 .article-content :not(pre) > code {
   font-family: var(--font-mono);
   font-size: .875em;
+  overflow-wrap: anywhere;             /* a long dotted path must not widen a phone page */
   font-variant-ligatures: none;
   background: var(--sunken);
   padding: .1em .3em;
@@ -1381,6 +1382,155 @@ h3.article-heading {
   .fig-grid--wide > .fig-cell--hd:first-child { display: block; }
   .fig-grid--wide > .fig-cell--row { grid-column: auto; background: var(--bg); }
   .fig-grid--wide > .fig-cell--grp { grid-column: 1 / -1; }
+}
+
+/* A file's byte layout, left to right: one ruled cell per region, its
+   flex weight (--w, a number) roughly its share. Header regions are the
+   recessed ones. On a phone the regions stack, one per line. */
+.fig-bytes { display: flex; margin-top: var(--s-4); border: 1px solid var(--rule-strong); }
+.fig-byte {
+  flex: var(--w, 1) 1 0;
+  min-width: 6rem;
+  padding: var(--s-2) var(--s-3);
+  border-left: 1px solid var(--rule);
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-ui);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+.fig-byte:first-child { border-left: 0; }
+.fig-byte b { display: block; font-size: var(--fs-xs); font-weight: 600; color: var(--text); }
+.fig-byte--hd { background: var(--sunken); }
+.fig-byte--hi { border-top: 2px solid var(--accent); }
+@media (max-width: 34rem) {
+  .fig-bytes { flex-direction: column; }
+  .fig-byte { border-left: 0; border-top: 1px solid var(--rule); }
+  .fig-byte:first-child { border-top: 0; }
+  .fig-byte--hi { border-top: 2px solid var(--accent); }
+}
+
+/* ---- playground: interactive figures mounted by js/widgets/ -------------
+   Same vocabulary as the figures, plus controls. Inputs take the search
+   field's recipe (a bottom rule, blue on focus, never --accent); choices are
+   the existing .chip toggle; a button is a 1px --rule-strong box, because
+   rule 3 leaves .article-link--primary the only filled surface. Data marks
+   are told apart by fill *value* — --sunken < --rule < --rule-strong <
+   --text-faint < --text — never by hue. */
+
+.pg { margin-top: var(--s-4); font-size: var(--fs-xs); line-height: var(--lh-ui); color: var(--text-muted); }
+.pg > * + * { margin-top: var(--s-4); }
+.pg-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--s-3) var(--s-4); }
+.pg-field { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
+.pg-field--grow { flex: 1 1 14rem; }
+.pg-lab {
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.pg-input, .pg-select {
+  font: 400 var(--fs-sm)/var(--lh-ui) var(--font-mono);
+  color: var(--text);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule-strong);
+  border-radius: 0;
+  padding: var(--s-1) 0;
+  min-width: 0;
+  width: 100%;
+}
+.pg-select { font-family: var(--font-sans); padding-right: var(--s-2); cursor: pointer; }
+.pg-select option { background: var(--surface); color: var(--text); }
+.pg-input:focus, .pg-select:focus { outline: none; border-bottom: 2px solid var(--focus); padding-bottom: calc(var(--s-1) - 1px); }
+.pg-input--num { width: 6.5rem; }
+.pg-range { width: 100%; accent-color: var(--text-muted); }
+.pg-btn {
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  padding: var(--s-1) var(--s-3);
+  cursor: pointer;
+}
+.pg-btn:hover { border-color: var(--text); }
+.pg .chips .chip { font-size: var(--fs-2xs); padding: 2px var(--s-2); }
+.pg-note { color: var(--text-faint); }
+.pg-note b, .pg-stat b { color: var(--text); font-weight: 600; }
+.pg-err { color: var(--text); border-left: 2px solid var(--rule-strong); padding-left: var(--s-3); }
+.pg-mono { font-family: var(--font-mono); font-size: var(--fs-xs); word-break: break-all; }
+.pg-pre {
+  font: 400 var(--fs-xs)/1.55 var(--font-mono);
+  background: var(--sunken);
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--rule-strong);
+  padding: var(--s-3) var(--s-4);
+  margin: 0;
+  max-height: 16rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+}
+.pg-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.pg-stat { background: var(--bg); padding: var(--s-2) var(--s-3); }
+.pg-stat b { display: block; font-size: var(--fs-base); font-variant-numeric: tabular-nums; }
+.pg-stat--hi { border-left: 2px solid var(--accent); }
+.pg-stat--hi b { color: var(--accent); }
+.pg table { font-size: var(--fs-xs); }
+.pg td, .pg th { padding-top: .35rem; padding-bottom: .35rem; vertical-align: top; }
+
+/* the quantizer: 32 columns; a bar is the true weight, a square the stored one */
+.pg-q { position: relative; height: 12rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); overflow: hidden; }
+.pg-q-zero { position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--rule-strong); }
+.pg-q-lvl { position: absolute; height: 0; border-top: 1px dashed var(--rule); }
+.pg-q-blk { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--rule-strong); }
+.pg-q-bar { position: absolute; background: var(--rule); border: 1px solid var(--rule-strong); box-sizing: border-box; }
+.pg-q-pt { position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: var(--bg); border: 2px solid var(--accent); box-sizing: border-box; }
+.pg-q-clip { position: absolute; top: 2px; transform: translateX(-50%); font-size: var(--fs-2xs); color: var(--text); white-space: nowrap; }
+.pg-bytes { display: flex; border: 1px solid var(--rule-strong); }
+.pg-byte { min-width: 0; padding: var(--s-1) var(--s-2); border-left: 1px solid var(--rule); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--fs-2xs); color: var(--text-muted); }
+.pg-byte:first-child { border-left: 0; }
+.pg-byte--scale { background: var(--sunken); color: var(--text); min-width: 6.5rem; }
+
+/* the name decoder: one ruled box per token, its kind underneath */
+.pg-toks { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.pg-tok { display: flex; flex-direction: column; border: 1px solid var(--rule-strong); padding: var(--s-1) var(--s-2); min-width: 0; }
+.pg-tok code { font: 600 var(--fs-sm)/var(--lh-ui) var(--font-mono); color: var(--text); background: none; padding: 0; word-break: break-all; }
+.pg-tok i { font-style: normal; font-size: var(--fs-2xs); letter-spacing: var(--ls-label-sm); text-transform: uppercase; color: var(--text-faint); }
+.pg-tok--hi { border-left: 2px solid var(--accent); }
+.pg-tok--hi i { color: var(--accent); }
+.pg-tok--unk { border-style: dashed; }
+
+/* the memory bar: stacked segments against a device's capacity */
+.pg-mem { position: relative; height: 1.75rem; border: 1px solid var(--rule); background: var(--bg); }
+.pg-mem-seg { position: absolute; top: 0; bottom: 0; border-right: 1px solid var(--bg); }
+.pg-mem-seg--w { background: var(--text-muted); }
+.pg-mem-seg--kv { background: var(--rule-strong); }
+.pg-mem-seg--x { background: var(--sunken); border: 1px dashed var(--rule-strong); }
+.pg-mem-cap { position: absolute; top: -.35rem; bottom: -.35rem; border-left: 2px solid var(--accent); }
+.pg-mem-key { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
+.pg-mem-key span { display: inline-flex; align-items: center; gap: var(--s-2); }
+.pg-mem-key i { width: 9px; height: 9px; display: inline-block; }
+
+/* a heat grid: rows of cells whose fill value encodes bits */
+.pg-heat { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); overflow-x: auto; }
+.pg-heat > span { background: var(--bg); min-height: 1.1rem; font-size: 9px; line-height: 1.1rem; text-align: center; color: var(--text-faint); overflow: hidden; white-space: nowrap; }
+.pg-heat > .pg-heat-lab { text-align: left; padding: 0 var(--s-2); font-size: var(--fs-2xs); color: var(--text-muted); }
+.pg-heat > .pg-h0 { background: var(--sunken); }
+.pg-heat > .pg-h1 { background: var(--rule); color: var(--text); }
+.pg-heat > .pg-h2 { background: var(--rule-strong); color: var(--bg); }
+.pg-heat > .pg-h3 { background: var(--text-faint); color: var(--bg); }
+.pg-heat > .pg-h4 { background: var(--text); color: var(--bg); }
+.pg-drop { border: 1px dashed var(--rule-strong); padding: var(--s-4); text-align: center; color: var(--text-faint); }
+.pg-drop--over { border: 2px solid var(--rule-ink); padding: calc(var(--s-4) - 1px); }
+.pg-hist .fig-row { grid-template-columns: 5rem minmax(0, 1fr) 7.5rem; }
+
+@media (max-width: 34rem) {
+  .pg-q { height: 10rem; }
+  .pg-hist .fig-row { grid-template-columns: minmax(0, 1fr) 7.5rem; }
 }
 
 /* ============================================================================

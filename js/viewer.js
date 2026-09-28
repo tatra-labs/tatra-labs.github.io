@@ -274,6 +274,29 @@
     });
   }
 
+  /* A post may carry interactive figures: an empty <div data-widget="name">
+     in its markdown, filled by a same-origin script the post lists under
+     `widgets`. The sanitiser never sees the script, and a page with no
+     placeholder loads nothing. */
+  var widgetScripts = {};
+
+  function mountWidgets(data, node) {
+    var slots = node.querySelectorAll('[data-widget]');
+    var srcs = ((data && data.widgets) || []).filter(function (s) {
+      return /^\/js\/[a-z0-9\/_-]+\.js$/i.test(s);
+    });
+    if (!slots.length || !srcs.length) return Promise.resolve();
+    return Promise.all(srcs.map(function (s) {
+      return widgetScripts[s] || (widgetScripts[s] = loadScript(s));
+    })).then(function () {
+      slots.forEach(function (slot) {
+        var draw = TL.widgets && TL.widgets[slot.getAttribute('data-widget')];
+        if (typeof draw !== 'function') return;
+        try { draw(slot); } catch (e) { if (window.console) console.error(e); }
+      });
+    }).catch(function () { });
+  }
+
   /* ------------------------------------------------------------- renderers */
 
   function renderStandard(data) {
@@ -295,6 +318,7 @@
     el.content.innerHTML = sections.map(renderSection).join('');
     wrapTables(el.content);
     typesetMath(el.content);
+    mountWidgets(data, el.content);
   }
 
   function renderPaper(data) {
@@ -390,6 +414,7 @@
         stripDuplicateHeading(el.content, heading, cur.title);
         wrapTables(el.content);
         typesetMath(el.content);
+        return mountWidgets(data, el.content);
       });
   }
 

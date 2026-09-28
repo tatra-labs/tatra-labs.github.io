@@ -1,0 +1,20 @@
+{
+  "slug": "whats-in-a-model-file",
+  "title": "What's in a Model File",
+  "date": "2026-09-28",
+  "readingTime": "1 h 45 min",
+  "tags": [
+    "Model Formats",
+    "Quantization",
+    "Inference",
+    "Security",
+    "GGUF"
+  ],
+  "author": "Tatra Labs",
+  "reader": "markdown-toc",
+  "contentRoot": "/content/posts/whats-in-a-model-file/sections",
+  "tocFile": "/content/posts/whats-in-a-model-file/toc.json",
+  "widgets": [
+    "/js/widgets/model-files.js"
+  ]
+}
