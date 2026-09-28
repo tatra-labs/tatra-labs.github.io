@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify every internal link in the Markdown book sections resolves.
+"""Verify every internal link in the Markdown book and essay sections resolves.
 
 The reading-list books cross-reference each other heavily — an entry that says
 "the mechanism is in Sutskever's List" links straight to that section. Those
@@ -12,6 +12,10 @@ Checks, for links of the form `/foundation/book/<slug>?section=<id>`:
   - the section id appears in that book's toc.json
   - the section's Markdown file is actually written (a link into an unwritten
     section renders as a blank page, which is worse than no link)
+
+The same check covers chaptered essays — a post whose sections live in
+content/posts/<slug>/sections/ — for links of the form
+`/post/<slug>?section=<id>`.
 
 Also flags root-relative links to paths that do not exist on disk, skipping
 the client-side routes the viewer owns (/post/, /project/, /foundation/).
@@ -31,18 +35,20 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 BOOKS = REPO / "content" / "foundation" / "books"
+POSTS = REPO / "content" / "posts"
 
 LINK = re.compile(r"\]\((/[^)\s]*)\)")
 BOOK_LINK = re.compile(r"^/foundation/book/([a-z0-9-]+)(?:\?section=([a-z0-9-]+))?$")
+POST_LINK = re.compile(r"^/post/([a-z0-9-]+)(?:\?section=([a-z0-9-]+))?$")
 
 # Routes the client-side viewer resolves; there is no file on disk to check.
 CLIENT_ROUTES = ("/post/", "/project/", "/foundation/")
 
 
-def load_books() -> dict[str, dict]:
+def load_books(root: Path = BOOKS) -> dict[str, dict]:
     """slug -> {ids: set of section ids, written: set of ids with a file}"""
     out = {}
-    for toc_path in sorted(BOOKS.glob("*/toc.json")):
+    for toc_path in sorted(root.glob("*/toc.json")):
         slug = toc_path.parent.name
         toc = json.loads(toc_path.read_text(encoding="utf-8"))
         flat = toc.get("flatSections") or []
@@ -60,12 +66,15 @@ def main() -> int:
     args = ap.parse_args()
 
     books = load_books()
+    essays = load_books(POSTS)
+    posts = {p.stem for p in POSTS.glob("*.json") if p.name != "index.json"}
     if not books:
         print("error: no books found", file=sys.stderr)
         return 2
 
     problems, checked = [], 0
-    for md in sorted(BOOKS.glob("*/sections/*.md")):
+    sources = sorted(BOOKS.glob("*/sections/*.md")) + sorted(POSTS.glob("*/sections/*.md"))
+    for md in sources:
         where = md.relative_to(REPO).as_posix()
         for href in LINK.findall(md.read_text(encoding="utf-8")):
             checked += 1
@@ -80,6 +89,20 @@ def main() -> int:
                 elif sec and sec not in books[slug]["ids"]:
                     problems.append(f"{where}: '{slug}' has no section '{sec}'")
                 elif sec and sec not in books[slug]["written"]:
+                    problems.append(f"{where}: '{slug}/{sec}' is declared but "
+                                    f"not written - the link renders blank")
+                continue
+
+            m = POST_LINK.match(href)
+            if m:
+                slug, sec = m.group(1), m.group(2)
+                if slug not in posts:
+                    problems.append(f"{where}: no such post '{slug}' -> {href}")
+                elif sec and slug not in essays:
+                    problems.append(f"{where}: '{slug}' is not a chaptered essay -> {href}")
+                elif sec and sec not in essays[slug]["ids"]:
+                    problems.append(f"{where}: '{slug}' has no section '{sec}'")
+                elif sec and sec not in essays[slug]["written"]:
                     problems.append(f"{where}: '{slug}/{sec}' is declared but "
                                     f"not written - the link renders blank")
                 continue

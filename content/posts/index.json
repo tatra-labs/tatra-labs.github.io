@@ -1,5 +1,20 @@
 [
   {
+    "slug": "who-closes-the-loop",
+    "title": "Who Closes the Loop",
+    "excerpt": "A coding agent is a model inside a program that decides what it sees, what it may do and when it is finished. That program — the harness — is where the engineering of AI coding moved. Nineteen sections on its history, its mathematics, what is inside Claude Code and the open harnesses, the hard problems each answers differently, how to measure any of it, and what to do on Monday.",
+    "date": "2026-09-27",
+    "readingTime": "2 h 40 min",
+    "tags": [
+      "Agents",
+      "Coding Agents",
+      "Harness Engineering",
+      "Evaluation",
+      "Security"
+    ],
+    "author": "Tatra Labs"
+  },
+  {
     "slug": "the-harness-tax",
     "title": "The Harness Tax",
     "excerpt": "Swap the harness around a coding agent and the task still gets solved about as often — but the bill can move by five times. A Berkeley study measured 21 model–harness pairs, and the cheapest harness on the board offers four tools.",

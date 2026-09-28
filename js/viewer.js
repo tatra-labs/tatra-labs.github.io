@@ -342,8 +342,12 @@
     var cur = flat[idx];
     var heading = (cur.number ? cur.number + ' ' : '') + cur.title;
 
-    document.title = heading + ' · ' + (data.title || 'Book') + ' — Tatra Labs';
-    setKicker('Book · ' + (data.title || ''), '/foundation/book/' + encodeURIComponent(slug));
+    /* A book and a chaptered essay share this reader; only the words that
+       name the container differ. */
+    var isPost = route.kind === 'post';
+    document.title = heading + ' · ' + (data.title || (isPost ? 'Essay' : 'Book')) + ' — Tatra Labs';
+    setKicker((isPost ? 'Essay · ' : 'Book · ') + (data.title || ''),
+      (isPost ? '/post/' : '/foundation/book/') + encodeURIComponent(slug));
     setTitle(heading, path + '?section=' + encodeURIComponent(cur.id));
 
     if (el.sub) {
@@ -352,7 +356,9 @@
       el.sub.classList.toggle('hidden', !chapter);
     }
 
-    setMeta(['Notes by ' + TL.OWNER]);
+    setMeta(isPost
+      ? [data.readingTime ? data.readingTime + ' in all' : '', flat.length + ' sections']
+      : ['Notes by ' + TL.OWNER]);
     renderTags(data.tags);
 
     if (el.toc) {
@@ -366,9 +372,10 @@
       .then(function (r) { return r.ok ? r.text() : null; })
       .then(function (md) {
         if (md == null) {
-          el.content.innerHTML =
-            '<p class="md-missing"><strong>Not written yet.</strong> ' +
-            'These notes are being written section by section; this one is still ahead of me.</p>';
+          el.content.innerHTML = isPost
+            ? '<p class="md-missing"><strong>This section could not be loaded.</strong></p>'
+            : '<p class="md-missing"><strong>Not written yet.</strong> ' +
+              'These notes are being written section by section; this one is still ahead of me.</p>';
           return;
         }
         var html = md;
@@ -508,7 +515,9 @@
       if (el.article) el.article.classList.remove('hidden');
       if (el.shell) el.shell.classList.remove('hidden');
 
-      if (route.kind === 'book') {
+      /* A post that declares the markdown-toc reader is a chaptered essay:
+         same TOC, same prev/next, sections fetched one at a time. */
+      if (route.kind === 'book' || (route.kind === 'post' && data.reader === 'markdown-toc')) {
         var tocUrl = data.tocFile || (route.base + '/' + encodeURIComponent(slug) + '/toc.json');
         return fetch(tocUrl)
           .then(function (r) { return r.ok ? r.json() : null; })

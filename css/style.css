@@ -1264,6 +1264,125 @@ h3.article-heading {
   .fig-cell--row { grid-column: 1 / -1; background: var(--surface); }
 }
 
+/* ---- diagrams: steps, stacks, timelines, wide matrices ------------------
+   Structure figures for the chaptered essays, in the same vocabulary as the
+   charts above: every box is a 1px rule, the one element a figure wants you
+   to find carries a 2px --accent left stroke (the .fig-cell--alt recipe), and
+   nothing is filled except --sunken group rows. Arrows are real text in the
+   markup, so a sequence wraps with its steps on a phone instead of shrinking. */
+
+.fig-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+}
+.fig-steps--v { flex-direction: column; flex-wrap: nowrap; }
+.fig-step {
+  flex: 1 1 7.5rem;
+  min-width: 0;
+  border: 1px solid var(--rule-strong);
+  padding: var(--s-2) var(--s-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-muted);
+}
+.fig-steps--v > .fig-step { flex: none; }
+.fig-step b  { display: block; font-weight: 600; color: var(--text); }
+.fig-step em { display: block; font-style: normal; color: var(--text-faint); }
+.fig-step--hi { border-left: 2px solid var(--accent); }
+.fig-step--hi b { color: var(--accent); }
+.fig-arr {
+  flex: none;
+  align-self: center;
+  font-style: normal;
+  font-size: var(--fs-sm);
+  line-height: 1;
+  color: var(--text-faint);
+}
+.fig-steps--v > .fig-arr { align-self: flex-start; padding-left: var(--s-4); }
+
+/* A labelled stack of layers: name | contents. */
+.fig-stack { margin-top: var(--s-4); border-top: 1px solid var(--rule); }
+.fig-layer {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: baseline;
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-muted);
+}
+.fig-layer > b {
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text);
+}
+.fig-layer--hi { border-left: 2px solid var(--accent); padding-left: var(--s-3); }
+.fig-layer--hi > b { color: var(--accent); }
+.fig-tags { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-2); }
+.fig-tag {
+  font-style: normal;
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-ui);
+  padding: 0 var(--s-2);
+  border: 1px solid var(--rule);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* A dated sequence: when | what. */
+.fig-tl { margin-top: var(--s-4); }
+.fig-tl-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--s-3);
+  padding-block: var(--s-2);
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-ui);
+  color: var(--text-muted);
+}
+.fig-tl-row > i { font-style: normal; color: var(--text-faint); }
+.fig-tl-row b  { font-weight: 600; color: var(--text); }
+.fig-tl-row em { font-style: normal; color: var(--text-faint); }
+.fig-tl-row--hi > i { color: var(--accent); font-weight: 600; }
+.fig-tl-era {
+  display: block;
+  margin-top: var(--s-4);
+  padding: var(--s-1) var(--s-3);
+  background: var(--sunken);
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label-sm);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* A matrix too wide for the phone column scrolls sideways inside its own
+   box rather than being refolded: the comparison IS the row. --cols is set
+   inline and is a count, not a colour, so rule 4 holds. */
+.fig-scroll { overflow-x: auto; margin-top: var(--s-4); }
+.fig-scroll > .fig-grid { margin-top: 0; }
+.fig-grid--wide {
+  grid-template-columns: minmax(7.5rem, 1.1fr) repeat(var(--cols, 4), minmax(7rem, 1fr));
+  min-width: calc(7.5rem + var(--cols, 4) * 7rem);
+}
+
+@media (max-width: 34rem) {
+  .fig-layer { grid-template-columns: minmax(0, 1fr); row-gap: var(--s-1); }
+  .fig-tl-row { grid-template-columns: 4rem minmax(0, 1fr); }
+  .fig-grid.fig-grid--wide {
+    grid-template-columns: minmax(7.5rem, 1.1fr) repeat(var(--cols, 4), minmax(7rem, 1fr));
+  }
+  .fig-grid--wide > .fig-cell--hd:first-child { display: block; }
+  .fig-grid--wide > .fig-cell--row { grid-column: auto; background: var(--bg); }
+  .fig-grid--wide > .fig-cell--grp { grid-column: 1 / -1; }
+}
+
 /* ============================================================================
    READER — TOC beside the chapter
    ============================================================================ */

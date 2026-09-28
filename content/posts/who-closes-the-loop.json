@@ -1,0 +1,17 @@
+{
+  "slug": "who-closes-the-loop",
+  "title": "Who Closes the Loop",
+  "date": "2026-09-27",
+  "readingTime": "2 h 40 min",
+  "tags": [
+    "Agents",
+    "Coding Agents",
+    "Harness Engineering",
+    "Evaluation",
+    "Security"
+  ],
+  "author": "Tatra Labs",
+  "reader": "markdown-toc",
+  "contentRoot": "/content/posts/who-closes-the-loop/sections",
+  "tocFile": "/content/posts/who-closes-the-loop/toc.json"
+}

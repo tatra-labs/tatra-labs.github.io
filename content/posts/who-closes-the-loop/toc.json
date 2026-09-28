@@ -1,0 +1,320 @@
+{
+  "prelude": {
+    "title": null,
+    "chapters": [
+      {
+        "id": "ch-0",
+        "number": "",
+        "title": "Front Matter",
+        "sections": [
+          {
+            "id": "sec-0-1",
+            "number": "",
+            "title": "Read this first",
+            "file": "sec-0-1.md"
+          }
+        ]
+      }
+    ]
+  },
+  "parts": [
+    {
+      "title": "Part I — The Idea",
+      "chapters": [
+        {
+          "id": "ch-1",
+          "number": "1",
+          "title": "Where the Loop Went",
+          "sections": [
+            {
+              "id": "sec-1-1",
+              "number": "1.1",
+              "title": "Before agents, 1970–2023",
+              "file": "sec-1-1.md"
+            },
+            {
+              "id": "sec-1-2",
+              "number": "1.2",
+              "title": "The agent years, 2024–2026",
+              "file": "sec-1-2.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-2",
+          "number": "2",
+          "title": "A Model of the Loop",
+          "sections": [
+            {
+              "id": "sec-2-1",
+              "number": "2.1",
+              "title": "The formal picture",
+              "file": "sec-2-1.md"
+            },
+            {
+              "id": "sec-2-2",
+              "number": "2.2",
+              "title": "The arithmetic of long tasks",
+              "file": "sec-2-2.md"
+            },
+            {
+              "id": "sec-2-3",
+              "number": "2.3",
+              "title": "The economics of context",
+              "file": "sec-2-3.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part II — The Machine",
+      "chapters": [
+        {
+          "id": "ch-3",
+          "number": "3",
+          "title": "Anatomy of a Harness",
+          "sections": [
+            {
+              "id": "sec-3-1",
+              "number": "3.1",
+              "title": "Seven subsystems and one turn",
+              "file": "sec-3-1.md"
+            },
+            {
+              "id": "sec-3-2",
+              "number": "3.2",
+              "title": "Claude Code, read from its source",
+              "file": "sec-3-2.md"
+            },
+            {
+              "id": "sec-3-3",
+              "number": "3.3",
+              "title": "The open harnesses",
+              "file": "sec-3-3.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part III — The Problems",
+      "chapters": [
+        {
+          "id": "ch-4",
+          "number": "4",
+          "title": "Hard Problems, Answered Differently",
+          "sections": [
+            {
+              "id": "sec-4-1",
+              "number": "4.1",
+              "title": "Finding the code, choosing what to see",
+              "file": "sec-4-1.md"
+            },
+            {
+              "id": "sec-4-2",
+              "number": "4.2",
+              "title": "Acting: edits, tools, environments",
+              "file": "sec-4-2.md"
+            },
+            {
+              "id": "sec-4-3",
+              "number": "4.3",
+              "title": "Knowing when you are right",
+              "file": "sec-4-3.md"
+            },
+            {
+              "id": "sec-4-4",
+              "number": "4.4",
+              "title": "Staying coherent for hours",
+              "file": "sec-4-4.md"
+            },
+            {
+              "id": "sec-4-5",
+              "number": "4.5",
+              "title": "When the environment attacks",
+              "file": "sec-4-5.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part IV — Judgement",
+      "chapters": [
+        {
+          "id": "ch-5",
+          "number": "5",
+          "title": "Measuring Agents",
+          "sections": [
+            {
+              "id": "sec-5-1",
+              "number": "5.1",
+              "title": "Benchmarks and what they miss",
+              "file": "sec-5-1.md"
+            },
+            {
+              "id": "sec-5-2",
+              "number": "5.2",
+              "title": "Harnesses compared",
+              "file": "sec-5-2.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part V — Practice",
+      "chapters": [
+        {
+          "id": "ch-6",
+          "number": "6",
+          "title": "Working With the Loop",
+          "sections": [
+            {
+              "id": "sec-6-1",
+              "number": "6.1",
+              "title": "A field manual",
+              "file": "sec-6-1.md"
+            },
+            {
+              "id": "sec-6-2",
+              "number": "6.2",
+              "title": "What is still unsolved",
+              "file": "sec-6-2.md"
+            }
+          ]
+        },
+        {
+          "id": "ch-7",
+          "number": "",
+          "title": "Back Matter",
+          "sections": [
+            {
+              "id": "sec-7-1",
+              "number": "",
+              "title": "References",
+              "file": "sec-7-1.md"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "flatSections": [
+    {
+      "id": "sec-0-1",
+      "number": "",
+      "title": "Read this first",
+      "file": "sec-0-1.md"
+    },
+    {
+      "id": "sec-1-1",
+      "number": "1.1",
+      "title": "Before agents, 1970–2023",
+      "file": "sec-1-1.md"
+    },
+    {
+      "id": "sec-1-2",
+      "number": "1.2",
+      "title": "The agent years, 2024–2026",
+      "file": "sec-1-2.md"
+    },
+    {
+      "id": "sec-2-1",
+      "number": "2.1",
+      "title": "The formal picture",
+      "file": "sec-2-1.md"
+    },
+    {
+      "id": "sec-2-2",
+      "number": "2.2",
+      "title": "The arithmetic of long tasks",
+      "file": "sec-2-2.md"
+    },
+    {
+      "id": "sec-2-3",
+      "number": "2.3",
+      "title": "The economics of context",
+      "file": "sec-2-3.md"
+    },
+    {
+      "id": "sec-3-1",
+      "number": "3.1",
+      "title": "Seven subsystems and one turn",
+      "file": "sec-3-1.md"
+    },
+    {
+      "id": "sec-3-2",
+      "number": "3.2",
+      "title": "Claude Code, read from its source",
+      "file": "sec-3-2.md"
+    },
+    {
+      "id": "sec-3-3",
+      "number": "3.3",
+      "title": "The open harnesses",
+      "file": "sec-3-3.md"
+    },
+    {
+      "id": "sec-4-1",
+      "number": "4.1",
+      "title": "Finding the code, choosing what to see",
+      "file": "sec-4-1.md"
+    },
+    {
+      "id": "sec-4-2",
+      "number": "4.2",
+      "title": "Acting: edits, tools, environments",
+      "file": "sec-4-2.md"
+    },
+    {
+      "id": "sec-4-3",
+      "number": "4.3",
+      "title": "Knowing when you are right",
+      "file": "sec-4-3.md"
+    },
+    {
+      "id": "sec-4-4",
+      "number": "4.4",
+      "title": "Staying coherent for hours",
+      "file": "sec-4-4.md"
+    },
+    {
+      "id": "sec-4-5",
+      "number": "4.5",
+      "title": "When the environment attacks",
+      "file": "sec-4-5.md"
+    },
+    {
+      "id": "sec-5-1",
+      "number": "5.1",
+      "title": "Benchmarks and what they miss",
+      "file": "sec-5-1.md"
+    },
+    {
+      "id": "sec-5-2",
+      "number": "5.2",
+      "title": "Harnesses compared",
+      "file": "sec-5-2.md"
+    },
+    {
+      "id": "sec-6-1",
+      "number": "6.1",
+      "title": "A field manual",
+      "file": "sec-6-1.md"
+    },
+    {
+      "id": "sec-6-2",
+      "number": "6.2",
+      "title": "What is still unsolved",
+      "file": "sec-6-2.md"
+    },
+    {
+      "id": "sec-7-1",
+      "number": "",
+      "title": "References",
+      "file": "sec-7-1.md"
+    }
+  ]
+}

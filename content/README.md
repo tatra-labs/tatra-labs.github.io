@@ -64,6 +64,23 @@ Links to another origin get `target="_blank"` and an arrow icon automatically. O
 
 Book rows additionally show how much is written (`1 / 164 sections`), read live from that book's `toc.json`. Nothing is hand-maintained.
 
+### Chaptered essays
+
+A post too long for one page can use the book reader instead of `content.sections`. Give the post
+JSON `"reader": "markdown-toc"`, a `contentRoot` and a `tocFile`, and put the chapters under
+`content/posts/<slug>/` exactly as a book does (`toc.json` with `prelude`, `parts` and a mirroring
+`flatSections`; one `sections/*.md` per entry). The route stays `/post/<slug>`, each section is
+`/post/<slug>?section=<id>`, and the page gets the book's contents rail and prev/next links, with the
+kicker reading "Essay" rather than "Book". `readingTime` is shown in the meta line as the whole essay's
+length. `tools/check_links.py` validates `/post/<slug>?section=<id>` links the same way it validates
+book links. Current example: `who-closes-the-loop`.
+
+Beyond the chart classes, posts can draw structure figures with `.fig-steps` / `.fig-step` /
+`.fig-arr` (a sequence; add `.fig-steps--v` for vertical), `.fig-stack` / `.fig-layer` with
+`.fig-tags` / `.fig-tag` (labelled layers), `.fig-tl` / `.fig-tl-row` / `.fig-tl-era` (a dated
+timeline), and `.fig-scroll` around a `.fig-grid.fig-grid--wide` with `style="--cols:N"` (a matrix that
+scrolls sideways on a phone instead of refolding). `--hi` modifiers carry the one 2px accent stroke.
+
 ## The Agent Hub — `content/agents/registry.json`
 
 One file. Adding an agent is one object in `agents[]`; the page at `/project/agents/` is rendered from it and nothing outside this file changes — bump `register.updated` to the new record's date while you are in there. Run `python tools/check_agents.py` afterwards; it refuses records that cut corners, and it names which corner.
