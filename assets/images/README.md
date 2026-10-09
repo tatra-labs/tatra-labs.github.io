@@ -10,7 +10,7 @@ Screenshots and clips for the Projects tab. Each project card in `content/projec
 |------|---------|
 | `jobs-occupations-map.webp` | `us-job-market` — card preview and hero |
 | `jobs-what-to-learn.webp`, `jobs-tech-quadrant.webp`, `jobs-remote-states.webp` | `us-job-market` — in-page figures |
-| `crossword-studio.webp` | `crossword-puzzle-agent` — card preview and in-page figure |
+| `crossword-studio.webp` | `crossword-puzzle-agent` — the Agent Hub plate for record 001 and an in-page figure of its write-up (no longer a Projects card: the agent is listed in the Agent Hub) |
 | `crossword-demo.mp4`, `crossword-demo-poster.webp` | `crossword-puzzle-agent` — the looping hero clip and its poster |
 | `agent-hub-register.webp` | `agent-hub` — card preview and hero, and the plate for record 001 in the register itself is `crossword-studio.webp` |
 | `deep-research-graph.webp` | the plate for record 003 in the Agent Hub. Rendered by that project's own `deck/images/system_graph.png`; padded to 16:9 rather than cropped, because `.entry-plate` covers to 16:9 and a crop cut the first and last phase off the diagram |

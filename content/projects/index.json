@@ -16,14 +16,5 @@
     "tags": ["Data Visualization", "Labor Market", "Python", "Remote Work", "BLS"],
     "author": "Tatra Labs",
     "image": "/assets/images/projects/jobs-occupations-map.webp"
-  },
-  {
-    "slug": "crossword-puzzle-agent",
-    "title": "Crossword Puzzle Agent",
-    "excerpt": "An agent that solves crosswords by pairing an LLM reading clues with belief propagation and search that make the grid agree with itself — then re-asking only the clues it doubts. Turns 0 of 14 NYT puzzles into 7.",
-    "date": "2026-09-02",
-    "tags": ["LLM Agents", "Belief Propagation", "Python", "Evaluation", "For Fun"],
-    "author": "Tatra Labs",
-    "image": "/assets/images/projects/crossword-studio.webp"
   }
 ]
