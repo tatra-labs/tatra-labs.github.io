@@ -1,0 +1,72 @@
+{
+  "slug": "cram",
+  "title": "Cram: Train the KV Cache, Don't Prune It",
+  "date": "2026-10-22",
+  "tags": [
+    "LLM Inference",
+    "KV Cache",
+    "Test-Time Training",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/cram-phonebook.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Phone-number lookups after shrinking the cache &#183; Qwen3-0.6B</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--pi\"></i>cram (trained cache)</span><span><i class=\"fig-m fig-m--cx\"></i>KVZip+ (eviction)</span><span><i class=\"fig-m fig-m--cc\"></i>full cache</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Lookups answered correctly, %</span>\n<div class=\"fig-row\"><span class=\"fig-name\">8&#215; smaller</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:5.00%;width:85.00%\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:97.50%\" title=\"Full cache: 97.5%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:5.00%\" title=\"KVZip+ eviction at 8x: 5%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:90.00%\" title=\"cram at 8x: 90%\"></i></span><span class=\"fig-val\">+85 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">16&#215; smaller</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:77.50%\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:97.50%\" title=\"Full cache: 97.5%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"KVZip+ eviction at 16x: 0%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:77.50%\" title=\"cram at 16x: 77.5%\"></i></span><span class=\"fig-val\">+77.5 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">32&#215; smaller</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:32.50%\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:97.50%\" title=\"Full cache: 97.5%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"KVZip+ eviction at 32x: 0%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:32.50%\" title=\"cram at 32x: 32.5%\"></i></span><span class=\"fig-val\">+32.5 pts</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">25%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">50%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">75%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">100%</i></span><span class=\"fig-val\">cram gain</span></div>\n</div>\n<figcaption>Two 4,096-token phonebooks of 180 names each, 20 lookups per book (40 in all), greedy decoding, one laptop RTX 5060. Each method compresses the document before it sees a single question. KVZip+ is the strongest eviction baseline in the paper.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/cram",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.20582)",
+            "url": "https://arxiv.org/abs/2610.20582"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Shrink a language model's memory of a document 8× with the strongest eviction method and it forgets 19 phone numbers out of 20. Train that memory instead of pruning it, and it remembers 18.\nThat memory is the KV cache: every token the model has read, kept as a key and a value in every layer, so it can look back without reading again. For a long document it is the real cost of inference — it decides how much GPU memory you need and how many users fit on one card. The usual way to shrink it is eviction: keep the entries that look important and throw the rest away. That works until the entry you threw away was the answer."
+      },
+      {
+        "type": "text",
+        "value": "Latent Compaction with Test-Time Training (Chen, Shen, Xiao and Han, October 2026) does something that sounds wrong the first time you hear it. It treats the cache as a tiny neural network and trains it. The model's weights stay frozen. Each document gets its own handful of key/value slots, optimised by gradient descent until the frozen model behaves as if it still had the whole cache. The paper reports 96.7% on the RULER long-context benchmark at 32× compression, against 40.0% for the strongest eviction method.\nCram is my implementation of it, built and published a week after the paper appeared. It is about 600 lines, it plugs into the standard attention interface of Hugging Face transformers, and so it runs on Qwen3, Llama and other modern decoders without touching their code. You study a document once, save the result to a file, and answer questions from that file later — the document itself is no longer needed."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\ncram compact report.txt --ratio 16     # study once, minutes\ncram ask report.txt.cram \"Who signed the agreement?\"\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; How cram studies a document</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Study</b><em>The frozen model reads the document, then answers 480 generic prompts about it. Those rollouts are the teacher. No test question is ever used.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Seed</b><em>Three quarters of the slots start as the original entries eviction would keep. The rest are anchors and spread-out diversifiers.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>Fit attention</b><em>Layer by layer, slots are trained so attention over them reproduces the full cache's outputs <i>and</i> its log-normalizers.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Distil</b><em>All slots together, so the model's next-token distributions match the full-cache model's. Held-out early stopping.</em></div>\n</div>\n<figcaption>Model weights never change. Everything trained lives in the cache, and the cache is a file you can save and load without the document.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "The trick that makes it work is the log-normalizer. Attention is a softmax over everything the model can see, and a compressed cache has fewer things in it, so on its own it quietly tells the model the document matters less than it does. Training each slot to reproduce how much total attention the document should receive fixes that. In the paper's own ablation, removing that one term drops Phonebook accuracy at 16× from 80.7% to 36.5%."
+      },
+      {
+        "type": "markdown",
+        "value": "## Results\n\n| lookup accuracy | 8&#215; smaller cache | 16&#215; | 32&#215; |\n|---|---:|---:|---:|\n| full cache (reference) | 97.5% | 97.5% | 97.5% |\n| KVZip+ eviction | 5% | 0% | 0% |\n| **cram, stage 1** | **90%** | **77.5%** | **32.5%** |\n| cram, stage 1 + 2 | 85% | 75% | 32.5% |"
+      },
+      {
+        "type": "text",
+        "value": "Studying a document took about nine minutes on a laptop GPU, then two minutes per budget for the attention fit. Eviction is instant, which is its whole appeal, and at 8× it has already lost almost every number. Trained slots keep most of them."
+      },
+      {
+        "type": "text",
+        "value": "What did not work, said plainly. The second stage, end-to-end distillation, kept improving its loss on held-out prompts but did not help lookups on this small model: it cost one question or less per document, so Cram lets you skip it. I changed the paper's recipe in one place — stage 2 keeps the checkpoint with the best held-out loss instead of running a fixed 1,000 steps — because a fixed schedule overfit and cost up to 15 points.\nAnd Qwen3-1.7B, the paper's main model, does worse here than it should: 40% after stage 1 on one document at 16×, against the paper's 87.8%. Eviction gets 0% on the same document, so the method still wins by a mile, but the gap to the paper is real and I have not found it yet. It is filed as an open issue in the repository."
+      },
+      {
+        "type": "text",
+        "value": "Two more things to know before you reach for it. Studying a document takes minutes, not milliseconds, so it pays off when one document answers many questions or has to sit in memory for a long time. And the compact attention is plain PyTorch, so today a crammed cache saves memory, not time; a fused kernel would make it fast as well. Its six tests run in seconds."
+      }
+    ]
+  }
+}

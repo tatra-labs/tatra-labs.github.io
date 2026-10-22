@@ -1,0 +1,76 @@
+{
+  "slug": "lethe",
+  "title": "Lethe: Agent Teams That Forget",
+  "date": "2026-10-21",
+  "tags": [
+    "LLM Agents",
+    "Multi-Agent",
+    "Program Search",
+    "Paper Implementation",
+    "Python"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/lethe-forgetting.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Same budget, three ways to spend it &#183; Tan et al., Table 1</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">VLIW kernel: clock cycles, lower is better</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">1 agent</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:89.12%\" title=\"1 agent: 1,426\"></i><i class=\"fig-blab\" style=\"left:89.12%\">1,426</i></span><span class=\"fig-val\">&#177;197</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">4 parallel agents</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:76.25%\" title=\"4 parallel agents: 1,220\"></i><i class=\"fig-blab\" style=\"left:76.25%\">1,220</i></span><span class=\"fig-val\">&#177;44</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">Team that forgets</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:68.56%\" title=\"Team that forgets: 1,097\"></i><i class=\"fig-blab\" style=\"left:68.56%\">1,097</i></span><span class=\"fig-val\">&#177;18</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Frontier-CS Q171: score, higher is better</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">1 agent</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:71.11%\" title=\"1 agent: 64.0\"></i><i class=\"fig-blab\" style=\"left:71.11%\">64.0</i></span><span class=\"fig-val\">&#177;6.2</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">4 parallel agents</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:78.00%\" title=\"4 parallel agents: 70.2\"></i><i class=\"fig-blab\" style=\"left:78.00%\">70.2</i></span><span class=\"fig-val\">&#177;1.1</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">Team that forgets</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:89.78%\" title=\"Team that forgets: 80.8\"></i><i class=\"fig-blab\" style=\"left:89.78%\">80.8</i></span><span class=\"fig-val\">&#177;2.9</span></div>\n</div>\n<figcaption>Mean and standard deviation over 3 runs with DeepSeek V4.1 Flash agents. These are the paper's numbers, not mine — why is further down the page.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/lethe",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.20563)",
+            "url": "https://arxiv.org/abs/2610.20563"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "An AI agent was optimising a compute kernel. At 1,710 clock cycles it stopped and wrote: “I've reached the practical limit of this machine configuration.” Of its 763 turns, 532 produced no attempt at all. A team of agents on the same machine, whose memories were wiped three times along the way, got to 1,077.\nThat is the finding of Scaling Discovery Requires Forgetting (Tan et al., October 2026). Agents that improve a program over many iterations — the AlphaEvolve style of search — all hit the same wall, and the wall is the agent's own history. The longer it runs, the more it is anchored to what it already tried. Before its first forget, a team's edits shrink from about 150 changed lines to 30, its reasoning from about 28,000 tokens per attempt to 7,000, and the score flattens. Running four agents in parallel does not fix it. Letting them share work does not fix it either."
+      },
+      {
+        "type": "text",
+        "value": "What fixes it is almost embarrassingly simple: forget. Every so often, throw away every agent's session and every past attempt, keep only the best program, and start a fresh team from it. Little is lost, because the best program already contains most of what was learned. What gets thrown away is the record of how it was found — including every dead end the agents had stopped being able to see past. In the paper, 32 of 36 forgets were followed by a new best within the next round."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; One run, four rounds</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Round 1</b><em>Four agents improve the program, each in its own git worktree, reading each other's best attempts.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>Forget</b><em>Every session is dropped. Every past candidate is dropped. Only the single best program survives.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Round 2</b><em>A brand-new team starts from that one program, with empty context and the same first message as round 1.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Repeat</b><em>Three forgets in all, four rounds, at the same total budget as one long run.</em></div>\n</div>\n<figcaption>Nothing about the agents changes between rounds. The only thing that changes is how much of their own past they are made to carry.</figcaption>\n</figure>"
+      },
+      {
+        "type": "markdown",
+        "value": "It is cheaper, too. From the same plateaued state, continuing the team for 30 more attempts per agent improved the score 1.4% for **$24.67**. Forgetting improved it 9.2% for **$15.32**, because fresh sessions are short."
+      },
+      {
+        "type": "text",
+        "value": "Lethe is my implementation of that harness, built and published a week after the paper appeared: under 1,000 lines of Python with no dependencies. The agents can be any model behind an OpenAI-compatible API — hosted or running on your own machine — or Claude Code itself, driven headless. Every attempt is a git commit, every agent works in its own worktree, and before each turn a small reducer writes the agent a briefing: the judge's feedback, its own attempts this session, and its teammates' best work as a diff against its own. One command runs a single agent, four parallel agents and a forgetting team on the same budget and plots them side by side."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\nlethe run tasks/bin_packing --agent claude -m haiku --budget 48\nlethe compare tasks/bin_packing --budget 96 -m <model>\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "## Four tasks to point it at\n\n| task | the agent writes | starts at | for reference |\n|---|---|---:|---|\n| bin packing | an online packing heuristic, judged exactly as in FunSearch | 95.94 | FunSearch's heuristic: 99.32 |\n| travelling salesman | a tour finder under a time limit | 100 | plain 2-opt: 117.4 |\n| circle packing | 26 circles in a unit square, sum of radii | 1.30 | best known &#8776; 2.636 |\n| VLIW kernel | Anthropic's performance take-home, in clock cycles | 147,734 | the paper's team: 1,077 |"
+      },
+      {
+        "type": "text",
+        "value": "The kernel task is the one people will recognise. Anthropic's own README for that take-home records Claude Opus 4.5 at 1,487 cycles after 11.5 hours in its harness, and notes that every first-day submission under 1,300 cycles turned out to be a language model editing the tests. So the judges in Lethe are built not to be gamed: a candidate runs in its own process, timed from outside; the judge is copied in last and run so that the candidate cannot replace it or shadow anything it imports; and the judge is never in the agent's workspace to begin with."
+      },
+      {
+        "type": "text",
+        "value": "Now the part I would rather say than have you discover. The results at the top of this page are the paper's, not mine. Forgetting rescues an agent that makes progress and then stalls; it cannot help one that never makes progress at all. I tried a 4-bit Qwen3.5-9B on a laptop GPU first. In the bin-packing run kept in the repository it made 101 attempts — 45 contained no edit at all and the other 56 were all worse than where it started — so there was no plateau for forgetting to break, and every strategy stayed flat.\nThe harness needs a model at least as capable as the paper's DeepSeek V4.1 Flash. With Claude Haiku through Claude Code, an attempt costs five to nine cents. The 18 tests run offline in seconds, and the comparison against a strong model is the next run I owe this page."
+      },
+      {
+        "type": "text",
+        "value": "One warning that belongs on any page like this: Lethe runs code written by language models on your machine. Separate processes and timeouts are not a sandbox, so run untrusted models in a container."
+      }
+    ]
+  }
+}

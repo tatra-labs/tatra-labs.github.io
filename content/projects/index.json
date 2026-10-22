@@ -1,10 +1,60 @@
 [
   {
+    "slug": "cram",
+    "title": "Cram: Train the KV Cache, Don't Prune It",
+    "excerpt": "Shrink a language model's memory of a document 8× with the strongest eviction method and it forgets 19 phone numbers out of 20. Train that memory instead of pruning it and it remembers 18. An implementation of an October 2026 paper, built a week after it appeared, for any Hugging Face decoder.",
+    "date": "2026-10-22",
+    "tags": [
+      "LLM Inference",
+      "KV Cache",
+      "Test-Time Training",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/cram-phonebook.webp"
+  },
+  {
+    "slug": "elastify",
+    "title": "Elastify: One Model, Every Size",
+    "excerpt": "One model, every size. Remove 60% of a search model's FLOPs at runtime from a single 38 KB file — no retraining — and it keeps 77% of its retrieval quality where the naive cut keeps 46%, while running 1.69× faster. An implementation of an October 2026 paper.",
+    "date": "2026-10-21",
+    "tags": [
+      "Model Compression",
+      "Pruning",
+      "Transformers",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/elastify-minilm.webp"
+  },
+  {
+    "slug": "lethe",
+    "title": "Lethe: Agent Teams That Forget",
+    "excerpt": "An AI agent stuck at 1,710 cycles wrote “I've reached the practical limit.” A team whose memories were wiped three times reached 1,077. Lethe is that forgetting harness, from an October 2026 paper, in under 1,000 lines of Python — for any OpenAI-compatible model or Claude Code.",
+    "date": "2026-10-21",
+    "tags": [
+      "LLM Agents",
+      "Multi-Agent",
+      "Program Search",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/lethe-forgetting.webp"
+  },
+  {
     "slug": "agent-hub",
     "title": "Agent Hub",
     "excerpt": "One page for every agent I build, across healthcare, finance, go-to-market and e-commerce. Each one shows what it does, what its tools can change, and what I measured — and says plainly who wrote it, including the one I only studied.",
     "date": "2026-09-06",
-    "tags": ["LLM Agents", "Agent Patterns", "Provenance", "Evaluation"],
+    "tags": [
+      "LLM Agents",
+      "Agent Patterns",
+      "Provenance",
+      "Evaluation"
+    ],
     "author": "Tatra Labs",
     "image": "/assets/images/projects/agent-hub-register.webp"
   },
@@ -13,7 +63,13 @@
     "title": "US Job Market Visualizer + Remote Job Explorer",
     "excerpt": "An interactive tool for exploring where US jobs are, how far remote work spread, and which technologies remote software postings are asking for — built on BLS, Census, Indeed and Hacker News data, 2018–2026. Hosted here and running in your browser.",
     "date": "2026-09-03",
-    "tags": ["Data Visualization", "Labor Market", "Python", "Remote Work", "BLS"],
+    "tags": [
+      "Data Visualization",
+      "Labor Market",
+      "Python",
+      "Remote Work",
+      "BLS"
+    ],
     "author": "Tatra Labs",
     "image": "/assets/images/projects/jobs-occupations-map.webp"
   }
