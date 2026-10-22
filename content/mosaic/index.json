@@ -1,0 +1,82 @@
+{
+  "kinds": [
+    { "id": "news", "label": "News" },
+    { "id": "paper", "label": "New paper" },
+    { "id": "repo", "label": "New repo" },
+    { "id": "note", "label": "Note" },
+    { "id": "feeling", "label": "Feeling" }
+  ],
+  "tiles": [
+    {
+      "id": "three-papers-three-repos",
+      "date": "2026-10-22",
+      "kind": "note",
+      "text": "Three papers on 14 October. Three working implementations a week later.",
+      "size": "wide",
+      "tags": ["Paper Implementation"]
+    },
+    {
+      "id": "cram-released",
+      "date": "2026-10-22",
+      "kind": "repo",
+      "text": "cram crams a long document into a KV cache 8–32× smaller by training the cache instead of evicting from it. At 8× on Qwen3-0.6B, eviction keeps 5% of phone-number lookups; cram keeps 90%. About 600 lines, for any Hugging Face decoder.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/cram" },
+        { "label": "Write-up", "url": "/project/cram" }
+      ],
+      "tags": ["KV Cache"]
+    },
+    {
+      "id": "elastify-released",
+      "date": "2026-10-21",
+      "kind": "repo",
+      "text": "elastify cuts a Hugging Face transformer to any size at runtime from one 38 KB ranking file, with no retraining. MiniLM with 60% of its FLOPs removed keeps 77% of its SciFact retrieval quality and runs 1.69× faster.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/elastify" },
+        { "label": "Write-up", "url": "/project/elastify" }
+      ],
+      "tags": ["Pruning"]
+    },
+    {
+      "id": "lethe-released",
+      "date": "2026-10-21",
+      "kind": "repo",
+      "text": "lethe is the forgetting harness from Tan et al. in under 1,000 lines of dependency-free Python. Agents are any OpenAI-compatible model or Claude Code; every attempt is a git commit, and the judges cannot be edited by the code they score.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/lethe" },
+        { "label": "Write-up", "url": "/project/lethe" }
+      ],
+      "tags": ["LLM Agents"]
+    },
+    {
+      "id": "latent-compaction-paper",
+      "date": "2026-10-14",
+      "kind": "paper",
+      "text": "Latent Compaction with Test-Time Training (Chen et al.): treat a document's KV cache as a small network and train it with the model frozen. 96.7% on RULER at 32× compression, against 40.0% for KVZip+.",
+      "links": [
+        { "label": "arXiv 2610.20582", "url": "https://arxiv.org/abs/2610.20582" }
+      ],
+      "tags": ["KV Cache"]
+    },
+    {
+      "id": "forgetting-paper",
+      "date": "2026-10-14",
+      "kind": "paper",
+      "text": "Scaling Discovery Requires Forgetting (Tan et al.): agents that iterate on a program get anchored to their own history. Wiping every session and restarting the team from its best candidate beats both one agent and four in parallel, at the same budget.",
+      "links": [
+        { "label": "arXiv 2610.20563", "url": "https://arxiv.org/abs/2610.20563" }
+      ],
+      "tags": ["LLM Agents"]
+    },
+    {
+      "id": "secretly-elastic-paper",
+      "date": "2026-10-14",
+      "kind": "paper",
+      "text": "Your Transformer Is Secretly Elastic (Simoncini et al.): one learned ranking of neurons and heads prunes a pretrained transformer to any size. DINOv3 ViT-H+/16 at 50% sparsity loses 427M parameters and 0.8% ImageNet accuracy.",
+      "links": [
+        { "label": "arXiv 2610.20588", "url": "https://arxiv.org/abs/2610.20588" }
+      ],
+      "tags": ["Pruning"]
+    }
+  ]
+}

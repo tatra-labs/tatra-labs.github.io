@@ -10,7 +10,7 @@ A minimal, fast blog and project site. No build step, no heavy frameworks. Optim
 | **Optional assets** | **`assets/images/`** | Extra images referenced from JSON posts (e.g. diagrams) and project screenshots under `assets/images/projects/`. Not required for foundation. |
 | **App shell** | **`index.html`**, **`404.html`**, **`css/`**, **`js/`**, **`foundation/`** | Pages and scripts. `foundation/book/.../index.html` is optional for local static servers. |
 | **Hosted apps** | **`project/<name>/`** | Self-contained static apps served from this site — `project/jobs/` is vendored from its own repo, `project/agents/` is authored here. See [Hosting a project here](#hosting-a-project-here). |
-| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator, the book-extent stamper, the hosted-app sync script, the reader-shell mirror, the agent-registry checker, and the internal-link checker. |
+| **Tools** | **`tools/`** | Utility scripts: the Deep Learning TOC generator, the book-extent stamper, the hosted-app sync script, the reader-shell mirror, the agent-registry checker, the InsightMosaic checker, and the internal-link checker. |
 
 There is **no** separate `data/` folder—everything you edit for the site is under **`content/`** so you only look in one place.
 
@@ -39,6 +39,7 @@ The stylesheet is token-driven and states its own rules at the top of `css/style
 - **No dates** – Publication dates are **never displayed**. Every content file still carries `date` (and the register its `added`/`updated`), and those still order the lists — nothing renders them. `js/util.js` has no date helpers at all; that is deliberate, and its header says so. Posts still show reading time.
 - **Sticky masthead** – The nav is `position: sticky` at the top of the viewport, so the three tabs stay reachable from the middle of a long article or a 164-section book. Anything that positions against the viewport top clears it via the `--masthead-h` token: the sticky article rail and book TOC, and `scroll-margin-top` on anchored headings.
 - **Content** – Posts and projects support **text**, **images**, and **video** (including embeds).
+- **InsightMosaic** – Short posts — news, new papers, new repos, notes, feelings — laid out as a masonry of tiles at `/?tab=mosaic`, from one file, `content/mosaic/index.json`. Each tile is a few hundred characters with its links, has a permalink (`/?tab=mosaic#m-{id}`, copied by its "Link" control), and joins the same search and tag chips as everything else. The home page's "all" view shows the latest six.
 - **Agent Hub** – Every agent, at `/project/agents/`, rendered from `content/agents/registry.json`: an authored domain list beside the agents themselves, a derived provenance byline on every one, and a detail page per agent at `?agent={slug}`.
 - **Foundation** – Books and papers use `/foundation/book/{slug}` and `/foundation/paper/{slug}` with a **table of contents** (Markdown sections for books; heading anchors for papers). The viewer reuses the same site header as the home page.
 
@@ -109,6 +110,27 @@ This site uses clean URLs such as `/foundation/book/deep-learning`. If your loca
 2. Create **`content/projects/your-slug.json`** with the same `content.sections` format as a post.
 
 Projects usually want a **`links`** section for "open the live thing" and "read the source" — see the section-type table in **`content/README.md`**.
+
+### New InsightMosaic tile
+
+One object at the top of `tiles[]` in **`content/mosaic/index.json`** — no page, no build step:
+
+```json
+{
+  "id": "cram-released",
+  "date": "2026-10-22",
+  "kind": "repo",
+  "text": "cram crams a long document into a KV cache 8–32× smaller. See [the write-up](/project/cram).",
+  "links": [{ "label": "GitHub", "url": "https://github.com/tatra-labs/cram" }],
+  "tags": ["KV Cache"]
+}
+```
+
+```bash
+python tools/check_mosaic.py     # exits non-zero on a tile that breaks a rule
+```
+
+The checker holds the limits the layout cannot: **at most 400 visible characters** (an inline `[label](url)` counts by its label), a `kind` that resolves in the file's own `kinds[]` (news, paper, repo, note, feeling — add one there), at most four links that all resolve, and a unique kebab-case `id`, which is the tile's permalink and must never change once shared. Optional: `title`, `"size": "wide"` (spans two columns), `"pin": true` (sorts first, accent stroke). A tile of 100 characters or fewer with no title is set large automatically. `date` orders the tiles and, as everywhere on this site, is never shown.
 
 ### New agent
 

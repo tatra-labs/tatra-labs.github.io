@@ -10,6 +10,7 @@ Everything you **author or configure** for the live site lives under **`content/
 | **`content/posts/<slug>.json`** | Full post body (`content.sections`: text, image, video, embed). |
 | **`content/projects/index.json`** | List of projects for the home page. |
 | **`content/projects/<slug>.json`** | Full project JSON (same section types as posts). |
+| **`content/mosaic/index.json`** | InsightMosaic: the `kinds[]` vocabulary and every tile. Rendered on the home page at `/?tab=mosaic`; validated by `python tools/check_mosaic.py`. |
 | **`content/agents/registry.json`** | The Agent Hub: the domain list, the pattern vocabulary, and one record per agent. Rendered by `/project/agents/`. |
 | **`assets/images/projects/`** | Screenshots and clips used by project cards and pages. |
 | **`content/foundation/books/index.json`** | List of books (cards on Foundation tab). |
@@ -95,6 +96,31 @@ chart, token boxes, the memory bar, `.pg-heat` grids), which follow the design l
 `model-files.js` provides `quantizer`, `name-decoder`, `memory-calculator` and `inspector`; the
 inspector reads model headers from local files or over HTTP range requests (Hugging Face allows them
 cross-origin). Current example: `whats-in-a-model-file`.
+
+## InsightMosaic — `content/mosaic/index.json`
+
+Short posts as tiles. Two top-level keys:
+
+| Key | What it is |
+|-----|-----------|
+| `kinds[]` | `{ id, label }`. The closed vocabulary a tile's `kind` must resolve in; the label is the tile's kicker. Today: `news` (News), `paper` (New paper), `repo` (New repo), `note` (Note), `feeling` (Feeling — its text is set in italic). |
+| `tiles[]` | One object per tile, any order — the page sorts pinned tiles first, then by `date`, newest first. |
+
+### A tile
+
+| Field | Notes |
+|-------|-------|
+| `id` | Lower-case-kebab, unique, **permanent**: the permalink is `/?tab=mosaic#m-<id>`. |
+| `date` | ISO date. Orders the mosaic; never displayed. |
+| `kind` | Must resolve in `kinds[]`. |
+| `text` | Plain text, **≤ 400 visible characters**. The one markup is an inline link, `[label](url)`; a newline is a line break. Everything else is escaped. |
+| `title` | Optional, ≤ 80 characters. Without one, a text of ≤ 100 characters is set large — the mosaic's big stones. |
+| `links[]` | Optional, ≤ 4 `{ label, url }`, rendered under the text. External links open in a new tab with an arrow. Root-relative links (`/project/<slug>`, `/post/<slug>`, `/foundation/...`, or a file) must resolve. |
+| `tags[]` | Optional; the first three render as chips and join the home page's tag filter. |
+| `size` | `"wide"` spans two columns (one on a phone). |
+| `pin` | `true` sorts the tile first and gives it the 2px accent stroke. Use it for one tile at a time. |
+
+Layout is masonry: `js/main.js` measures each tile and sets its row span against 1px grid rows, repacking when the column width changes or the webfont lands. Three columns on a desktop, two below 52rem, one below 34rem.
 
 ## The Agent Hub — `content/agents/registry.json`
 

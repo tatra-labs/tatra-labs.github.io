@@ -33,6 +33,7 @@
           <ul class="nav">
             <li><a href="/?tab=projects" data-tab="projects">Projects</a></li>
             <li><a href="/?tab=posts" data-tab="posts">Writing</a></li>
+            <li><a href="/?tab=mosaic" data-tab="mosaic" aria-label="InsightMosaic"><span class="nav-long">Insight</span>Mosaic</a></li>
             <li><a href="/?tab=foundation" data-tab="foundation">Foundation</a></li>
           </ul>
           <span class="masthead-div" aria-hidden="true"></span>
@@ -139,6 +140,19 @@
       </div>
       <ol class="u-wide register" id="posts-list"></ol>
       <p class="u-wide empty hidden" id="posts-empty">No posts match the current filter.</p>
+    </section>
+
+    <!-- InsightMosaic: short posts as tiles. main.js fills #mosaic-list from
+         content/mosaic/index.json and packs it; on the "all" view it shows the
+         latest few and #mosaic-more links to the rest. -->
+    <section class="spread list-section" id="mosaic-section">
+      <div class="u-wide section-head">
+        <h2>InsightMosaic</h2>
+        <span class="section-count" id="mosaic-count"></span>
+      </div>
+      <div class="u-wide mosaic" id="mosaic-list"></div>
+      <p class="u-wide mosaic-more hidden" id="mosaic-more"></p>
+      <p class="u-wide empty hidden" id="mosaic-empty">No tiles match the current filter.</p>
     </section>
 
     <section class="spread list-section" id="foundation-section">

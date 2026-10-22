@@ -9,7 +9,9 @@
    3. Exactly ONE filled component surface: .article-link--primary. Beyond it
       --accent may appear only as a stroke or as a mark under 6px — today the
       2px heading bar (.article-content h2::before) and the 5px live dot
-      (.entry-flag::before), and nothing else. --accent must never fill a
+      (.entry-flag::before), plus the 2px emphasis strokes of the figures
+      (.fig-*--hi) and of a pinned or linked mosaic tile (.tile--pin,
+      .tile--target), and nothing else. --accent must never fill a
       panel, never colour an input border, never mark a validation state.
       --accent-quiet is a tint, not a fill.
    4. NO colour literal outside the token block. No hex, no rgba(), no colour
@@ -736,6 +738,133 @@ main { flex: 1 0 auto; }
   font-style: italic;
   color: var(--text-faint);
 }
+
+/* ============================================================================
+   INSIGHTMOSAIC — short posts laid as tiles, not rows.
+
+   Each tile is a 1px-ruled box on --bg: no fill, no radius, no shadow, so the
+   mosaic is drawn entirely by its joints. Variety comes from type and span,
+   never from colour: a very short tile sets its text large (.tile--big), a
+   `wide` tile spans two columns, and a pinned tile — or the one a permalink
+   points at — carries the single 2px --accent left stroke.
+
+   Packing is masonry. main.js measures each tile and sets its grid-row span
+   against 1px rows (.mosaic--packed), so tiles keep their natural heights and
+   still read in date order, left to right. Without that class it is a plain
+   grid of top-aligned tiles, which is the honest fallback.
+   ============================================================================ */
+
+.mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  gap: var(--s-3);
+  align-items: start;
+  padding-top: var(--s-5);
+}
+.mosaic--packed { grid-auto-rows: 1px; row-gap: 0; }
+
+@media (max-width: 52rem) { .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 34rem) { .mosaic { grid-template-columns: minmax(0, 1fr); } }
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-width: 0;
+  padding: var(--s-4);
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  scroll-margin-top: calc(var(--masthead-h) + var(--s-5));
+}
+.tile:hover { border-color: var(--rule-strong); }
+.tile--wide { grid-column: span 2; }
+@media (max-width: 34rem) { .tile--wide { grid-column: auto; } }
+
+.tile--pin,
+.tile--target { border-left: 2px solid var(--accent); padding-left: calc(var(--s-4) - 1px); }
+
+.tile-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.tile-kind { color: var(--accent); }
+.tile-pin  { color: var(--text-faint); margin-left: var(--s-2); }
+
+/* The permalink. Copies the tile's URL; without the clipboard it is simply a
+   link to it. Faint until the tile is hovered or the link is focused. */
+.tile-perma {
+  font: 600 var(--fs-2xs)/var(--lh-ui) var(--font-sans);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  opacity: .55;
+}
+.tile:hover .tile-perma,
+.tile-perma:focus-visible { opacity: 1; }
+.tile-perma:hover { color: var(--accent); }
+
+.tile-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-title);
+}
+
+.tile-text {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  line-height: var(--lh-lede);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.tile--big .tile-text {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-title);
+}
+.tile[data-kind="feeling"] .tile-text { font-style: italic; }
+
+.tile-text a {
+  border-bottom: 1px solid var(--accent);
+}
+.tile-text a:hover { color: var(--accent); }
+
+.tile-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tile-links a {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+}
+.tile-links a:hover { color: var(--accent); border-bottom-width: 2px; }
+.tile-ext { font-weight: 400; color: var(--text-faint); }
+
+.tile-tags { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.tile-tags .chip { font-size: var(--fs-2xs); padding: 0 var(--s-2); }
+
+/* Under the full mosaic on the "all" view, which shows only the latest few. */
+.mosaic-more { margin: var(--s-4) 0 0; }
+.mosaic-more a {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+}
+.mosaic-more a:hover { color: var(--accent); }
 
 /* ============================================================================
    ARTICLE
@@ -1746,4 +1875,19 @@ h3.article-heading {
     min-width: 0;
   }
   .nav { flex-wrap: wrap; gap: var(--s-4); min-width: 0; }
+
+  /* Four tabs and three icons need 369px and the band is 339px, so on a
+     phone the icons move up beside the wordmark and the tabs take the second
+     row alone. Still two rows, so --masthead-h above holds. */
+  .masthead-nav { display: contents; }
+  .masthead-div { display: none; }
+  .header-links { order: 1; margin-left: auto; }
+  .nav { order: 2; flex-basis: 100%; }
+}
+
+/* Below 352px even a row of its own cannot hold "InsightMosaic" beside three
+   other tabs; it shortens to "Mosaic". The section heading and the link's
+   aria-label keep the full name. */
+@media (max-width: 22rem) {
+  .nav-long { display: none; }
 }
