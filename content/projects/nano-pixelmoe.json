@@ -1,0 +1,90 @@
+{
+  "slug": "nano-pixelmoe",
+  "title": "nano-pixelmoe: A Mixture of Experts on Raw Pixels",
+  "date": "2026-10-22",
+  "tags": [
+    "Diffusion Models",
+    "Mixture of Experts",
+    "Flow Matching",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/nano-pixelmoe-tie.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; 2.4&#215; the parameters, the same active cost, the same pictures</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">FID at 30,000 steps, lower is better</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">dense twin</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:89.10%\" title=\"dense twin: 26.73\"></i><i class=\"fig-blab\" style=\"left:89.10%\">26.73</i></span><span class=\"fig-val\">26.7M active</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">PixelMoE E32A4</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:88.10%\" title=\"PixelMoE E32A4: 26.43\"></i><i class=\"fig-blab\" style=\"left:88.10%\">26.43</i></span><span class=\"fig-val\">27.0M active</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Inception score, higher is better</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">dense twin</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:81.50%\" title=\"dense twin: 8.15\"></i><i class=\"fig-blab\" style=\"left:81.50%\">8.15</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">PixelMoE E32A4</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:80.50%\" title=\"PixelMoE E32A4: 8.05\"></i><i class=\"fig-blab\" style=\"left:80.50%\">8.05</i></span><span class=\"fig-val\">&#160;</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Wall-clock training time, minutes on one RTX 5060 Laptop</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">dense twin</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:49.13%\" title=\"dense twin: 69\"></i><i class=\"fig-blab\" style=\"left:49.13%\">69</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">PixelMoE E32A4</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:91.62%\" title=\"PixelMoE E32A4: 128\"></i><i class=\"fig-blab\" style=\"left:91.62%\">128</i></span><span class=\"fig-val\">1.87&#215; slower</span></div>\n</div>\n<div class=\"fig-note\">CIFAR-10, class-conditional, 32&#215;32 pixels: 26.7M parameters all of them active, against <b>64.2M parameters of which 27.0M are active per token</b>. Same seed, same recipe, same 30,000 steps at batch 128.</div>\n<figcaption>At this scale the two are tied: 0.30 FID is inside the noise of a 10,000-sample FID, and the dense twin takes the Inception score back by about as much. The paper&#8217;s gains arrive at 200M+ active parameters and 100+ ImageNet epochs, where it reports 2.46 against a dense 4.40. What a laptop can show is not the gain but the mechanism &#8212; which is the next two figures.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/nano-pixelmoe",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.18857)",
+            "url": "https://arxiv.org/abs/2610.18857"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Nearly every image generator in use works the same way, and it is a workaround. It does not denoise pixels; it denoises the compressed latent space of a separately trained autoencoder, because pixels were held to be too many and too redundant to denoise directly. PixelMoE (Dong et al., October 2026) throws that autoencoder away, denoises raw pixels with a transformer whose feed-forward layers are routed experts, and still reports FID 1.47 on ImageNet 256×256. Its code is \"coming soon\".\nnano-pixelmoe is an independent version you can read in one sitting: three files, about 250 lines, and a training run that finishes on a laptop before lunch."
+      },
+      {
+        "type": "text",
+        "value": "The claim worth testing is narrow and it is not about pixels. It is that the mixture-of-experts recipe which made large language models cheap transfers to diffusion unchanged — fine-grained experts, one always-on shared expert, top-A routing on sigmoid scores, and load balancing done by a bias rather than by a term in the loss. So the repository implements that recipe to the letter and trains it against its own dense twin: same seed, same recipe, same number of steps, and the dense FFN width chosen so that both models do within a percent of the same arithmetic per token."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npython train.py --out runs/moe                # PixelMoE E32A4\npython train.py --out runs/dense --experts 0  # its dense twin\npython fid.py runs/moe                        # FID and IS, 10k samples\npython analyze.py runs/moe -o experts.png     # the routing figure\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "## Results\n\n| model | parameters | active per token | FID &#8595; | IS &#8593; | training time |\n|---|---:|---:|---:|---:|---:|\n| dense | 26.7M | 26.7M | **26.73** | **8.15** | 69 min |\n| PixelMoE E32A4 | 64.2M | 27.0M | **26.43** | **8.05** | 128 min |"
+      },
+      {
+        "type": "text",
+        "value": "CIFAR-10, class-conditional, 32×32 pixels, patch size 4, 30,000 steps at batch 128 — 77 epochs. FID and Inception score on 10,000 samples against the training set, guidance 1.5, 40 sampling steps, one RTX 5060 Laptop."
+      },
+      {
+        "type": "text",
+        "value": "That is a tie, and I am going to call it one. A 0.30 difference in a 10,000-sample FID is noise; the dense model wins the Inception score by a similar nothing. Anyone who reports this as a win for the mixture of experts is reading their own hope. The paper's own numbers say where the win lives — Dense-B 4.40 against PixelMoE-B 2.46 — and that is at 200M+ active parameters and more than a hundred epochs of ImageNet, two orders of magnitude from a laptop."
+      },
+      {
+        "type": "text",
+        "value": "What a laptop can settle is whether the machinery works, and the interesting half of that is load balancing. A router is free to send every token to the same expert, and left alone it does: the other thirty-one get no gradient, stay useless, and the model becomes a small dense one wearing a large coat. The standard fix is an auxiliary loss that punishes imbalance, which also pulls the router away from the experts it actually wanted. PixelMoE's recipe instead keeps a per-expert bias that is added to the scores only when picking the top A, and nudges it after every step toward uniform load. It is in no loss, it receives no gradient, and it never changes how much a chosen expert's output counts."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; The busiest expert, with nothing in the loss asking it to behave</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Load of the busiest expert &#247; even share &#183; worst of the six MoE layers</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">step 200</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:94.28%\" title=\"step 200: 4.71&#215;\"></i><i class=\"fig-blab\" style=\"left:94.28%\">4.71&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">step 1,000</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:29.14%\" title=\"step 1,000: 1.46&#215;\"></i><i class=\"fig-blab\" style=\"left:29.14%\">1.46&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">step 5,000</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:25.84%\" title=\"step 5,000: 1.29&#215;\"></i><i class=\"fig-blab\" style=\"left:25.84%\">1.29&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">step 10,000</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:27.10%\" title=\"step 10,000: 1.35&#215;\"></i><i class=\"fig-blab\" style=\"left:27.10%\">1.35&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">step 20,000</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:28.94%\" title=\"step 20,000: 1.45&#215;\"></i><i class=\"fig-blab\" style=\"left:28.94%\">1.45&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">step 30,000</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:31.54%\" title=\"step 30,000: 1.58&#215;\"></i><i class=\"fig-blab\" style=\"left:31.54%\">1.58&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:20.00%\"></i><i class=\"fig-tlab\" style=\"left:20.00%\">1&#215;</i><i class=\"fig-tick\" style=\"left:40.00%\"></i><i class=\"fig-tlab\" style=\"left:40.00%\">2&#215;</i><i class=\"fig-tick\" style=\"left:60.00%\"></i><i class=\"fig-tlab\" style=\"left:60.00%\">3&#215;</i><i class=\"fig-tick\" style=\"left:80.00%\"></i><i class=\"fig-tlab\" style=\"left:80.00%\">4&#215;</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">5&#215;</i></span><span class=\"fig-val\">&#160;</span></div>\n</div>\n<div class=\"fig-note\">1.00&#215; is a perfectly even split across the 32 experts. <b>32&#215; would be every token going to one of them</b> &#8212; the collapse an auxiliary load-balancing loss exists to prevent, and there is no such loss here.</div>\n<figcaption>Two hundred steps in, one expert is carrying 4.7 times its share. A per-expert bias, nudged after every optimiser step by b &#8592; b &#8722; &#947;(F &#8722; Q)/RMS(F &#8722; Q), pulls it back under 1.5&#215; and holds it there for the remaining 29,800 steps. The bias only decides which experts are picked; it never touches the loss, the gradients, or how much an expert&#8217;s output counts.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "It works, and it works without being asked twice. Two hundred steps in, the worst layer has an expert hogging 4.7× its share. By step 1,000 the bias has it under 1.5×, and it stays between 1.24× and 1.83× for the rest of the run. The experts that balance are then free to specialise, and they do — on two different axes at once."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/nano-pixelmoe-experts.webp",
+        "alt": "Six CIFAR-10 images above maps of which expert each patch was routed to, and a heatmap of expert use against noise level",
+        "caption": "From the trained run. Top: six CIFAR-10 images. Middle: the top-1 expert of every 4×4 patch in the last MoE layer, one colour per expert. Right: each expert's share of patches at twelve noise levels. Routing follows the content — the dog's body, the sky band behind the plane — and shifts with noise, with two experts taking over the last, nearly clean steps."
+      },
+      {
+        "type": "text",
+        "value": "That second axis is the one I did not expect. A diffusion model at t = 0.8 and the same model at t = 0.05 are doing genuinely different jobs — inventing layout versus sharpening edges — and here they end up running through different experts, which no part of the training objective asked for. The hierarchical flow matching underneath makes the split sharper still, because the two stages already divide the work by resolution."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 3 &#183; One model, two resolutions, 40 sampling steps</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Stage 0 &#183; 16&#215;16</b><em>Pure noise at t = 1 down to a still-noisy half-resolution image at t = 0.75. Ten steps, on a quarter of the patches.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>The transition</b><em>Upsample, rescale, and add noise that is zero-mean inside every 2&#215;2 block &#8212; correlation &#8722;1/3 &#8212; so the state lands exactly in the distribution Stage 1 was trained on, at t = 6/7.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Stage 1 &#183; 32&#215;32</b><em>From that blurred, noisy full-resolution image down to t = 0. The remaining thirty steps.</em></div>\n</div>\n<figcaption>The same weights read both stages, because the position embeddings are sin-cos functions of each patch&#8217;s <i>relative</i> place in the image rather than its index. The transition is the one piece that cannot be eyeballed, so it is tested statistically: the injected noise has to reproduce Stage 1&#8217;s training covariance, and the test fails if the constants drift. Both stages take Heun steps with classifier-free guidance.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Simplified on purpose, and worth knowing before you scale it up: timestep and class enter through AdaLN rather than as in-context tokens, the prediction head is one wide block instead of the paper's full DDT head, and the optimiser is AdamW rather than Muon. The MoE step is 1.87× slower than the dense one at equal active parameters, which is a property of my implementation and not of the method: the experts run as two batched matmuls over a padded per-expert buffer, so the padding is wasted work that a grouped-GEMM kernel would not do.\nConfig in model.py holds every size — width, depth, expert count, active experts, expert widths. Five tests cover routing, the matched-parameter claim, both resolutions, the sampler, and the stage transition's covariance; they run in 21 seconds."
+      }
+    ]
+  }
+}

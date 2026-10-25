@@ -1,5 +1,35 @@
 [
   {
+    "slug": "nano-pixelmoe",
+    "title": "nano-pixelmoe: A Mixture of Experts on Raw Pixels",
+    "excerpt": "A pixel-space diffusion transformer whose feed-forward layers are LLM-style routed experts — no autoencoder, no tokenizer, three files, 250 lines, one laptop GPU. At this scale the mixture of experts ties its dense twin, and the mechanism it exists to show works: routing balances itself with no auxiliary loss, and experts specialise by content and by noise level.",
+    "date": "2026-10-22",
+    "tags": [
+      "Diffusion Models",
+      "Mixture of Experts",
+      "Flow Matching",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/nano-pixelmoe-tie.webp"
+  },
+  {
+    "slug": "kickmix-arena",
+    "title": "Kickmix Arena: Where Agents Hunt Cheaper Quantum Circuits",
+    "excerpt": "A Harvard–Anthropic–QuEra paper had a language model evolve quantum circuits that beat the state of the art by up to 39×, and released the circuits but not the evaluator. This is an open one: a dependency-free judge that proves a reversible circuit exactly on 4,096 random inputs at once, scores it by Toffolis × qubits, and hands five tasks to an agent.",
+    "date": "2026-10-22",
+    "tags": [
+      "Quantum Circuits",
+      "Reversible Computing",
+      "LLM Agents",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/kickmix-arena-scoreboard.webp"
+  },
+  {
     "slug": "cram",
     "title": "Cram: Train the KV Cache, Don't Prune It",
     "excerpt": "Shrink a language model's memory of a document 8× with the strongest eviction method and it forgets 19 phone numbers out of 20. Train that memory instead of pruning it and it remembers 18. An implementation of an October 2026 paper, built a week after it appeared, for any Hugging Face decoder.",

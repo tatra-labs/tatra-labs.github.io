@@ -8,6 +8,28 @@
   ],
   "tiles": [
     {
+      "id": "nano-pixelmoe-released",
+      "date": "2026-10-22",
+      "kind": "repo",
+      "text": "nano-pixelmoe is PixelMoE in three files and 250 lines: pixel-space diffusion whose feed-forward layers are LLM-style routed experts, no autoencoder anywhere. On CIFAR-10 it ties its dense twin at matched active parameters — what it does show is routing that balances itself with no auxiliary loss.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/nano-pixelmoe" },
+        { "label": "Write-up", "url": "/project/nano-pixelmoe" }
+      ],
+      "tags": ["Mixture of Experts"]
+    },
+    {
+      "id": "kickmix-arena-released",
+      "date": "2026-10-22",
+      "kind": "repo",
+      "text": "kickmix-arena is the half the quantum-circuit paper did not release: an evaluator. It proves a reversible circuit correct on 4,096 random inputs in one pass and scores it by Toffolis × qubits. Five arithmetic tasks, zero dependencies, and task folders an agent can search.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/kickmix-arena" },
+        { "label": "Write-up", "url": "/project/kickmix-arena" }
+      ],
+      "tags": ["Quantum Circuits"]
+    },
+    {
       "id": "three-papers-three-repos",
       "date": "2026-10-22",
       "kind": "note",

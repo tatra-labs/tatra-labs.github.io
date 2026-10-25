@@ -1,0 +1,88 @@
+{
+  "slug": "kickmix-arena",
+  "title": "Kickmix Arena: Where Agents Hunt Cheaper Quantum Circuits",
+  "date": "2026-10-22",
+  "tags": [
+    "Quantum Circuits",
+    "Reversible Computing",
+    "LLM Agents",
+    "Paper Implementation",
+    "Python"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/kickmix-arena-scoreboard.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; The arena pays for exactly what the paper found &#183; measured here</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">add32: b &#8592; a + b mod 2&#179;&#178; &#183; Toffolis &#215; qubits, lower is better</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">plain ripple carry (start)</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:98.17%\" title=\"plain ripple carry (start): 5,890\"></i><i class=\"fig-blab\" style=\"left:98.17%\">5,890</i></span><span class=\"fig-val\">62 &#215; 95</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">Cuccaro 2004 ripple-carry</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:69.33%\" title=\"Cuccaro 2004 ripple-carry: 4,160\"></i><i class=\"fig-blab\" style=\"left:69.33%\">4,160</i></span><span class=\"fig-val\">64 &#215; 65</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">Gidney 2018, measured carries</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:49.08%\" title=\"Gidney 2018, measured carries: 2,945\"></i><i class=\"fig-blab\" style=\"left:49.08%\">2,945</i></span><span class=\"fig-val\">31 &#215; 95</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">cmadd8: x &#8592; x + k&#183;y or x + k&#183;z &#183; Toffolis &#215; qubits</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">two controlled multiplies (start)</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:88.20%\" title=\"two controlled multiplies (start): 14,112\"></i><i class=\"fig-blab\" style=\"left:88.20%\">14,112</i></span><span class=\"fig-val\">288 &#215; 49</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">conditional routing</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:43.20%\" title=\"conditional routing: 6,912\"></i><i class=\"fig-blab\" style=\"left:43.20%\">6,912</i></span><span class=\"fig-val\">144 &#215; 48</span></div>\n</div>\n<div class=\"fig-note\">Each panel has its own scale. The right-hand column is <b>Toffolis &#215; peak qubits</b>, the two numbers the score multiplies.</div>\n<figcaption>Every number is produced by this repository&#8217;s evaluator, on 4,096 random inputs with 4,096 independent sets of measurement outcomes. Both winners win the same way: they halve the Toffoli count. Gidney&#8217;s adder spends 30 more qubits than Cuccaro&#8217;s to do it and still wins the product, which is the trade this score is built to expose.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/kickmix-arena",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.22367)",
+            "url": "https://arxiv.org/abs/2610.22367"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "A search is only as good as the thing that scores it.\nIn October 2026, Gu, Kemeny, Yelin and Lukin (Harvard, Anthropic, QuEra) let a language model evolve programs that build quantum circuits, scored each one with an exact evaluator, and kept what won. On seven of eight tasks the circuits it found beat the published state of the art in both Toffoli count and qubit count — by up to 39× on the product of the two — and on one task the search produced a reversible architecture for modular inversion that nobody had written down. The circuits are in the paper. The evaluator is not."
+      },
+      {
+        "type": "text",
+        "value": "That missing half is the whole loop. An agent writing circuits needs a judge that can tell it a circuit is wrong in seconds, not a reviewer and a week. kickmix-arena is an open judge for the same circuit model: 569 lines of Python, no dependencies at all, five arithmetic tasks with checked baselines, and task folders that drop straight into an agent harness."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e .\nkickmix tasks                                  # tasks and their costs\nkickmix eval add32 references/add32_gidney.py  # T=31 Q=95 TQ=2,945\n```"
+      },
+      {
+        "type": "text",
+        "value": "The score is Toffolis × qubits, as in the paper, and both halves of it are real money. On an error-corrected machine the Clifford gates are nearly free and the Toffolis are not: each one needs distilled magic states, which is where the time and most of the hardware goes. Qubits are the other scarce thing. A circuit that halves the Toffolis by doubling the qubits has not obviously won, so the arena scores the product and lets the trade argue with itself."
+      },
+      {
+        "type": "text",
+        "value": "The surprising part is that a laptop can check these circuits exactly, with no quantum simulation at all. The arena uses the kickmix model the paper's methods describe: classical reversible gates, sign gates, and destructive X-basis measurements whose random outcomes may control sign gates but never flip a bit. A circuit built from those pieces sends every computational-basis input to a single basis state with a sign — so its action on any superposition is fixed by its action on basis states, and basis states are just bits. The measurements are what make it interesting rather than merely classical: they are how Gidney's trick clears a temporary AND for free, and the simulator has to get their random sign kicks right or it would accept circuits that leave a coherent state in ruins."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; How a candidate is checked</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Build, in a sandbox</b><em>The candidate file runs in a separate interpreter started with -P, and returns one thing: the list of gates its build() asked for.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Replay</b><em>The scorer rebuilds that gate list in its own simulator. Candidate code never touches the counters that score it &#8212; a candidate that edits them only fools itself, and there is a test for exactly that.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>Prove</b><em>4,096 random inputs run in one bit-sliced pass. On every one: each register holds the required value, every ancilla is back to 0, and the sign is +1.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Score</b><em>Toffolis &#215; peak live qubits, task registers included. Lower wins, and nothing else counts.</em></div>\n</div>\n<figcaption>Each qubit is a single Python integer whose bit <i>k</i> is that qubit&#8217;s value in trajectory <i>k</i>, so all 4,096 trajectories advance together on one gate call. Pass all of them and the chance the circuit is wrong is at most about ln(1/&#948;)/4,096 with confidence 1 &#8722; &#948;.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Verification and sandboxing are the same mechanism here. A candidate is built in a child process that can return only data — a JSON list of gate calls — and the scorer replays that list in a simulator the candidate has never been able to reach. So an agent cannot win by overwriting the Toffoli counter, by freeing a register it was supposed to compute into, or by leaving an ancilla dirty and hoping nobody looks. All three are rejected, and all three have tests."
+      },
+      {
+        "type": "markdown",
+        "value": "## The scoreboard\n\n| task | what the circuit computes | start | best here |\n|---|---|---:|---:|\n| add32 | b &#8592; a + b mod 2&#179;&#178; | 5,890 | **2,945** Gidney 2018 &#183; 4,160 Cuccaro 2004 |\n| compare32 | t &#8592; t &#8853; [a &lt; b] | 6,208 | — |\n| madd16 | p &#8592; p + a&#183;b mod 2&#179;&#178; | 160,528 | — |\n| cmadd8 | x &#8592; x + k&#183;y if s = 0, else x + k&#183;z | 14,112 | **6,912** conditional routing |\n| modinv251 | y &#8592; y &#8853; x&#8315;&#185; mod 251 | 80,500 | — |"
+      },
+      {
+        "type": "text",
+        "value": "Toffolis × peak qubits, lower is better; kickmix tasks and pytest reproduce every number. The starting circuits are deliberately plain — ripple carries uncomputed with Toffolis, schoolbook products, and a 250-entry lookup table for the inverse — because a starting point an agent cannot beat teaches it nothing."
+      },
+      {
+        "type": "text",
+        "value": "Two of the reference cells are filled, and they are filled by the paper's own two findings, which is the check that the arena is pointed the right way. Gidney's 2018 adder replaces each carry's uncomputation with an X-basis measurement and a cancelling phase gate: 62 Toffolis become 31, and the score halves. On the conditional multiply-add, swapping y and z under control of s and then running a single uncontrolled multiply-add, instead of two controlled ones, takes 288 Toffolis to 144. That is the paper's own conditional-routing principle, and the arena pays for it without being told to.\nThe other three cells are empty, and that is the honest state of them: I have not beaten the plain starting circuit on comparison, multiply-accumulate or modular inversion. They are open."
+      },
+      {
+        "type": "markdown",
+        "value": "Each task directory holds a `TASK.md` that teaches the circuit model from scratch, a starting `circuit.py`, and a judge that prints one JSON line — the format my agent harness [lethe](/project/lethe) reads, so a search is one command and works with any OpenAI-compatible model or Claude Code."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\nlethe run tasks/cmadd8 --agent claude -m sonnet --budget 48\n```"
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's search, and it is not the paper's evaluator. The method and the design principles are the authors', the baselines are the published human circuits, and the trajectory bound is theirs. What it adds is a judge anyone can run — eleven tests, 0.7 seconds, zero dependencies — so the expensive half of that loop is the only half you have to pay for."
+      }
+    ]
+  }
+}
