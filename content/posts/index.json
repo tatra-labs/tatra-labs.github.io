@@ -1,5 +1,20 @@
 [
   {
+    "slug": "agentic-ai-security-engineering",
+    "title": "Agentic AI Security Engineering",
+    "excerpt": "A model cannot tell instructions from data, and nothing like the parameterized query exists to fix it. Everything in agent security follows from that: where untrusted text gets in, whether it can steer what the agent decides, what the agent's hands can reach, and how data gets out. A map of the field built on that one fact, with fifteen widely shared portfolio projects placed on it, kept, reframed or demoted on the 2025–2026 evidence.",
+    "date": "2026-11-10",
+    "readingTime": "34 min",
+    "tags": [
+      "Security",
+      "Agents",
+      "Prompt Injection",
+      "MCP",
+      "Red Teaming"
+    ],
+    "author": "Tatra Labs"
+  },
+  {
     "slug": "whats-in-a-model-file",
     "title": "What's in a Model File",
     "excerpt": "Safetensors or GGUF, Q4_K_M or IQ4_XS, AWQ or FP8: one model can ship in a dozen files that differ eightfold in size and run on different programs — and one kind can take over the machine that opens it. Twenty-one sections on what the formats store, why they differ, what their names mean, what quantization costs, and how to choose, with tools that read real model files in your browser.",
