@@ -1,5 +1,20 @@
 [
   {
+    "slug": "the-cost-of-finding-the-keys",
+    "title": "The Cost of Finding the Keys",
+    "excerpt": "Sparse attention made reading keys cheap, so at ten million tokens a sparse attention layer spends 98% of its time choosing which keys to read. Latent Sparse Attention clusters keys by content and searches the clusters instead: one layer 22.7× faster than GLM-5.3-Flash's own sparse attention, the whole model 2–9× faster to its first token, and nothing gained below a million tokens. How it works, what the measurements show, and where they stop.",
+    "date": "2026-11-10",
+    "readingTime": "18 min",
+    "tags": [
+      "Attention",
+      "Long Context",
+      "Sparse Attention",
+      "Inference",
+      "GPU"
+    ],
+    "author": "Tatra Labs"
+  },
+  {
     "slug": "agentic-ai-security-engineering",
     "title": "Agentic AI Security Engineering",
     "excerpt": "A model cannot tell instructions from data, and nothing like the parameterized query exists to fix it. Everything in agent security follows from that: where untrusted text gets in, whether it can steer what the agent decides, what the agent's hands can reach, and how data gets out. A map of the field built on that one fact, with fifteen widely shared portfolio projects placed on it, kept, reframed or demoted on the 2025–2026 evidence.",
