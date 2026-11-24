@@ -8,6 +8,182 @@
   ],
   "tiles": [
     {
+      "id": "alu-graft-released",
+      "date": "2026-11-23",
+      "kind": "repo",
+      "text": "alu-graft compiles an exact six-digit adder/subtractor into Qwen3-0.6B: 184,277 weights set by formula, zero gradients. On 600 sum prompts the model goes from 299 right to all 600, and on WikiText it moves by 5 × 10⁻⁸ nats per token. It loads with vanilla transformers, and the circuit also runs in your browser.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/alu-graft" },
+        { "label": "Write-up", "url": "/project/alu-graft" }
+      ],
+      "tags": ["Circuit Compilation"]
+    },
+    {
+      "id": "just-a-nudge-released",
+      "date": "2026-11-23",
+      "kind": "repo",
+      "text": "just-a-nudge asks whether RL post-training of a diffusion transformer is just a constant nudge, on a 3.45M-parameter MM-DiT drawing MNIST digits. 5,632 constant numbers recover 83% of RL's gain on prompt following, and RL on those numbers alone gets the same. On a slant reward they recover 65%, and a same-size LoRA does better.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/just-a-nudge" },
+        { "label": "Write-up", "url": "/project/just-a-nudge" }
+      ],
+      "tags": ["Diffusion Models"]
+    },
+    {
+      "id": "heavy-metal-gym-released",
+      "date": "2026-11-18",
+      "kind": "repo",
+      "text": "heavy-metal-gym balances a simulated five-tonne skid-steer loader on two wheels with four small PPO policies, after Heavy Metal Acrobatics (Science Robotics). Up, ten seconds on two wheels and back down, with nobody at the stick: 83.4% of 1,000 randomised machines. On flat ground a plain LQR still balances better. The policies run in your browser.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/heavy-metal-gym" },
+        { "label": "Write-up", "url": "/project/heavy-metal-gym" }
+      ],
+      "tags": ["Reinforcement Learning"]
+    },
+    {
+      "id": "stale-kv-released",
+      "date": "2026-11-18",
+      "kind": "repo",
+      "text": "stale-kv measures Callo's bet on a laptop: when an agent masks an old tool output, draft the reply on the now-stale KV cache and verify it against the exact one. Over real SWE-agent sessions, Qwen3-0.6B keeps the whole 32-token draft 21.5% of the time, and 36% once a four-token chat-template mismatch is fixed. The paper's 70B model: 65%.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/stale-kv" },
+        { "label": "Write-up", "url": "/project/stale-kv" }
+      ],
+      "tags": ["KV Cache"]
+    },
+    {
+      "id": "hopfield-tank-released",
+      "date": "2026-11-16",
+      "kind": "repo",
+      "text": "hopfield-tank reproduces CRAM: Hopfield and Tank's 1985 puzzle energy, learned from solved boards in a tenth of a second. 10,000 of 10,000 sampled Sudoku-Extreme puzzles in each of three seeds with zero wrong halts, and 999 of 1,000 Maze-Hard mazes with one hidden neuron per cell. Not this site's cram, which trains KV caches. It also trains in your browser.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/hopfield-tank" },
+        { "label": "Write-up", "url": "/project/hopfield-tank" }
+      ],
+      "tags": ["Energy-Based Models"]
+    },
+    {
+      "id": "collateral-released",
+      "date": "2026-11-09",
+      "kind": "repo",
+      "text": "collateral is an open take on harmful success from VeriHarm-Bench: 27 coding tasks where the shortcut passes every test and does damage, and a watcher that has never seen any of them. With no configuration it flags 22 of the 27 harmful runs, and one ordinary flask, requests or httpx commit in seven. No dependencies, no API key.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/collateral" },
+        { "label": "Write-up", "url": "/project/collateral" }
+      ],
+      "tags": ["AI Safety"]
+    },
+    {
+      "id": "not-yet-released",
+      "date": "2026-11-09",
+      "kind": "repo",
+      "text": "not-yet is SecureGARD's ready / waiting / forbidden gate for tool-using agents, open and dependency-free, with an offline prompt-injection harness. Over 316 attacked episodes it lets no action attack through and still finishes 98.7% of the user's tasks. The same ontology with every wait turned into a no finishes 82.6%.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/not-yet" },
+        { "label": "Write-up", "url": "/project/not-yet" }
+      ],
+      "tags": ["Prompt Injection"]
+    },
+    {
+      "id": "zebra-cover-released",
+      "date": "2026-11-09",
+      "kind": "repo",
+      "text": "zebra-cover is NeuralExactCover in pure Python: the model turns a Zebra puzzle into tool calls, Knuth's Algorithm C solves them, the verdict goes back. On a CPU, Qwen3-1.7B loses to answering directly, 1 puzzle of 30 to 4, mostly by misspelling tool names. The paper's own appendix finds the same below 4B.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/zebra-cover" },
+        { "label": "Write-up", "url": "/project/zebra-cover" }
+      ],
+      "tags": ["Neuro-Symbolic"]
+    },
+    {
+      "id": "lrmoe-lite-released",
+      "date": "2026-11-05",
+      "kind": "repo",
+      "text": "lrmoe-lite keeps an MoE layer's forward pass whole and back-propagates half of its token–expert pairs. Sample those pairs by their contribution and reweight them, and matching the full run's step-1,000 loss costs 36% less modelled MoE-layer time. Rank them by the same score and training stalls near 2.6 nats. About 430 lines of PyTorch, trained on a laptop CPU.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/lrmoe-lite" },
+        { "label": "Write-up", "url": "/project/lrmoe-lite" }
+      ],
+      "tags": ["Mixture of Experts"]
+    },
+    {
+      "id": "done-or-not-released",
+      "date": "2026-11-01",
+      "kind": "repo",
+      "text": "done-or-not grades the verifiers that decide whether a computer-using agent really finished: 910 simulated cases with exact labels. Judges that read screenshots accept 16% to 68% of false “Done” claims; one that goes back and looks accepts none. Plug in a Python class, a JSON-lines program or any OpenAI-compatible model.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/done-or-not" },
+        { "label": "Write-up", "url": "/project/done-or-not" }
+      ],
+      "tags": ["Evaluation"]
+    },
+    {
+      "id": "es-com-released",
+      "date": "2026-10-27",
+      "kind": "repo",
+      "text": "es-com checks one identity to the last bit: a mean-subtracted evolution-strategies step is exactly the displacement from the population's centroid to its reward-weighted centre of mass. Across 36 settings the worst disagreement is 9.9 × 10⁻¹¹, which is float64 rounding and grows as σ shrinks. Numpy only, 31 tests.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/es-com" },
+        { "label": "Write-up", "url": "/project/es-com" }
+      ],
+      "tags": ["Evolution Strategies"]
+    },
+    {
+      "id": "lb-audit-released",
+      "date": "2026-10-27",
+      "kind": "repo",
+      "text": "lb-audit spends a rationed strong verifier where a reward hack would have paid most: the GRPO groups with the fewest passes, first. With caught hacks punished rather than zeroed, hacking stops paying at 23.1% of passes checked, against 53.0% for random audits. Pure numpy, 27 tests; the paper's accuracy cost of unbiased corrections did not reproduce.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/lb-audit" },
+        { "label": "Write-up", "url": "/project/lb-audit" }
+      ],
+      "tags": ["Reward Hacking"]
+    },
+    {
+      "id": "continuous-pbit-released",
+      "date": "2026-10-26",
+      "kind": "repo",
+      "text": "continuous-pbit is a probabilistic computer in numpy: each bit holds a real number and is redrawn from an energy, not computed. On 40-dimensional Rastrigin it returns the best value its 8-bit grid contains in every seed, while restarted Adam on the same budget ends 58× worse. On a clean associative memory it buys nothing, and says so.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/continuous-pbit" },
+        { "label": "Write-up", "url": "/project/continuous-pbit" }
+      ],
+      "tags": ["Probabilistic Computing"]
+    },
+    {
+      "id": "doc2harness-released",
+      "date": "2026-10-26",
+      "kind": "repo",
+      "text": "doc2harness grades a coding-agent harness, not a model: a spec to build from, a scripted model server on localhost, and 110 cases over the requests, the files, the exit code and the output. The reference harness passes 110, a do-nothing one 0. Let a failed tool end the run and you lose 27 cases in five categories. Offline, no dependencies, no API key.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/doc2harness" },
+        { "label": "Write-up", "url": "/project/doc2harness" }
+      ],
+      "tags": ["Harness Engineering"]
+    },
+    {
+      "id": "softmax-fix-released",
+      "date": "2026-10-26",
+      "kind": "repo",
+      "text": "softmax-fix is a drop-in F.cross_entropy that keeps the right answer's gradient. Once the target leads by 25 nats PyTorch returns exactly 0.0 for it, though float32 could hold the true value to a lead of 100. Without weight decay, the fix holds a grokking run's largest logit at 131 instead of 658.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/softmax-fix" },
+        { "label": "Write-up", "url": "/project/softmax-fix" }
+      ],
+      "tags": ["Numerical Stability"]
+    },
+    {
+      "id": "waypoint-opd-released",
+      "date": "2026-10-26",
+      "kind": "repo",
+      "text": "waypoint-opd gates RL-shift distillation with one checkpoint from the middle of the teacher's run: where the early and late halves disagree, transfer nothing. In a synthetic run it removes the copied residue entirely when every candidate is scored. The measurement on real OLMo 2 checkpoints is written and has not been run.",
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/tatra-labs/waypoint-opd" },
+        { "label": "Write-up", "url": "/project/waypoint-opd" }
+      ],
+      "tags": ["Knowledge Distillation"]
+    },
+    {
       "id": "nano-pixelmoe-released",
       "date": "2026-10-22",
       "kind": "repo",

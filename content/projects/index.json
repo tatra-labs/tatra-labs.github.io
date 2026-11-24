@@ -1,5 +1,245 @@
 [
   {
+    "slug": "alu-graft",
+    "title": "alu-graft: Exact Arithmetic, Compiled into the Weights",
+    "excerpt": "An exact six-digit adder and subtractor compiled into Qwen3-0.6B's weights with zero gradient steps and zero training examples. On the same 600 prompts the model goes from 299 right answers to 600, and on ordinary text it is unchanged to 5 × 10⁻⁸ nats per token. An implementation of a November 2026 paper that released no code.",
+    "date": "2026-11-23",
+    "tags": [
+      "Circuit Compilation",
+      "Model Editing",
+      "Transformers",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/alu-graft-digits.webp"
+  },
+  {
+    "slug": "just-a-nudge",
+    "title": "just-a-nudge: How Much of RL Is a Constant Nudge?",
+    "excerpt": "Is RL post-training of a diffusion transformer just a constant nudge to its activations? Rebuilt from scratch with a 3.45M-parameter MM-DiT, MNIST and Flow-GRPO, 5,632 constant numbers recover 83% of what RL taught about prompt following, and RL on those numbers alone gets the same. On a style-like reward they recover 65%, and a LoRA of the same size gets 84%.",
+    "date": "2026-11-23",
+    "tags": [
+      "Diffusion Models",
+      "Reinforcement Learning",
+      "Activation Steering",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/just-a-nudge-shares.webp"
+  },
+  {
+    "slug": "heavy-metal-gym",
+    "title": "heavy-metal-gym: Five Tonnes on Two Wheels",
+    "excerpt": "A five-tonne skid-steer loader balanced on two wheels by four small neural networks: an open, planar rebuild of a Science Robotics paper whose code had not been released. From rest, with nobody at the stick, 83.4% of 1,000 randomised machines swing up, hold ten seconds on two wheels and land. The trained policies also run live in your browser.",
+    "date": "2026-11-18",
+    "tags": [
+      "Reinforcement Learning",
+      "Robotics",
+      "Simulation",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/heavy-metal-gym-chain.webp"
+  },
+  {
+    "slug": "stale-kv",
+    "title": "stale-kv: Draft on the Cache Your Agent Just Broke",
+    "excerpt": "When a coding agent masks an old tool output, its KV cache stops matching the prompt and the reply waits on a full re-prefill. Callo drafts on the stale cache meanwhile and verifies against the exact one. On real SWE-agent sessions, Qwen3-0.6B and 1.7B keep the whole 32-token draft 15–32% of the time against the paper's 65% — and a four-token chat-template quirk explains a sizeable part of the gap.",
+    "date": "2026-11-18",
+    "tags": [
+      "LLM Inference",
+      "KV Cache",
+      "Speculative Decoding",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/stale-kv-window.webp"
+  },
+  {
+    "slug": "hopfield-tank",
+    "title": "hopfield-tank: Sudoku-Extreme, Solved by an Energy From 1985",
+    "excerpt": "An open reproduction of CRAM, a learned version of Hopfield and Tank's 1985 puzzle energy: pairwise costs between cells, fitted from solved boards in a tenth of a second on a laptop GPU. It solves all 10,000 sampled Sudoku-Extreme test puzzles in each of three seeds and, with one hidden neuron per cell, 999 of 1,000 Maze-Hard mazes — missing one shared maze, as the paper's runs do.",
+    "date": "2026-11-16",
+    "tags": [
+      "Energy-Based Models",
+      "Hopfield Networks",
+      "Reasoning",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/hopfield-tank-reproduction.webp"
+  },
+  {
+    "slug": "collateral",
+    "title": "Collateral: What Your Coding Agent Did Besides Pass the Tests",
+    "excerpt": "A coding agent can pass every test and still delete a shared model store through a symlink. Collateral is 27 coding tasks where the obvious fix passes and does damage, and a watcher that knows nothing about the task: it flags 22 of the 27 harmful runs — and one ordinary human commit in seven.",
+    "date": "2026-11-09",
+    "tags": [
+      "LLM Agents",
+      "AI Safety",
+      "Evaluation",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/collateral-watcher.webp"
+  },
+  {
+    "slug": "not-yet",
+    "title": "not-yet: A Third Answer for Agent Firewalls",
+    "excerpt": "Agent firewalls answer allow or block. SecureGARD adds a third answer, not yet, and this open implementation measures what it buys: over 316 attacked episodes the same ontology lets no action attack through either way, but with waiting the agent still finishes 98.7% of its tasks, against 82.6% when every wait becomes a refusal. Dependency-free Python, no API key.",
+    "date": "2026-11-09",
+    "tags": [
+      "LLM Agents",
+      "Prompt Injection",
+      "Security",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/not-yet-gate.webp"
+  },
+  {
+    "slug": "zebra-cover",
+    "title": "zebra-cover: Let the Model Read the Puzzle, Let Knuth Solve It",
+    "excerpt": "A language model translates a Zebra puzzle into tool calls and Knuth's exact-cover algorithm solves it: the NeuralExactCover loop in 1,012 lines of dependency-free Python. On a CPU, Qwen3-1.7B solves 4 puzzles of 30 by answering directly and only 1 through the solver, because it misspells the tools; read its calls with the near-miss names fixed and it solves 7.",
+    "date": "2026-11-09",
+    "tags": [
+      "Neuro-Symbolic",
+      "Exact Cover",
+      "Tool Use",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/zebra-cover-spelling.webp"
+  },
+  {
+    "slug": "lrmoe-lite",
+    "title": "lrmoe-lite: Sample the MoE Backward, Don't Rank It",
+    "excerpt": "Run every routed token through the experts on the way forward, and back-propagate only half of them. Sample that half in proportion to each pair's contribution and reweight it, and a laptop-scale MoE reaches the full backward's step-1,000 loss for 36% less modelled MoE-layer cost. Keep the top-scoring half instead, as the paper's rule does, and training stalls. An implementation of an October 2026 paper.",
+    "date": "2026-11-05",
+    "tags": [
+      "Mixture of Experts",
+      "Training Efficiency",
+      "Gradient Estimation",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/lrmoe-lite-backward.webp"
+  },
+  {
+    "slug": "done-or-not",
+    "title": "Done or Not: Grading the Verifiers of Computer-Using Agents",
+    "excerpt": "A computer-using agent says “Done.” Was it? done-or-not grades the verifiers that answer, on 910 simulated cases with exact labels. Judges that read screenshots accept 16% to 68% of false completion claims; a verifier that goes back and looks at the computer accepts none. An open test bed for an October 2026 paper from Google and the University of Hong Kong.",
+    "date": "2026-11-01",
+    "tags": [
+      "LLM Agents",
+      "Computer-Use Agents",
+      "Evaluation",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/done-or-not-verifiers.webp"
+  },
+  {
+    "slug": "es-com",
+    "title": "es-com: An Evolution-Strategies Step Is a Displacement",
+    "excerpt": "An evolution-strategies step is not an estimate of anything: it is exactly the shift in where a population balances once each perturbed model carries its reward as mass. Checked in numpy across 36 settings, the two forms agree to float64 rounding, 9.9 × 10⁻¹¹ at worst, and the only thing that pulls them apart is the arithmetic, not the idea.",
+    "date": "2026-10-27",
+    "tags": [
+      "Evolution Strategies",
+      "Gradient-Free Optimization",
+      "Numerical Stability",
+      "Paper Implementation",
+      "NumPy"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/es-com-residual.webp"
+  },
+  {
+    "slug": "lb-audit",
+    "title": "lb-audit: Spend the Strong Verifier Where Hacks Pay",
+    "excerpt": "Reward hacks in GRPO pay most in the groups where almost nothing passed, and those are the cheapest groups to check. Audit them first and punish what you catch, and hacking stops being rewarded at 23.1% of passes strong-checked, against 53.0% for random audits. An implementation of an October 2026 paper, in pure numpy.",
+    "date": "2026-10-27",
+    "tags": [
+      "Reinforcement Learning",
+      "Reward Hacking",
+      "RLVR",
+      "Paper Implementation",
+      "NumPy"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/lb-audit-labels.webp"
+  },
+  {
+    "slug": "continuous-pbit",
+    "title": "continuous-pbit: Bits That Hold Real Numbers",
+    "excerpt": "A probabilistic computer whose bits hold real numbers and are redrawn from an energy rather than computed — an October 2026 FPGA paper's machine, in about 120 lines of numpy. On a rugged 40-dimensional landscape it lands exactly on the best point its grid contains, while restarted Adam on the same budget ends 58× worse. Where there is nowhere to get stuck, it buys nothing.",
+    "date": "2026-10-26",
+    "tags": [
+      "Probabilistic Computing",
+      "Energy-Based Models",
+      "Optimization",
+      "Paper Implementation",
+      "NumPy"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/continuous-pbit-rastrigin.webp"
+  },
+  {
+    "slug": "doc2harness",
+    "title": "doc2harness: Grade the Harness, Not the Model",
+    "excerpt": "Doc2Harness asks a coding agent to build the harness it runs inside, then grades that harness against a scripted model. This open, dependency-free version has 110 cases over four channels, a reference harness that passes all of them and a do-nothing one that passes none, and it shows what each rule is worth: let one failed tool end the run and you lose 27 cases in five categories.",
+    "date": "2026-10-26",
+    "tags": [
+      "LLM Agents",
+      "Harness Engineering",
+      "Evaluation",
+      "Paper Implementation",
+      "Python"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/doc2harness-controls.webp"
+  },
+  {
+    "slug": "softmax-fix",
+    "title": "softmax-fix: The Gradient Your Cross-Entropy Throws Away",
+    "excerpt": "Once the right answer leads by 25 nats, PyTorch's cross-entropy returns exactly zero for the one gradient that matters, while float32 could carry the true value to a lead of 100. A drop-in fix from a Google DeepMind paper, the measurements behind both of its bugs, and a grokking run where the fix holds the largest logit at 131 instead of 658, plus the three claims that did not reproduce.",
+    "date": "2026-10-26",
+    "tags": [
+      "Numerical Stability",
+      "Cross-Entropy",
+      "Grokking",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/softmax-fix-collapse.webp"
+  },
+  {
+    "slug": "waypoint-opd",
+    "title": "Waypoint-OPD: Don't Copy a Teacher's Change of Mind",
+    "excerpt": "An RL run that pushed one way and then pushed back still leaves a shift at its endpoint, and endpoint distillation copies it. One checkpoint from the middle of the run catches that: in a synthetic run the gate cuts the copied residue 480-fold and, scoring every candidate, reaches the ideal student exactly. The test on real released checkpoints is written but has not been run.",
+    "date": "2026-10-26",
+    "tags": [
+      "Knowledge Distillation",
+      "Reinforcement Learning",
+      "LLM Post-Training",
+      "Paper Implementation",
+      "PyTorch"
+    ],
+    "author": "Tatra Labs",
+    "image": "/assets/images/projects/waypoint-opd-gate.webp"
+  },
+  {
     "slug": "nano-pixelmoe",
     "title": "nano-pixelmoe: A Mixture of Experts on Raw Pixels",
     "excerpt": "A pixel-space diffusion transformer whose feed-forward layers are LLM-style routed experts — no autoencoder, no tokenizer, three files, 250 lines, one laptop GPU. At this scale the mixture of experts ties its dense twin, and the mechanism it exists to show works: routing balances itself with no auxiliary loss, and experts specialise by content and by noise level.",

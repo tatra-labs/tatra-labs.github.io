@@ -1,0 +1,92 @@
+{
+  "slug": "lrmoe-lite",
+  "title": "lrmoe-lite: Sample the MoE Backward, Don't Rank It",
+  "date": "2026-11-05",
+  "tags": [
+    "Mixture of Experts",
+    "Training Efficiency",
+    "Gradient Estimation",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/lrmoe-lite-backward.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; One score, two ways to use it &#183; half the MoE backward kept</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Held-out loss after 2,000 steps, nats &#183; lower is better</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">full backward</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:39.48%\" title=\"full backward: final loss 1.185, MoE-layer cost to full@1000 1.00x\"></i><i class=\"fig-blab\" style=\"left:39.48%\">1.185</i></span><span class=\"fig-val\">1.00&#215;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">random</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:43.21%\" title=\"random: final loss 1.296, MoE-layer cost to full@1000 0.96x\"></i><i class=\"fig-blab\" style=\"left:43.21%\">1.296</i></span><span class=\"fig-val\">0.96&#215;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">random, reweighted</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:42.85%\" title=\"random, reweighted: final loss 1.286, MoE-layer cost to full@1000 0.89x\"></i><i class=\"fig-blab\" style=\"left:42.85%\">1.286</i></span><span class=\"fig-val\">0.89&#215;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">top gate weight</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:41.08%\" title=\"top gate weight: final loss 1.233, MoE-layer cost to full@1000 0.76x\"></i><i class=\"fig-blab\" style=\"left:41.08%\">1.233</i></span><span class=\"fig-val\">0.76&#215;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">top score (ranked)</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:86.83%\" title=\"top score (ranked): final loss 2.605, MoE-layer cost to full@1000 never\"></i><i class=\"fig-blab\" style=\"left:86.83%\">2.605</i></span><span class=\"fig-val\">never</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">score, sampled + reweighted</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:40.00%\" title=\"score, sampled + reweighted: final loss 1.200, MoE-layer cost to full@1000 0.64x\"></i><i class=\"fig-blab\" style=\"left:40.00%\">1.200</i></span><span class=\"fig-val\">0.64&#215;</span></div>\n</div>\n<div class=\"fig-note\">The right-hand column is the <b>modelled MoE-layer cost</b> of reaching the loss the full-backward run had at step 1,000, as a multiple of that run&#8217;s. <b>never</b>: not within 2,000 steps.</div>\n<figcaption>A 4-layer byte-level decoder, 2.45M parameters, eight experts per layer and top-2 routing, trained on the Python standard library&#8217;s own source; mean of two seeds, each compared with the full run that shares its seed, initialisation and data order. &#8220;Top score&#8221; keeps each expert&#8217;s highest-scoring pairs, which is the paper&#8217;s rule. &#8220;Sampled&#8221; draws pairs in proportion to the same score and divides each kept pair&#8217;s gradient by its chance of being drawn.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/lrmoe-lite",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.37720)",
+            "url": "https://arxiv.org/abs/2610.37720"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "A mixture-of-experts layer pays for every token it routes three times: once on the way forward, and twice on the way back — once for the expert's weight gradient, and once for the gradient that flows back to the token.\nLRMoE (Hu, Jiang, Xing, Li, Chen and Zhang, JD.com, October 2026) goes after the two-thirds on the way back. It keeps every routed computation in the forward pass. Then, once the output gradient arrives, it scores each token–expert pair by how much it contributes to its expert's update, and runs the backward only for the best-scoring pairs inside a per-expert quota. Fewer rows means smaller all-to-all messages and smaller matrix multiplies on the busiest GPU, which is the one everyone waits for. On Qwen3-30B-A3B and GLM4.5-106B-A12B across eight Hopper GPUs, the paper reports 21.2–44.8% less cumulative MoE-layer time to fixed loss targets than SYMI, a state-of-the-art system for the same problem. No code was released."
+      },
+      {
+        "type": "text",
+        "value": "lrmoe-lite is the backward half of that idea, small enough to read in one sitting and to train on a laptop CPU: a custom autograd function that does the expert backward on compacted rows only, a quota planner, five ways of choosing which pairs to keep, and the experiments that say which of them works. The library is about 430 lines of PyTorch with 23 tests, and with nothing dropped its backward matches plain autograd to within 1e-12 in float64."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[dev,experiments]\"\npytest -q                        # 23 tests\npython experiments/train.py      # 26 runs, ~3 h on 8 CPU workers\npython experiments/report.py     # tables and figures from results/\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nfrom lrmoe import BackwardPlan, TinyMoELM\n\nplan = BackwardPlan(keep=0.5, policy=\"metric-is\", quota=\"waterfill\")\nmodel = TinyMoELM(plan=plan)\nloss = model(x, y)\nloss.backward()   # forward: every pair; backward: half of them\n```"
+      },
+      {
+        "type": "text",
+        "value": "The score is the paper's, and it is cheap for a reason worth knowing. A pair adds one rank-one matrix to its expert's output-projection gradient: the outer product of the gradient arriving at the expert's output, already scaled by the routing weight, and the hidden activation the forward pass saved. The size of an outer product is the product of the two vectors' sizes, so the exact size of every pair's contribution costs two row norms, not a matrix multiply. The paper squares it and calls it the load recalibration metric; ranking by either one picks the same pairs."
+      },
+      {
+        "type": "text",
+        "value": "Keep the top-scoring half of each expert's pairs, as the paper does, and on this model training breaks. From the first evaluation at step 100 the held-out loss never gets below 2.44 nats, while the full backward goes from 2.30 to 1.18 over the same steps — at both budgets I tested, under both quota rules, for both seeds. Dropping pairs at random is far better than that.\nUse the same score differently — draw pairs with probability in proportion to it, and divide each kept pair's gradient by its probability of being drawn — and keeping half the backward finishes 0.016 nats behind the full run. It needs 10% more steps to reach the full run's step-1,000 loss, but each step is cheap enough that it gets there for 0.64× the modelled MoE-layer cost: a 36% saving, inside the paper's 21–45% band."
+      },
+      {
+        "type": "markdown",
+        "value": "## Results\n\n| backward kept | plan | final loss | steps to full@1000 | MoE cost to full@1000 |\n|---:|---|---:|---:|---:|\n| 50% | random | 1.296 | 1.70&#215; | 0.96&#215; |\n| 50% | random, reweighted | 1.286 | 1.55&#215; | 0.89&#215; |\n| 50% | top gate weight | 1.233 | 1.30&#215; | 0.76&#215; |\n| 50% | top score (ranked) | 2.605 | never | never |\n| 50% | **score, sampled + reweighted** | 1.200 | 1.10&#215; | **0.64&#215;** |\n| 25% | random | 1.415 | never | never |\n| 25% | random, reweighted | 1.446 | never | never |\n| 25% | top gate weight | 1.356 | never | never |\n| 25% | top score (ranked) | 2.671 | never | never |\n| 25% | **score, sampled + reweighted** | 1.279 | 1.55&#215; | **0.69&#215;** |"
+      },
+      {
+        "type": "text",
+        "value": "Final held-out loss after 2,000 steps; the full backward reaches 1.185. Steps and cost are multiples of what the full run needed to reach its own step-1,000 loss, and never means not within 2,000 steps. Every plan runs the same cosine schedule, so one that needs more steps is cut off at the same point as the run it is chasing. That is also why nothing reaches the full run's final loss."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; A good gradient on every step, and still the wrong model</span>\n<div class=\"fig-grid\">\n<span class=\"fig-cell fig-cell--hd\">plan, half kept</span>\n<span class=\"fig-cell fig-cell--hd\">one step: cosine to exact gradient</span>\n<span class=\"fig-cell fig-cell--hd\">2,000 steps: held-out loss</span>\n<span class=\"fig-cell fig-cell--row\">random</span>\n<span class=\"fig-cell\"><b>0.731</b></span>\n<span class=\"fig-cell\"><b>1.296</b></span>\n<span class=\"fig-cell fig-cell--row\">random, reweighted</span>\n<span class=\"fig-cell\"><b>0.665</b></span>\n<span class=\"fig-cell\"><b>1.286</b></span>\n<span class=\"fig-cell fig-cell--row\">top gate weight</span>\n<span class=\"fig-cell\"><b>0.879</b></span>\n<span class=\"fig-cell\"><b>1.233</b></span>\n<span class=\"fig-cell fig-cell--row\">top score (ranked)</span>\n<span class=\"fig-cell fig-cell--alt\"><b>0.923</b></span>\n<span class=\"fig-cell fig-cell--alt\"><b>2.605</b></span>\n<span class=\"fig-cell fig-cell--row\">score, sampled + reweighted</span>\n<span class=\"fig-cell fig-cell--alt\"><b>0.922</b></span>\n<span class=\"fig-cell fig-cell--alt\"><b>1.200</b></span>\n</div>\n<div class=\"fig-note\">The two marked plans have the same one-step cosine, <b>0.923</b> and <b>0.922</b>, and end <b>1.4 nats</b> apart.</div>\n<figcaption>Cosine between each plan&#8217;s expert gradient and the exact one, on a checkpoint trained for 1,000 steps: four fixed batches, and 8 random draws per batch for the randomised plans. Loss is held-out, mean of two seeds. Random-with-reweighting has the worst cosine here and trains normally.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Here is the part I would want to know before building this into a real trainer. On a single step, the ranked gradient looks excellent: its cosine to the exact gradient is as good as the sampled one's. Random selection with reweighting has the worst cosine in the table and trains fine. Per-step gradient fidelity does not predict where training ends up.\nWhat separates them is bias, not size. A sampled, reweighted estimate is wrong in a different direction every step, and the errors average away. A ranking is wrong in the same direction every step, and that adds up. Judge a backward-dropping scheme by the gradient it produces on one step and you will pick the wrong one."
+      },
+      {
+        "type": "text",
+        "value": "To see what the ranking gets wrong, a separate set of 300-step runs changes only the score used to rank. Ranking by activation size alone trains almost normally: 2.095 nats, against 1.883 for the full backward. Ranking by the size of the incoming gradient alone collapses harder than the full score does, to 2.857. The pairs with the biggest incoming gradient are the tokens the model currently gets most wrong. Training on only those, step after step, while every other pair's gradient — to its expert and back to its token — is zeroed, is a selection bias that never washes out. It is not a fixation on the first few context positions: those are 6.25% of the window and 7.4% of the kept pairs. That the gradient-driven bias is the mechanism is a hypothesis these runs are consistent with; they do not prove it."
+      },
+      {
+        "type": "text",
+        "value": "None of this contradicts the paper, and it is worth being exact about why. The paper never drops more than 30% of the backward: its settings remove 10, 20 and 30% of pairs, and there its own ablation finds ranked selection far ahead of random (a mean perplexity deviation of 0.012 against 0.776 on Qwen3-30B-A3B). I trained at half and at a quarter kept. At a quarter dropped, the one-step cosines of the ranked and sampled plans are 0.971 and 0.984, and I did not train there. The finding is narrower than \"ranking is wrong\": somewhere between the paper's drop rates and mine ranking stops being safe, and sampling by the same score is what lets you go further."
+      },
+      {
+        "type": "text",
+        "value": "What is measured: losses, gradients, cosines, and which pairs were kept. What is modelled: the MoE-layer cost. Each layer's eight experts are dealt round-robin to four devices, and a step costs the busiest device's forward pairs plus twice its retained backward pairs — the straggler-bound shape of the paper's setting, with no communication, memory or kernel efficiency in it. CPU wall-clock is recorded in every run but it is not the headline: the runs shared one CPU eight ways, the toy is dominated by attention and Python overhead, and the sampling code is unoptimised. Even so, a sampled step took 0.97× the time of a full one at half kept and 0.71× at a quarter."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's system. There is no multi-node placement, no expert replicas, no capacity-aware routing among them, no real communication and no grouped-GEMM kernels — the parts of LRMoE that turn fewer backward rows into less time on eight GPUs. The model has 2.45 million parameters, four to five orders of magnitude below the paper's, trained for 2,000 steps with two seeds on one corpus. The two quota rules were only ever trained with the collapsing ranked policy, so only the one-step sweep speaks to them: capping the hottest experts first costs fidelity, a cosine of 0.923 at half kept against 0.964 under proportional quotas. What it adds is the backward half, small enough to read, and one rule the paper's ablation never pushed far enough to show: score by contribution, but sample by the score and reweight."
+      }
+    ]
+  }
+}

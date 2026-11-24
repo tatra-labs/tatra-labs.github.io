@@ -1,0 +1,80 @@
+{
+  "slug": "just-a-nudge",
+  "title": "just-a-nudge: How Much of RL Is a Constant Nudge?",
+  "date": "2026-11-23",
+  "tags": [
+    "Diffusion Models",
+    "Reinforcement Learning",
+    "Activation Steering",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/just-a-nudge-shares.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Most of the RL gain, from 5,632 numbers that never see the input</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">match: draw each digit at its prompted stroke weight &#183; share of the RL gain</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">fitted vectors</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:82.96%\" title=\"fitted vectors: 83.0%\"></i><i class=\"fig-blab\" style=\"left:82.96%\">83.0%</i></span><span class=\"fig-val\">76.9&#8211;89.1</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">vectors via RL</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:82.87%\" title=\"vectors via RL: 82.9%\"></i><i class=\"fig-blab\" style=\"left:82.87%\">82.9%</i></span><span class=\"fig-val\">76.8&#8211;90.0</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">same-size LoRA</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:91.81%\" title=\"same-size LoRA: 91.8%\"></i><i class=\"fig-blab\" style=\"left:91.81%\">91.8%</i></span><span class=\"fig-val\">86.4&#8211;97.3</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">upright: straighten the slant, whatever the prompt &#183; share of the RL gain</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">fitted vectors</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:64.70%\" title=\"fitted vectors: 64.7%\"></i><i class=\"fig-blab\" style=\"left:64.70%\">64.7%</i></span><span class=\"fig-val\">62.6&#8211;66.8</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">vectors via RL</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:47.93%\" title=\"vectors via RL: 47.9%\"></i><i class=\"fig-blab\" style=\"left:47.93%\">47.9%</i></span><span class=\"fig-val\">45.6&#8211;50.2</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">same-size LoRA</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:84.40%\" title=\"same-size LoRA: 84.4%\"></i><i class=\"fig-blab\" style=\"left:84.40%\">84.4%</i></span><span class=\"fig-val\">82.9&#8211;85.8</span></div>\n</div>\n<div class=\"fig-note\">Right: 95% bootstrap interval over 150 held-out prompts. The paper, on six image models: <b>fitted vectors 90.0&#8211;96.3%</b>, and a LoRA of the same size no better.</div>\n<figcaption>Share = (reward of the policy &#8722; base) &#247; (reward of the RL-tuned model &#8722; base). The vectors are 44 constants, 5,632 numbers in all, 51 times fewer than the RL-tuned LoRA, added to the frozen base model&#8217;s block outputs the same way for every prompt, token and seed. On prompt following they carry most of the gain, and RL that trains only them gets the same 83%. On the style-like reward a LoRA with exactly as many parameters does clearly better, and the intervals do not overlap.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/just-a-nudge",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2611.26627)",
+            "url": "https://arxiv.org/abs/2611.26627"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "RL post-training makes diffusion transformers render the text you asked for, compose the objects you named and score higher with human-preference models, and it does it by changing their weights, so every prompt and every token gets its own change. In November 2026, Meral, Oktay, Helbling, Kara, Chau and Yanardag (Virginia Tech, fal, Georgia Tech and IBM Research) asked how much of that input-dependence is needed. They froze the base model and added a fixed set of steering vectors to its block outputs, 0.29M numbers on SD3.5-M against 18.8M in the RL-tuned LoRA, fitted to match the RL-tuned model's velocity predictions with no reward anywhere in the objective. The same vectors for every prompt, token and seed recover 90.0–96.3% of the reward gains of six RL-tuned image models, and trained from zero with online RL they exceed weight-based RL on OCR and PickScore. The title says it outright: RL post-training in diffusion transformers is activation steering. The code is listed as coming soon."
+      },
+      {
+        "type": "text",
+        "value": "just-a-nudge rebuilds that experiment from nothing, at a scale you can rerun on a laptop GPU in a few hours. The base is a 3.45M-parameter MM-DiT with text and image streams, joint attention and adaLN-Zero, trained on two MNIST digits side by side whose prompt names each digit and a stroke weight, like \"3 bold, 7 thin\". RL is Flow-GRPO with a rank-32 LoRA. The vectors follow the paper's layout, one per block output, guidance pass and step bin: 44 of them, 5,632 numbers. Two rewards stand in for the paper's two kinds. match is the verifiable one, like OCR or GenEval: a classifier's confidence in each digit times a soft check that its ink falls in the prompted third of its class. upright is the preference-like one, like PickScore: minus the mean slant, and it ignores the prompt entirely."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[data,figures,test]\"\npython scripts/01_pretrain.py            # the base MM-DiT, ~17 min\npython scripts/02_run.py --reward match  # RL, fits, controls, eval\npython scripts/02_run.py --reward upright\npython scripts/04_report.py              # results/tables.md\n```"
+      },
+      {
+        "type": "text",
+        "value": "On match the answer is yes. RL lifts exact prompt accuracy on 150 held-out prompts from 90.8% to 98.5%. The fitted vectors, which never saw a reward, reach 97.6%, and Flow-GRPO training only the vectors, starting from zero, reaches 97.8%: 83.0% and 82.9% of the RL reward gain (Figure 1). The change they make depends on the prompt, since thin digits must get thinner and bold ones bolder, and the vectors do not. That is the paper's point: the vectors sit on the text tokens, and the text tokens carry the prompt. Kept alone, the text-stream vectors give 82.8% and the image-stream vectors 6.3%."
+      },
+      {
+        "type": "text",
+        "value": "It is not guidance and it is not luck. No classifier-free guidance scale from 1 to 8 gives the base more than 5% of the gain, and random vectors with the fitted norms wreck it, at −291%. Fitting also matters: the mean difference of the activations, the cheap estimate, recovers 62% on match and 10% on upright, against 12.2–79.0% for the same estimate in the paper."
+      },
+      {
+        "type": "text",
+        "value": "On upright the answer is partly. The fitted vectors recover 64.7% and RL on the vectors alone 47.9%, where the paper's vectors trained by RL reach 104%. A rank-2 LoRA on the attention output projections, exactly 5,632 parameters and fitted with the same loss on the same data, recovers 84.4%, and the intervals do not overlap. The paper found no detectable difference between the two on image models. My reading is that straightening a digit is a per-sample correction: a 7 that leans left needs the opposite shear of one that leans right, even though the reward never reads the prompt, and a constant can only get that sign from whatever the frozen model already computes."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; Same output, different road</span>\n<div class=\"fig-grid\">\n<span class=\"fig-cell fig-cell--hd\">share of its gain kept after the reset</span><span class=\"fig-cell fig-cell--hd\">here &#183; match / upright</span><span class=\"fig-cell fig-cell--hd\">paper &#183; OCR / PickScore</span>\n<span class=\"fig-cell fig-cell--row\">base + fitted vectors</span><span class=\"fig-cell\"><b>17.5% / 23.9%</b></span><span class=\"fig-cell\"><b>20.5% / 10.5%</b></span>\n<span class=\"fig-cell fig-cell--row\">RL-tuned model</span><span class=\"fig-cell fig-cell--alt\"><b>83.8% / 65.2%</b><em>keeps most of it</em></span><span class=\"fig-cell\"><b>26.4% / 24.5%</b><em>loses most of it</em></span>\n</div>\n<figcaption>The reset gives image queries, in joint attention, the text keys and values of the unsteered base model on the same noisy state, and changes nothing else. Cut that route and the steering vectors lose most of their gain, here and in the paper. In the paper the RL-tuned models lose most of theirs too, which is its evidence that RL and the vectors reach the image the same way. Here the RL-tuned model keeps most of its own gain: it gets there mostly by another road.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Where the vectors act matches the paper closely. The unconditional guidance pass's vectors, kept alone, hurt: −224% on match and −13% on upright, the same sign as in the paper's Table S12. On upright the early step bin carries the gain, 62%, and the late bin almost none, 3%. The conditional and unconditional vectors point the same way, a mean cosine of 0.74–0.76, which is the paper's explanation for why dropping the unconditional ones can help: on upright, conditional-only recovers 77%, more than the full set's 65%. The disagreement is the RL-tuned model itself (Figure 2). The vectors reproduce RL's output through the text keys and values that image tokens read; the RL LoRA, for the most part, does not need that road. The paper says it makes no claim that RL must work this way, and here it does not."
+      },
+      {
+        "type": "text",
+        "value": "Two variants push on the claim from either side. A weaker base, pretrained for 4,500 steps instead of 6,000, draws the right digit only 59% of the time. The same RL budget adds little to it, the fitted vectors recover a quarter of that (25.1%), and RL on the vectors alone recovers nothing (−16.9%), which fits the paper's reading that RL steers the generator toward what it can already compute. Without the KL term, upright recovery rises to 83–89%, but by then RL has hacked the reward: exact prompt match falls from 90.8% to 40.7%, and random vectors also score 74% by destroying the digits. A high share on a hacked reward says little."
+      },
+      {
+        "type": "text",
+        "value": "A toy has its own traps, and two of them matter for anyone rebuilding this. The base has to leave RL something to do: pretrained for 20,000 steps it gets 99.8% of prompts exactly right, so the shipped base is a 6,000-step run at 91.5%, and headroom is not smooth in training length, since 4,500 steps gives 7%. And the reward has to read the last SDE step's mean, not its noisy draw: Flow-GRPO's final step leaves per-pixel noise that adds ink and shifts the slant moments, and rewarding the draw cut the match reward from 0.92 to 0.70 at the first update and taught the policy to correct for noise the evaluation sampler never adds. Those runs were aborted, and their logs are in the repo."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's code, and it is not SD3.5. It is a 3.45M-parameter model drawing MNIST digits, with one seed of everything, so the intervals cover the choice of prompts and not training variance. The match gain is small in absolute terms, +0.046 reward and 7.7 points of exact match, because the base already gets most prompts right, so shares of it carry about ±6 points. The upright reward is mine, and it can be gamed. The question, the vectors' layout, the fitting objective and the attention analysis are the authors'. What this adds is a version small enough to rerun in an afternoon, including the parts that did not come out the same."
+      }
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "slug": "softmax-fix",
+  "title": "softmax-fix: The Gradient Your Cross-Entropy Throws Away",
+  "date": "2026-10-26",
+  "tags": [
+    "Numerical Stability",
+    "Cross-Entropy",
+    "Grokking",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/softmax-fix-collapse.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; The gradient on the right answer, as it pulls ahead &#183; float32, 1,000 classes</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--pi\"></i>true value, which softmax-fix returns</span><span><i class=\"fig-m fig-m--cx\"></i>PyTorch F.cross_entropy, printed on the right</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Size of the gradient on the target logit, log scale &#183; lead = target logit minus the runner-up</span>\n<div class=\"fig-row\"><span class=\"fig-name\">lead 10</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--cx\" style=\"left:96.97%\" title=\"lead 10, PyTorch: -4.339e-02\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:96.97%\" title=\"lead 10, true: -4.339e-02, softmax-fix: -4.339e-02\"></i></span><span class=\"fig-val\">4.3&#215;10&#8315;&#178;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">lead 20</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--cx\" style=\"left:87.16%\" title=\"lead 20, PyTorch: -1.669e-06\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:87.36%\" title=\"lead 20, true: -2.059e-06, softmax-fix: -2.059e-06\"></i></span><span class=\"fig-val\">1.7&#215;10&#8315;&#8310;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">lead 25</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:82.54%\" title=\"lead 25, true: -1.387e-08, softmax-fix: -1.387e-08\"></i></span><span class=\"fig-val\">exactly 0</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">lead 40</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:68.06%\" title=\"lead 40, true: -4.244e-15, softmax-fix: -4.244e-15\"></i></span><span class=\"fig-val\">exactly 0</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">lead 60</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:48.76%\" title=\"lead 60, true: -8.748e-24, softmax-fix: -8.748e-24\"></i></span><span class=\"fig-val\">exactly 0</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">lead 100</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:10.17%\" title=\"lead 100, true: -3.780e-41, softmax-fix: -3.780e-41\"></i></span><span class=\"fig-val\">exactly 0</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:11.11%\"></i><i class=\"fig-tlab\" style=\"left:11.11%\">10&#8315;&#8308;&#8304;</i><i class=\"fig-tick\" style=\"left:33.33%\"></i><i class=\"fig-tlab\" style=\"left:33.33%\">10&#8315;&#179;&#8304;</i><i class=\"fig-tick\" style=\"left:55.56%\"></i><i class=\"fig-tlab\" style=\"left:55.56%\">10&#8315;&#178;&#8304;</i><i class=\"fig-tick\" style=\"left:77.78%\"></i><i class=\"fig-tlab\" style=\"left:77.78%\">10&#8315;&#185;&#8304;</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">1</i></span><span class=\"fig-val\">PyTorch</span></div>\n</div>\n<figcaption>One row of 1,000 float32 logits: the target set to the lead, the other 999 to zero. At a lead of 20 PyTorch is already 19% low; from 25 on it returns exactly zero, so it has no mark at all. softmax-fix matches the true value to four significant figures at every lead, including 100, where the answer is a float32 subnormal. The axis stops at 10&#8315;&#8308;&#8309;, the smallest number float32 can hold.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/softmax-fix",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.31642)",
+            "url": "https://arxiv.org/abs/2610.31642"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Give a classifier a right answer that leads the runner-up by 40 nats, and ask PyTorch for the gradient on that answer. It returns exactly 0.0. The true value is −4.24 × 10⁻¹⁵, and float32 holds numbers down to about 10⁻⁴⁵.\nA Fix for Softmax and Cross-Entropy, by Jonathan Barron, Dan Gnanapragasam and Michael Tschannen of Google DeepMind (October 2026), names two numerical bugs in the softmax, log-softmax and cross-entropy that every framework ships, and reports that fixing them removes the “slingshot” loss spikes seen in grokking, speeds grokking up, prevents accuracy collapse and stops distilled students drifting from their teachers. softmax-fix is a PyTorch implementation of both fixes, the measurements that show the bugs are real, and a training run that shows what one of them costs. Some of the paper's claims reproduced here; three did not, and they are listed below."
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nimport torch, torch.nn.functional as F\n\nlogits = torch.zeros(1, 1000); logits[0, 0] = 40.0\nlogits.requires_grad_(True)\nloss = F.cross_entropy(logits, torch.tensor([0]))\ntorch.autograd.grad(loss, logits)[0][0, 0]   # tensor(0.)\n```"
+      },
+      {
+        "type": "text",
+        "value": "The first bug, which Prieto et al. named Softmax Collapse in 2025, is an addition. To avoid overflow, every implementation subtracts the largest logit first, so when the right answer is the largest it becomes exactly 0 and its exponential exactly 1. The softmax denominator is then 1 plus the sum of everything else, and once the right answer leads by enough that sum is too small to change 1.0. The paper calls that point the precision cliff: about 5.5 nats of margin in bfloat16, 16.6 in float32 and 36.7 in float64. Past it the target's probability is exactly 1, its gradient p − 1 is exactly 0, and the loss is exactly 0.\nThe wrong answers' gradients do not vanish, because they are computed from small numbers directly and never have 1 added to them. So the gradient stops summing to zero. Every wrong answer is still pushed down and nothing pushes the right one up: a net force on the logits that should not exist. The paper's account of the slingshot is what Adam does with that. Its running estimate of each gradient's size decays while the target gradients are switched off, and when one turns back on it gets divided by almost nothing."
+      },
+      {
+        "type": "text",
+        "value": "The fix is never to add 1 to a small number. Measure every logit relative to the target, so the target's own slot is an exact zero, sum the others, and take log1p of the sum. Then the target's gradient is minus the sum of the other gradients, a sum of positive terms with nothing to cancel, and the vector sums to zero by construction. That is what Figure 1 shows: with 999 other classes the cliff falls at a lead of about 23.5, PyTorch's answer is zero from 25 on, and the fixed one tracks the true value through forty orders of magnitude to a lead of 100. The paper prints its fix in JAX. softmax-fix is the PyTorch version, a drop-in for F.cross_entropy, and it uses the same construction."
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nfrom softmax_fix import cross_entropy   # drop-in for F.cross_entropy\nloss = cross_entropy(logits, targets)\n```"
+      },
+      {
+        "type": "text",
+        "value": "One thing no fix can change is the softmax output itself. Past the cliff the winning probability is not representable in float32 as anything but 1.0, whatever the implementation does. The information is gone from p and still present in log p, which is exactly why the fixed gradient is never built from p."
+      },
+      {
+        "type": "markdown",
+        "value": "## The second bug: a student that has already caught up"
+      },
+      {
+        "type": "text",
+        "value": "Softmax Cancellation is the paper's name for the other bug, and it lives in distillation. The gradient of a soft-target loss is the student's probabilities minus the teacher's. When the student has matched the teacher, that is a subtraction of two nearly equal vectors, and whatever rounding separates them becomes the gradient. The test here is a student whose logits are bitwise identical to its teacher's, so the true gradient is exactly zero:"
+      },
+      {
+        "type": "markdown",
+        "value": "| teacher's probabilities cached as | naive gradient, L1 | softmax-fix |\n|---|---:|---:|\n| float32 | 0 | 0 |\n| bfloat16 | 0.041 | 0 |\n| float16 | 0.0057 | 0 |"
+      },
+      {
+        "type": "text",
+        "value": "With a float32 teacher the naive subtraction gets zero too. What breaks it is caching the teacher's probabilities in a smaller format, which is what a real distillation pipeline does. Left to train for 400 Adam steps against a bfloat16-cached copy of its own teacher, a student that started at a perfect match moved its logits by up to 0.030 and opened a KL divergence of 9.2 × 10⁻⁵. With softmax-fix both stayed at exactly zero. My naive baseline subtracts probabilities computed the same way, so it does not exercise the paper's other source of error, a forward softmax and a backward log-softmax that disagree in the last bit."
+      },
+      {
+        "type": "text",
+        "value": "The fix writes the difference in terms of the logit gap instead, with expm1 and log1p, so every term is exactly zero when the gap is, in any precision. It needs the teacher's logits rather than cached probabilities, which is the practical lesson: keep the logits. Here softmax-fix takes a shorter route than the paper. The paper's version also centres the gap under the teacher's distribution, falls back to plain subtraction when the log-ratio is large, and projects the result so it sums to zero; mine does none of the three, which is why it is exact at a match but not uniformly more accurate than the naive subtraction away from one. The repository says so."
+      },
+      {
+        "type": "markdown",
+        "value": "## What it costs in training"
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; What the missing gradient does to the logits &#183; 3 seeds each</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>standard cross-entropy, one seed</span><span><i class=\"fig-m fig-m--pi\"></i>softmax-fix, one seed</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">No weight decay &#183; largest logit after 10,000 steps</span>\n<div class=\"fig-row\"><span class=\"fig-name\">standard CE</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:11.17%;width:87.98%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:99.15%\" title=\"standard CE, seed 0: 991\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:11.17%\" title=\"standard CE, seed 1: 112\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:86.99%\" title=\"standard CE, seed 2: 870\"></i></span><span class=\"fig-val\">658</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">softmax-fix</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:11.47%;width:4.14%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:12.08%\" title=\"softmax-fix, seed 0: 121\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:15.61%\" title=\"softmax-fix, seed 1: 156\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:11.47%\" title=\"softmax-fix, seed 2: 115\"></i></span><span class=\"fig-val\">131</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Weight decay 1 &#183; same scale</span>\n<div class=\"fig-row\"><span class=\"fig-name\">standard CE</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:4.51%;width:1.75%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:5.80%\" title=\"standard CE, seed 0: 58\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:4.51%\" title=\"standard CE, seed 1: 45\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:6.26%\" title=\"standard CE, seed 2: 63\"></i></span><span class=\"fig-val\">55</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">softmax-fix</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:3.95%;width:4.29%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:3.95%\" title=\"softmax-fix, seed 0: 40\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:8.24%\" title=\"softmax-fix, seed 1: 82\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:4.96%\" title=\"softmax-fix, seed 2: 50\"></i></span><span class=\"fig-val\">57</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">250</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">500</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">750</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">1,000</i></span><span class=\"fig-val\">mean</span></div>\n</div>\n<figcaption>A one-block transformer learning (a + b) mod 97 from 40% of the pairs, full-batch AdamW, float32, identical initialisation and data in both arms. Without weight decay nothing else bounds the logits, and the standard runs end anywhere from 112 to 991 depending on the seed. With weight decay the two arms are indistinguishable.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Grokking is the cheapest place to look, because a small network memorises its training set long before it generalises, and in between its logits grow into exactly the regime where collapse bites. The setup: (a + b) mod 97, a one-block transformer of width 128, 10,000 full-batch steps of AdamW, three seeds per arm, about two minutes per run on one GPU."
+      },
+      {
+        "type": "markdown",
+        "value": "| 3 seeds per arm | loss spikes per run | largest logit | grokked at step | final validation |\n|---|---:|---:|---:|---:|\n| no decay, standard | 2.3 | 658 | never | 38.6% |\n| no decay, softmax-fix | 0.7 | 131 | never | 38.9% |\n| decay 1, standard | 9.7 | 55 | 3,850 | 100% |\n| decay 1, softmax-fix | 8.3 | 57 | 3,783 | 99.98% |"
+      },
+      {
+        "type": "text",
+        "value": "Without weight decay the mechanism is in plain sight. Standard cross-entropy pushes the wrong answers down with nothing pushing back, and nothing else bounds the result: its largest logit ends at 658 on average and anywhere from 112 to 991 depending on the seed. With softmax-fix it ends at 131 and barely varies. Loss spikes after memorisation fall from 2.3 to 0.7 per run; in the first seed, the one the repository plots, the standard loss falls below 10⁻⁷ and is thrown back above 10⁻³ four times, while the fixed loss falls without a spike to 3.4 × 10⁻¹⁰."
+      },
+      {
+        "type": "text",
+        "value": "With weight decay there is no difference at all. Weight decay already keeps the logits in check, so the missing gradient has nothing left to do: both arms grok, both finish at 100% validation accuracy or a hair under it, and the fixed arm groks earlier in every seed, but by 50 to 100 steps out of about 3,800, which is 1.7% and not a speed-up worth the name. The bug costs you something exactly when nothing else is keeping your logits in check."
+      },
+      {
+        "type": "text",
+        "value": "Three of the paper's training claims did not reproduce here, said plainly. First, slingshots: with weight decay both arms spiked about equally, 9.7 and 8.3 times per run, so whatever drives those spikes in my setup is not something the fix removes, and I have not established what it is. Second, faster grokking with weight decay: 1.7%, consistent in sign across three seeds and far too small to call. Third, accuracy collapse without weight decay: neither arm generalised at all, both ending near 39% validation accuracy, so there was nothing to collapse.\nThe setups differ in ways the paper says matter. Its accuracy collapse comes from a network with neither LayerNorm nor weight decay, on a² + b² mod 97 with Adam's epsilon at 10⁻¹⁶, where one spike drops test accuracy from 61% to 23%. Its weight-decay result is a transformer without LayerNorm on a + b mod 31, where standard cross-entropy ends at 94.3% and the fix at 100%. Mine has LayerNorm in its block, runs a + b mod 97 with epsilon at 10⁻⁸, and reached 100% either way. I have not run theirs."
+      },
+      {
+        "type": "markdown",
+        "value": "To find out whether a run of your own is affected, `collapse_report(logits, targets)` counts the rows whose target gradient the standard implementation has thrown away. It needs a margin past the cliff, so a model that is still learning reports zero; it is the confidently fitted examples that are hit, late in training, on memorised data, with little or no weight decay."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: the authors' code. The two bugs, their names and the shape of both fixes are the paper's; the PyTorch port, the measurements and the training runs are mine, on one architecture, one task, three seeds and float32 only, and the paper's other finding, that after memorisation the margin settles where weight decay balances Adam's epsilon, is not tested here. The paper itself notes that margins this extreme and student–teacher gaps this small are uncommon in standard large-scale training. Where PyTorch is already right the fixes agree with it, in the loss, the gradient and every reduction, which 26 tests check in under ten seconds on a CPU."
+      }
+    ]
+  }
+}

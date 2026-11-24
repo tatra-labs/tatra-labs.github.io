@@ -1,0 +1,92 @@
+{
+  "slug": "hopfield-tank",
+  "title": "hopfield-tank: Sudoku-Extreme, Solved by an Energy From 1985",
+  "date": "2026-11-16",
+  "tags": [
+    "Energy-Based Models",
+    "Hopfield Networks",
+    "Reasoning",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/hopfield-tank-reproduction.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; The reproduction against the paper</span>\n<div class=\"fig-grid\">\n<span class=\"fig-cell fig-cell--hd\">Benchmark</span>\n<span class=\"fig-cell fig-cell--hd\">This repository</span>\n<span class=\"fig-cell fig-cell--hd\">Paper</span>\n<span class=\"fig-cell fig-cell--row\"><b>Sudoku-Extreme</b><em>learned, 3 seeds</em></span>\n<span class=\"fig-cell\"><b>100%</b><em>in every seed &#183; ~7.7K weights</em></span>\n<span class=\"fig-cell\"><b>99.996%</b><em>7.7K weights</em></span>\n<span class=\"fig-cell fig-cell--row\"><b>Fit, 1,000 puzzles</b><em>32 SGD steps</em></span>\n<span class=\"fig-cell\"><b>0.09&#8211;0.10 s</b><em>one laptop RTX 5060</em></span>\n<span class=\"fig-cell\"><b>42 ms</b><em>one H200</em></span>\n<span class=\"fig-cell fig-cell--row\"><b>Maze-Unique</b><em>learned, 18 parameters</em></span>\n<span class=\"fig-cell fig-cell--alt\"><b>100%</b><em>longest descent 290 flips</em></span>\n<span class=\"fig-cell\"><b>100%</b><em>at most 290 moves</em></span>\n<span class=\"fig-cell fig-cell--row\"><b>Maze-Hard</b><em>CRAM+z, 29 parameters</em></span>\n<span class=\"fig-cell fig-cell--alt\"><b>99.9%</b><em>all 3 seeds miss one shared maze</em></span>\n<span class=\"fig-cell\"><b>99.9%</b><em>all 3 runs miss one shared maze</em></span>\n</div>\n<div class=\"fig-note\">Marked: the two results that match the paper <b>to the digit</b>.</div>\n<figcaption>Sudoku is scored on 10,000 puzzles drawn at random from the 412,786 in the test split; zero failures bounds each energy&#8217;s failure rate below 0.03% at 95% confidence, which cannot tell 100% from 99.996%. Mazes are the full 1,000-maze test sets. Search on a laptop CPU, fits on a laptop GPU. The paper&#8217;s numbers are from its Table 2 and Appendix F.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/hopfield-tank",
+            "primary": true
+          },
+          {
+            "label": "Try it in your browser",
+            "url": "https://tatra-labs.github.io/hopfield-tank/"
+          },
+          {
+            "label": "Read the paper (arXiv 2611.17309)",
+            "url": "https://arxiv.org/abs/2611.17309"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "In 1985 John Hopfield and David Tank showed that a network of neurons could find good answers to hard optimisation problems, the travelling salesman among them, if you wrote the problem's rules as costs between pairs of neurons and let the network roll downhill. Forty years later Sudoku-Extreme and mazes became the showcase for a different idea, looped models: networks, most of them millions of parameters, that apply the same block again and again and train for hours on a GPU.\nIn November 2026, Benjamin Hoover, Hugh Blayney and James Whittington of Prefrontal, in London, asked whether the old energy would do if it were learned from examples instead of written by hand. Their model, CRAM, solves 99.996% of Sudoku-Extreme and every Maze-Unique test maze after 42 ms and 132 ms of training on one GPU — at least 1,000× faster than the looped models they compare it with. The paper ends on a warning: puzzles this easy to solve should not be used to argue that looped reasoning scales."
+      },
+      {
+        "type": "markdown",
+        "value": "hopfield-tank is an open reproduction, written before any official code had been released. One note on names: the paper's CRAM has nothing to do with [Cram](/project/cram), this site's KV-cache project. They share four letters and nothing else."
+      },
+      {
+        "type": "text",
+        "value": "The model fits in a paragraph. Every cell of the board holds one of a few values, every pair of cells has a small table of costs, one for each combination of their values, and the energy of a board is the sum. CRAM learns the tables from solved boards by pseudolikelihood: hide one cell of a solution, ask which value the energy prefers given everything else, and penalise it for preferring the wrong one. For this energy that is exactly a cross-entropy on a linear map of the board. Nothing is unrolled, no solver runs during training and no negative examples are sampled, which is why a fit on 1,000 puzzles takes a tenth of a second."
+      },
+      {
+        "type": "text",
+        "value": "Solving is noisy descent. Pick a cell whose local cost looks too high, redraw its value from a softmax at the current temperature, and repeat, with four chains annealing and restarting side by side. It also knows when to stop without ever looking at the answer: a search halts the first time a board's energy falls to that of the worst training solution. That rule carries more of the paper's argument than it seems to. By the paper's count, the looped models' halting heads stop on a wrong board on 0.05–3.54% of the puzzles they stop on, and CRAM's threshold never did on Sudoku. Figure 2 shows when it can."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[test,figures]\"\npython scripts/fetch_data.py       # ~86 MB into data/raw/\npython experiments/maze_eval.py    # Maze-Unique and Maze-Hard\npython experiments/sudoku_eval.py --n-test 10000 --seeds 0 1 2\n```"
+      },
+      {
+        "type": "text",
+        "value": "Figure 1 is the result. Every one of the 10,000 sampled Sudoku-Extreme puzzles is solved, by the hand-set energy and by each of three learned ones, and none of the 40,000 searches halts on a wrong board. The learned energies solve 99.61–99.66% within the first 64M moves; the rest needed more, up to 501M, which is 2.8 × 10¹¹ FLOPs by this repository's count, inside the paper's search budget of 6.3 × 10¹¹. Two numbers match the paper to the digit. The learned Maze-Unique energy's longest descent is 290 flips, the paper's “at most 290 moves”, and on Maze-Hard each of three seeds solves 999 of 1,000 and all three miss the same maze, as the paper's three runs do. They are probably not the same maze: the paper describes its miss as a six-cell dead end left standing, and this repository's, test maze 721, is a loop."
+      },
+      {
+        "type": "text",
+        "value": "The weights can be read, which is the part I like best. The cells are opaque indices: the model is never told which cells share a row, a column or a box. After 32 steps on 1,000 puzzles, every one of the 810 pairs of cells that do share one has learned a positive cost for holding the same digit, the costs between different digits in those pairs are all zero, bar one stray entry in each of two seeds, and 89–91% of the 2,430 pairs that share nothing are exactly zero. It has learned the rules of Sudoku, and almost nothing else."
+      },
+      {
+        "type": "text",
+        "value": "The paper's warning is the most interesting part to reproduce, and it is in Maze-Hard. Its mazes are full of loops and have more than one shortest path. The plain maze energy prunes dead ends but cannot break a loop, and it solves none of the 1,000. The paper's appendix adds a hidden layer, CRAM+z: one scalar hidden neuron per open cell. Relaxed, the hidden neurons spread a field out from the goal that shrinks by a constant factor at every step, and each cell bonds most strongly to the neighbour its field points toward. Learned, with 29 parameters, that solves 999 of 1,000 in every seed."
+      },
+      {
+        "type": "text",
+        "value": "The fitted model reads cleanly. Its 16 inherited neighbour couplings all go to zero under L1. What is left is a cost of 20.9 to light a cell and a bond of about 14.2 toward each neighbour, so a cell stays lit only when two bonds hold it — which is what a path is. The direction preference comes out as down 5.77, left 1.32, right −1.03, up −6.07: by the repository's reading, the neighbour order of the breadth-first search that wrote the dataset's answer paths. The model recovered it from the labels alone, which is how it matches the one labelled path rather than any shortest path."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; How many solved puzzles the energy needs &#183; measured here</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>unique puzzles only</span><span><i class=\"fig-m fig-m--pi\"></i>+ 99 symmetry variants of each</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">1,000 held-out puzzles solved within 16M moves, % &#183; right: searches that halted on a wrong board, unique puzzles only</span>\n<div class=\"fig-row\"><span class=\"fig-name\">3 puzzles</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:44.70%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"3 unique puzzles only: 0.0% solved, 1,000 wrong halts\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:44.70%\" title=\"3 puzzles + 99 variants each: 44.7% solved, 539 wrong halts\"></i></span><span class=\"fig-val\">1,000</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">10 puzzles</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:98.90%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"10 unique puzzles only: 0.0% solved, 1,000 wrong halts\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:98.90%\" title=\"10 puzzles + 99 variants each: 98.9% solved, 0 wrong halts\"></i></span><span class=\"fig-val\">1,000</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">30 puzzles</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:98.90%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"30 unique puzzles only: 0.0% solved, 1,000 wrong halts\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:98.90%\" title=\"30 puzzles + 99 variants each: 98.9% solved, 0 wrong halts\"></i></span><span class=\"fig-val\">1,000</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">100 puzzles</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:99.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"100 unique puzzles only: 0.0% solved, 1,000 wrong halts\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:99.00%\" title=\"100 puzzles + 99 variants each: 99.0% solved, 0 wrong halts\"></i></span><span class=\"fig-val\">1,000</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">300 puzzles</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:31.70%;width:66.90%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:31.70%\" title=\"300 unique puzzles only: 31.7% solved, 675 wrong halts\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:98.60%\" title=\"300 puzzles + 99 variants each: 98.6% solved, 0 wrong halts\"></i></span><span class=\"fig-val\">675</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">1,000 puzzles</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--cx\" style=\"left:98.60%\" title=\"1,000 unique puzzles only: 98.6% solved, 0 wrong halts\"></i></span><span class=\"fig-val\">0</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">25%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">50%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">75%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">100%</i></span><span class=\"fig-val\">wrong halts</span></div>\n</div>\n<figcaption>The variants shuffle rows within bands, columns within stacks, the bands and stacks themselves, and add a random transpose. With them, 10 puzzles reach 98.9%; the paper reports 98% from 30. Without them the energy has minima below its own stopping threshold that are not solutions, and the search stops on them. The 1,000-puzzle variant run was not made.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Figure 2 is the caveat on that halting rule. With 99 symmetry variants of each puzzle, 10 unique puzzles are enough. Without them, below 1,000 puzzles each pair of cells sees too few examples, the energy grows minima below its own stopping threshold that are not solutions, and the search halts on them: on every one of the 1,000 held-out puzzles at 3 to 100 training puzzles, and on 675 at 300. The halting rule is only as trustworthy as the energy behind it."
+      },
+      {
+        "type": "text",
+        "value": "Where it differs from the paper, so the numbers can be read correctly. Sudoku is scored on a 10,000-puzzle sample rather than all 412,786 test puzzles, which at the measured search speed would take roughly 5 to 12 hours per energy on this laptop. Every search was capped at 64M moves, and the 114 puzzles that hit the cap were re-run on their own random streams with a cap of 1G, so the first 64M moves replay exactly. The search constants are the paper's, but I could not find the paper's definition of its temperature unit, so it is defined here as the mean coupling weighted by size; a first guess ran the paper's schedule twice too hot. The hidden mass in CRAM+z is fixed instead of learned, and inference is zero-temperature descent rather than mean-field updates. FLOP counts are this repository's own accounting and comparable to the paper's only roughly."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's code, and it does not test the paper's headline. The 1,000× is a comparison with HRM, TRM and five other looped models that the authors trained on H200s; this repository trains none of them, so it can confirm that the energy is this accurate and this quick to fit, not how much faster it is than anything else. N-Queens, graph colouring and the paper's comparison of twelve training objectives are not reproduced either. What it adds is the energy and its search, small enough for a laptop, and a page where you can train the Sudoku energy in your own browser and watch it solve."
+      }
+    ]
+  }
+}

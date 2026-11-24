@@ -1,0 +1,92 @@
+{
+  "slug": "stale-kv",
+  "title": "stale-kv: Draft on the Cache Your Agent Just Broke",
+  "date": "2026-11-18",
+  "tags": [
+    "LLM Inference",
+    "KV Cache",
+    "Speculative Decoding",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/stale-kv-window.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; How often a 32-token draft on stale KV survives verification</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--pi\"></i>stale KV (Callo)</span><span><i class=\"fig-m fig-m--cc\"></i>exact KV (the ceiling)</span><span><i class=\"fig-m fig-m--cx\"></i>prompt-lookup n-grams</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Miss requests whose whole 32-token draft was accepted, %</span>\n<div class=\"fig-row\"><span class=\"fig-name\">0.6B &#183; L5</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:21.50%;width:51.50%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"Qwen3-0.6B-L5, prompt-lookup n-grams: 0.0% of 200\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:73.00%\" title=\"Qwen3-0.6B-L5, exact KV: 73.0% of 200\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:21.50%\" title=\"Qwen3-0.6B-L5, stale KV: 21.5% of 200\"></i></span><span class=\"fig-val\">21.5%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">1.7B &#183; L5</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:15.00%;width:70.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"Qwen3-1.7B-L5, prompt-lookup n-grams: 0.0% of 100\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:85.00%\" title=\"Qwen3-1.7B-L5, exact KV: 85.0% of 100\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:15.00%\" title=\"Qwen3-1.7B-L5, stale KV: 15.0% of 100\"></i></span><span class=\"fig-val\">15.0%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">0.6B &#183; L10</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:25.00%;width:48.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"Qwen3-0.6B-L10, prompt-lookup n-grams: 0.0% of 100\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:73.00%\" title=\"Qwen3-0.6B-L10, exact KV: 73.0% of 100\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:25.00%\" title=\"Qwen3-0.6B-L10, stale KV: 25.0% of 100\"></i></span><span class=\"fig-val\">25.0%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">1.7B &#183; L10</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:31.67%;width:46.67%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"Qwen3-1.7B-L10, prompt-lookup n-grams: 0.0% of 60\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:78.33%\" title=\"Qwen3-1.7B-L10, exact KV: 78.3% of 60\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:31.67%\" title=\"Qwen3-1.7B-L10, stale KV: 31.7% of 60\"></i></span><span class=\"fig-val\">31.7%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name fig-name--hi\">0.6B &#183; L5, template fixed</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:36.00%;width:38.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:0.00%\" title=\"Qwen3-0.6B-L5-asrendered, prompt-lookup n-grams: 0.0% of 100\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:74.00%\" title=\"Qwen3-0.6B-L5-asrendered, exact KV: 74.0% of 100\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:36.00%\" title=\"Qwen3-0.6B-L5-asrendered, stale KV: 36.0% of 100\"></i></span><span class=\"fig-val\">36.0%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">paper &#183; 70B &#183; L5</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:65.00%;width:15.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:12.00%\" title=\"Llama-3.3-70B (paper), prompt-lookup n-grams: 12.0% of 240\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:80.00%\" title=\"Llama-3.3-70B (paper), exact KV: 80.0% of 240\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:65.00%\" title=\"Llama-3.3-70B (paper), stale KV: 65.0% of 240\"></i></span><span class=\"fig-val\">65.0%</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">25%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">50%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">75%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">100%</i></span><span class=\"fig-val\">stale KV</span></div>\n</div>\n<figcaption>Cache misses from SWE-agent&#8217;s own observation masking, keeping the last 5 (L5) or 10 (L10) tool outputs, replayed from one shard of SWE-smith trajectories; prompts up to 8,192 tokens, greedy drafting, one 8 GB laptop GPU. 200, 100, 100, 60 and 100 requests per row. &#8220;Template fixed&#8221; puts the previous reply in the old cache the way later prompts render it. The paper&#8217;s row is its offline study on Llama-3.3-70B FP8, 240 requests. Prompt-lookup n-grams never kept a whole window here.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/stale-kv",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2611.18459)",
+            "url": "https://arxiv.org/abs/2611.18459"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "A coding agent's context does not stay append-only for long. SWE-agent, by default, replaces every tool output older than the last five with a one-line placeholder. The moment it does, the serving engine's cached keys and values for everything after that point stop matching the prompt — the tokens are mostly the same, but what they attended to is not — and the request has to wait for a full re-prefill before the model can write a word. In the replay here that happens on 80.9% of requests, and the median miss re-prefills 2.9 thousand tokens."
+      },
+      {
+        "type": "text",
+        "value": "Callo (Jianjun Ou and Matthew Lentz, Duke University, November 2026) starts from a simple observation: the decode GPU is still holding the old cache, and the old cache is nearly right. So it moves the reusable parts to their new positions, computes the handful of new tokens, and starts drafting the reply on that stale cache while the exact prefill runs on another GPU. When the exact KV arrives it checks every draft in one forward pass and keeps the accepted prefix. The output is unchanged; only latency moves. On Llama-3.3-70B the whole 32-token draft survives verification for 65% of miss requests, and on a two-H200 testbed the paper measures miss requests 1.06–1.24× faster than vLLM at moderate load. No code had been released."
+      },
+      {
+        "type": "text",
+        "value": "stale-kv is an open, laptop-scale take on the part of that you can check without a cluster: how often a model drafting on stale KV writes what the exact KV would have. It draws cache-miss requests from one 3,229-trajectory shard of SWE-smith, replayed under SWE-agent's own masking, builds Callo's provisional cache for each on Qwen3-0.6B and Qwen3-1.7B, drafts on it, and verifies every draft against the exact cache. A small discrete-event simulator then turns those acceptance records into latencies, and every number it produces is modelled, not measured."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[data,figures,test]\"\nbash experiments/run_all.sh      # acceptance runs, CUDA, ~3 h\npython experiments/summarize.py  # tables and figures\npytest -q                        # 56 tests, CPU only\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; What happens on one cache miss</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Align</b><em>The new prompt is matched against the old one: the exact common prefix, then in-order runs of at least 16 identical tokens. Everything else is new.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>Move and re-rotate</b><em>Each reused run is copied to its new position, layer by layer. Keys are rotated by the shift so their positional encoding matches the new place; values move as they are.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Draft</b><em>The few new tokens are computed over the assembled cache, then the reply is drafted greedily on it, while the exact re-prefill runs on another GPU.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Verify</b><em>One forward pass over every draft on the exact KV. The longest prefix the exact model would have written itself is kept; the rest is thrown away.</em></div>\n</div>\n<figcaption>The reused tokens are stale, not wrong: their text is unchanged, but they once attended to the observation that was just masked, and nothing on the decode side recomputes them.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "The re-rotation step looks like a detail and is not one. Copy the stale keys to their new positions without rotating them, leaving each key's rotary angle at its old position, and mean accepted drafts at L5 fall from 12.4 to 5.2 on the 0.6B model and from 11.5 to 3.6 on the 1.7B — even though the median edit removes only about 240 tokens, so the shifts are small."
+      },
+      {
+        "type": "markdown",
+        "value": "## Results\n\n| | 0.6B L5 | 1.7B L5 | 0.6B L10 | 1.7B L10 | paper, 70B L5 |\n|---|---:|---:|---:|---:|---:|\n| miss requests | 200 | 100 | 100 | 60 | 240 |\n| **whole window, stale KV** | **21.5%** | **15.0%** | **25.0%** | **31.7%** | **65%** |\n| whole window, exact KV | 73.0% | 85.0% | 73.0% | 78.3% | 80% |\n| drafts accepted of 32, stale KV | 12.4 | 11.5 | 12.6 | 16.6 | — |\n| next-token agreement, teacher-forced | 94.5% | 94.0% | 94.7% | 95.4% | 98.3% |"
+      },
+      {
+        "type": "text",
+        "value": "Drafting is greedy over a 32-token window, as in the paper's offline study. A whole window means every draft was accepted, or the reply ended inside the window with every draft up to its end accepted. The exact-KV row drafts on the right cache and is still below 100%, because decoding one token at a time and verifying a chunk in one pass differ numerically wherever two tokens are nearly tied."
+      },
+      {
+        "type": "text",
+        "value": "Several things reproduced closely. The workload did: 80.9% of L5 requests miss, against the paper's 79%, with a median re-prefill of 2.9k tokens (paper: 3.1k) and 2.4k reusable (paper: 2.5k). Where the model is sure, stale KV is right: when the draft's top logit leads the runner-up by at least 1, the stale cache gives the exact model's token 98.2–99.6% of the time, against the paper's 97–100%. And the baselines lose by a mile. Prompt-lookup n-grams, and drafting on the valid prefix alone, accept between 0.4 and 1.5 tokens on average; stale KV accepts 11.5 to 16.6."
+      },
+      {
+        "type": "text",
+        "value": "The headline did not. At this scale the whole window survives for 15–32% of miss requests, not 65%. Per-position agreement is 94–95% rather than 98.3%, and a 32-token window compounds the difference: 0.945 to the 32nd power is about 16%. Two things explain most of it."
+      },
+      {
+        "type": "text",
+        "value": "The first is a quirk in Qwen3's chat template. Qwen3 writes an empty think block in front of every reply it generates, then leaves it out when that reply reappears in the history. So the last reply's cache is stale before any masking has happened. Put the reply into the old cache the way later prompts render it and, on the same 100 requests, whole windows go from 19% to 36%, mean accepted drafts from 12.9 to 18.5, and per-position agreement from 94.7% to 97.2%. Four template tokens cost nearly half the whole windows. That is worth knowing beyond Callo: a history that renders replies exactly as they were generated helps the ordinary prefix cache too."
+      },
+      {
+        "type": "text",
+        "value": "The second is size, and the two small models fail differently. The 0.6B model sits in a near tie — top two logits within 0.5 — at 15% of positions, six times the paper's 2.4%, and 75% of its first mismatches happen there. The 1.7B model has fewer near ties, 4–6%, but it disagrees more where it is confident: 90% agreement when the gap is between 1 and 2, against 98% for the 0.6B. Whether acceptance climbs to the paper's level somewhere between 2 and 24 billion parameters is something this repository cannot show."
+      },
+      {
+        "type": "text",
+        "value": "The serving simulator is an accounting, not a forecast. It models one prefill and one decode instance, with step times from the paper's own fit to Llama-3.3-70B on H200s, replays 100 held-out sessions as closed loops, and draws each speculation's outcome from the acceptance records above under the paper's scheduling rules. With the 0.6B model's acceptance at L5, Callo makes a miss request 1.022× faster at light load — about 0.12 s — and almost nothing near capacity, where speculation competes with ready requests for batch slots. Even exact-KV acceptance only reaches 1.04×. The paper measures 1.13× at light load, and half of its 0.8 s saving at moderate load comes from the exact KV arriving sooner, which this simulator's baseline cannot show."
+      },
+      {
+        "type": "markdown",
+        "value": "What this is not: it is not Callo. There is no vLLM, no second GPU, no KV transfer and no streaming of the exact cache into a running draft, so every latency here is modelled. Nothing above 1.7B parameters was run — the 65% for 24–70B models is the paper's result, not checked here — and verification is greedy only. The paper sets Callo against compacting the cache, which saves memory but changes the output; that is the trade [cram](/project/cram) makes on purpose, and Callo never makes it, because no draft is committed until the exact cache agrees. What this repository adds is the measurement underneath the system: an engine that builds the provisional cache and is tested against Hugging Face's own forward pass, 56 tests that run on a CPU, and every draft, logit gap and acceptance on record, so anyone with a bigger GPU can fill in the rows I could not."
+      }
+    ]
+  }
+}

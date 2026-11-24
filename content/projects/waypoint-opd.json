@@ -1,0 +1,120 @@
+{
+  "slug": "waypoint-opd",
+  "title": "Waypoint-OPD: Don't Copy a Teacher's Change of Mind",
+  "date": "2026-10-26",
+  "tags": [
+    "Knowledge Distillation",
+    "Reinforcement Learning",
+    "LLM Post-Training",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/waypoint-opd-gate.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Score more candidates and endpoint transfer copies more of a reversed shift &#183; synthetic run</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>endpoint-only transfer</span><span><i class=\"fig-m fig-m--pi\"></i>gated by the waypoint</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Error on the states where the run changed its mind: KL to the ideal student &#183; lower is better</span>\n<div class=\"fig-row\"><span class=\"fig-name\">2 candidates</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.19%;width:10.66%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:10.85%\" title=\"2 candidates, endpoint-only: 0.0271\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:0.19%\" title=\"2 candidates, gated: 0.0005\"></i></span><span class=\"fig-val\">0.027</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">4 candidates</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.08%;width:23.09%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:23.18%\" title=\"4 candidates, endpoint-only: 0.0579\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:0.08%\" title=\"4 candidates, gated: 0.0002\"></i></span><span class=\"fig-val\">0.058</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">8 candidates</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.08%;width:36.88%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:36.95%\" title=\"8 candidates, endpoint-only: 0.0924\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:0.08%\" title=\"8 candidates, gated: 0.0002\"></i></span><span class=\"fig-val\">0.092</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">16 candidates</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.08%;width:52.79%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:52.87%\" title=\"16 candidates, endpoint-only: 0.1322\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:0.08%\" title=\"16 candidates, gated: 0.0002\"></i></span><span class=\"fig-val\">0.132</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">32 candidates</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.03%;width:70.53%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:70.56%\" title=\"32 candidates, endpoint-only: 0.1764\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:0.03%\" title=\"32 candidates, gated: 0.0001\"></i></span><span class=\"fig-val\">0.176</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">64 candidates (all)</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:0.00%;width:83.13%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:83.13%\" title=\"64 candidates, endpoint-only: 0.2078\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:0.00%\" title=\"64 candidates, gated: 0.0000\"></i></span><span class=\"fig-val\">0.208</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0.00</i><i class=\"fig-tick\" style=\"left:20.00%\"></i><i class=\"fig-tlab\" style=\"left:20.00%\">0.05</i><i class=\"fig-tick\" style=\"left:40.00%\"></i><i class=\"fig-tlab\" style=\"left:40.00%\">0.10</i><i class=\"fig-tick\" style=\"left:60.00%\"></i><i class=\"fig-tlab\" style=\"left:60.00%\">0.15</i><i class=\"fig-tick\" style=\"left:80.00%\"></i><i class=\"fig-tlab\" style=\"left:80.00%\">0.20</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">0.25</i></span><span class=\"fig-val\">endpoint</span></div>\n</div>\n<div class=\"fig-note\"><b>A synthetic run only.</b> The measurement this idea depends on, on real released checkpoints, has not been run.</div>\n<figcaption>The student&#8217;s top candidates are the only tokens each method can move. 512 states, a 64-token vocabulary, 30% of them wandering, 1,500 distillation steps, mean of 3 seeds; the gated error is 0.0005 or less in every row. From results/synthetic_k.json.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/waypoint-opd",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.21601)",
+            "url": "https://arxiv.org/abs/2610.21601"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "When you distil a teacher that reinforcement learning improved into a student of a different size, the teacher's distribution is the wrong thing to copy. What is worth transferring is how RL moved the teacher's preferences. Score the student's own candidate tokens with the teacher after RL and before it, take the difference in log-probability, centre it so that a uniform change in confidence drops out, and what is left is the movement. Direct on-policy distillation transfers exactly that endpoint shift."
+      },
+      {
+        "type": "text",
+        "value": "Waypoint-OPD (Bingxi Hou, Guochao Jiang, Guofeng Quan, Weiqing Li, Wenfeng Feng, Guohua Liu and Yuewei Zhang, Alibaba Cloud Computing, October 2026) points out what the endpoint cannot see. The same endpoint shift can come from two halves of a run that pushed the same way, or from a first half that pushed hard and a second half that pushed most of the way back. The second leaves a residue that looks exactly like a preference and is not one. Keep one more checkpoint from the middle of the run and the two cases separate: compare the early shift with the late one, and weight the endpoint by how far they agree.\nWith three checkpoints of one Qwen3-4B RL run — steps 0, 600 and 1,200 — distilled into Qwen3-8B, 14B and 30B-A3B students, the paper reports the best domain average among the methods it compared in all six math and code settings, 1.6 to 2.2 points above endpoint-only transfer on math and 1.2 to 2.7 on code."
+      },
+      {
+        "type": "markdown",
+        "value": "```\nearly  = centre(logp_W - logp_I)\nlate   = centre(logp_F - logp_W)\ngate   = max(0, cos(early, late))\nsignal = gate * centre(logp_F - logp_I)\n```"
+      },
+      {
+        "type": "text",
+        "value": "Halves that reinforce each other gate to 1 and transfer in full. Halves that oppose each other gate to 0 and transfer nothing, however large the endpoint shift they leave behind. The price is one more frozen-teacher scoring pass: three instead of two, which is +50% on the teacher's forward passes and nothing at all on the student's backward pass."
+      },
+      {
+        "type": "text",
+        "value": "waypoint-opd is that gate and a loss around it, two files that depend only on torch, plus the two experiments it takes to judge the idea. One has been run: a synthetic post-training run where the right answer is known. The other, the measurement on a real model's checkpoints, has not."
+      },
+      {
+        "type": "text",
+        "value": "On real checkpoints nobody knows which endpoint shifts were durable, so the synthetic experiment builds a run where it is known. Each state gets one of two histories. Steady: both halves push the same way, and a student should take all of the shift. Wandering: the first half pushes hard, the second pushes back less hard, and a sizeable shift survives in a direction that meant nothing. A different student is distilled three ways and scored by KL divergence to the student it should have become: its own starting policy plus the real shifts."
+      },
+      {
+        "type": "markdown",
+        "value": "| transfer | KL to ideal | steady states | wandering states |\n|---|---:|---:|---:|\n| none | 0.9695 | 1.4095 | 0.0000 |\n| endpoint-only | 0.4145 | 0.5598 | 0.0924 |\n| **gated** | **0.3856** | 0.5598 | **0.0002** |"
+      },
+      {
+        "type": "text",
+        "value": "512 states, a 64-token vocabulary, the student's top 8 candidates scored at each, 30% of states wandering, 3 seeds; I re-ran it for this page and got the same numbers to four decimals. The gate separates the two histories perfectly, a mean gate of 1.000 on steady states and 0.000 on wandering ones, and the error that endpoint-only transfer picks up on wandering states falls about 480-fold under the gate. On steady states the methods are identical, as they must be: when the halves agree, the gate is 1.\nThe overall number moves only 7%, and the reason is worth knowing."
+      },
+      {
+        "type": "text",
+        "value": "Both methods share a floor. A shift centred over 8 candidates can only reorder those eight, while the ideal involves all 64 logits, and that floor dominates the average. Score more candidates and it falls away. At 32 the gated student is 72% closer to the ideal; with all 64 it reaches the ideal exactly, while endpoint-only transfer is left at 0.065, every bit of it residue absorbed from the wandering states.\nWorse, the more candidates endpoint-only transfer scores, the more faithfully it copies that residue. In Figure 1 its error on wandering states rises from 0.027 at two candidates to 0.208 at sixty-four, while the gated error stays at zero. Gating is what makes a wide candidate set safe, and the paper scores 16."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; The gate is a bet that disagreement means noise</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>endpoint-only transfer</span><span><i class=\"fig-m fig-m--pi\"></i>gated by the waypoint</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">KL to the ideal student, by how often a change of mind really was noise &#183; 8 candidates</span>\n<div class=\"fig-row\"><span class=\"fig-name\">0% were noise</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:56.87%;width:31.62%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:56.87%\" title=\"0% were noise, endpoint-only: 0.4169\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:88.49%\" title=\"0% were noise, gated: 0.4485\"></i></span><span class=\"fig-val\">+7.6%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">20% were noise</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:56.49%;width:17.20%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:56.49%\" title=\"20% were noise, endpoint-only: 0.4165\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:73.69%\" title=\"20% were noise, gated: 0.4337\"></i></span><span class=\"fig-val\">+4.1%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">40% were noise</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:57.07%;width:4.82%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:57.07%\" title=\"40% were noise, endpoint-only: 0.4171\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:61.89%\" title=\"40% were noise, gated: 0.4219\"></i></span><span class=\"fig-val\">+1.2%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">60% were noise</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:50.34%;width:5.97%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:56.31%\" title=\"60% were noise, endpoint-only: 0.4163\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:50.34%\" title=\"60% were noise, gated: 0.4103\"></i></span><span class=\"fig-val\">&#8722;1.4%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">80% were noise</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:36.94%;width:18.30%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:55.24%\" title=\"80% were noise, endpoint-only: 0.4152\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:36.94%\" title=\"80% were noise, gated: 0.3969\"></i></span><span class=\"fig-val\">&#8722;4.4%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">100% were noise</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:25.56%;width:28.98%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:54.55%\" title=\"100% were noise, endpoint-only: 0.4145\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:25.56%\" title=\"100% were noise, gated: 0.3856\"></i></span><span class=\"fig-val\">&#8722;7.0%</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0.36</i><i class=\"fig-tick\" style=\"left:20.00%\"></i><i class=\"fig-tlab\" style=\"left:20.00%\">0.38</i><i class=\"fig-tick\" style=\"left:40.00%\"></i><i class=\"fig-tlab\" style=\"left:40.00%\">0.40</i><i class=\"fig-tick\" style=\"left:60.00%\"></i><i class=\"fig-tlab\" style=\"left:60.00%\">0.42</i><i class=\"fig-tick\" style=\"left:80.00%\"></i><i class=\"fig-tlab\" style=\"left:80.00%\">0.44</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">0.46</i></span><span class=\"fig-val\">gated</span></div>\n</div>\n<figcaption>30% of states wandering, 3 seeds. The axis starts at 0.36, not zero, because the whole sweep moves the answer by a few hundredths; the right-hand column is the gated student&#8217;s error relative to endpoint-only, so positive is worse. From results/synthetic_honest.json.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "The gate costs nothing when the run never changed its mind: with no wandering states the two methods tie. When every state wandered, endpoint-only transfer is worse than not distilling at all, 0.0925 against 0.0000, and the gate brings it back to 0.0002. But the gate is a bet that when the halves disagree, the residue is noise. Hold the wandering share at 30% and vary how often those residues really were noise, and the crossover sits where it should, at about one half. Below it the gate throws away real supervision and does up to 7.6% worse than endpoint-only transfer; above it, it wins by nearly as much. The premise is an empirical question, not a design choice."
+      },
+      {
+        "type": "markdown",
+        "value": "## Not run: does a real RL run disagree with itself?\n\nGating is only worth a scoring pass if real runs actually reverse themselves on the prefixes a student visits, and on shifts that matter. Checking needs a released run with an intermediate checkpoint. OLMo 2 published its whole post-training chain, and `experiments/checkpoints.py` is written against it:"
+      },
+      {
+        "type": "markdown",
+        "value": "```\nallenai/OLMo-2-0425-1B-SFT  ->  -DPO      ->  -Instruct\n        Initial                 Waypoint      Final\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "The base model, `allenai/OLMo-2-0425-1B`, generates completions and records its own top candidates at every position; all three checkpoints score exactly those. The script reports the share of positions gated off and the number that matters, the share of endpoint-signal magnitude the gate would remove. Nothing is trained and the teachers load one at a time, so it fits in 8 GB."
+      },
+      {
+        "type": "markdown",
+        "value": "**It has not been run.** The three teacher checkpoints are about 9 GB, the base model another 6, and they were never pulled onto the machine this was built on. The script has been exercised end to end against a stand-in, all three roles pointed at one model, and gives the degenerate answer it should: every shift zero, every gate falling back to 1. There are no OLMo numbers on this page or in the repository, and nothing here says how often a real run changes its mind. One command produces them:"
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npython experiments/checkpoints.py --device cuda \\\n    --out results/checkpoints.json\n```"
+      },
+      {
+        "type": "text",
+        "value": "Two caveats before reading an answer from it. The default chain is a looser test than the paper's: its halves are two different post-training stages, preference tuning and then RL with verifiable rewards, not two halves of one RL run. OLMo also publishes checkpoints from inside its RL training, every 200 steps, as revisions of the Instruct repository; that would be the closer test, and the script takes model names, not revisions, today. And a disagreement rate is necessary but not sufficient: by Figure 2, gating pays only if disagreement means noise more than half the time, and a run can reverse itself for good reasons."
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nfrom waypoint_opd import gather_logps, opd_loss, topk_candidates\n\nids, s = topk_candidates(student_logits, k=8)\nloss, parts = opd_loss(\n    s,\n    gather_logps(initial_logits, ids),\n    gather_logps(waypoint_logits, ids),\n    gather_logps(final_logits, ids),\n    logp_reference=gather_logps(reference_logits, ids),\n)\nparts[\"gate\"]   # 1 where the halves agreed, 0 where they fought\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "`opd_loss(..., gated=False)` is the endpoint-only baseline, the same code path with one argument changed. Its 18 tests run in seconds without a GPU, and pin what is easy to get subtly wrong: that opposing halves gate to zero while still carrying a large endpoint shift, and that a half which barely moved falls back instead of dividing by noise."
+      },
+      {
+        "type": "text",
+        "value": "What is the paper's and what is mine. The gate is the paper's, with one simplification: the paper centres the shifts and measures their agreement weighted by the student's own probabilities over its candidates, and this weights them equally. The low-norm fallback to a gate of 1 follows the paper.\nThe loss is not the paper's. The authors train with a dense per-candidate reward under dual-clipped PPO, a KL penalty to the starting student and a batch-level rescaling of the gates, and their code, a patched verl, is public. Here the loss is a KL to softmax(log π_ref + β·signal) over the candidates, anchored on the frozen starting student so the objective has a fixed point. It is the simplest objective that transfers a relative change, and it is my reading, not theirs."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not a reproduction. The paper's results are math and code benchmarks after real distillation runs into 8B to 30B students; nothing here reproduces them, and the synthetic divergences above are not comparable to them. What it adds is the gate as a small library, a controlled experiment that shows exactly when gating helps and when it throws away real supervision, and the measurement the idea actually depends on — written, tested against a stand-in, and waiting for someone with 15 GB of disk and a GPU."
+      }
+    ]
+  }
+}

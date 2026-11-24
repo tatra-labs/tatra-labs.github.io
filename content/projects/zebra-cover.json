@@ -1,0 +1,108 @@
+{
+  "slug": "zebra-cover",
+  "title": "zebra-cover: Let the Model Read the Puzzle, Let Knuth Solve It",
+  "date": "2026-11-09",
+  "tags": [
+    "Neuro-Symbolic",
+    "Exact Cover",
+    "Tool Use",
+    "Paper Implementation",
+    "Python"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/zebra-cover-spelling.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Zebra puzzles and Qwen3-1.7B, on a CPU</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Puzzles solved, of 30 &#183; sizes 2&#215;3 to 5&#215;5</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">answer directly</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:40.00%\" title=\"answer directly: 4 of 30 puzzles\"></i><i class=\"fig-blab\" style=\"left:40.00%\">4 of 30</i></span><span class=\"fig-val\">13.3%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">tool calls + solver</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:10.00%\" title=\"tool calls + solver: 1 of 30 puzzles\"></i><i class=\"fig-blab\" style=\"left:10.00%\">1 of 30</i></span><span class=\"fig-val\">3.3%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">+ feedback, 4 rounds</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:10.00%\" title=\"+ feedback, 4 rounds: 1 of 30 puzzles\"></i><i class=\"fig-blab\" style=\"left:10.00%\">1 of 30</i></span><span class=\"fig-val\">3.3%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">lenient reader</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:70.00%\" title=\"lenient reader: 7 of 30 puzzles\"></i><i class=\"fig-blab\" style=\"left:70.00%\">7 of 30</i></span><span class=\"fig-val\">23.3%</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">First-round clue calls that mean what their clue says, of 252</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">as written</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:53.57%\" title=\"as written: 135 of 252\"></i><i class=\"fig-blab\" style=\"left:53.57%\">54%</i></span><span class=\"fig-val\">135 / 252</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">near-miss names mapped</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:79.76%\" title=\"near-miss names mapped: 201 of 252\"></i><i class=\"fig-blab\" style=\"left:79.76%\">80%</i></span><span class=\"fig-val\">201 / 252</span></div>\n</div>\n<div class=\"fig-note\">Each panel has its own scale. The <b>lenient reader</b> re-reads the one-shot replies with tool-name aliases written after seeing them: a diagnosis, not a separate run.</div>\n<figcaption>30 freshly generated puzzles with one solution each, five at each of six sizes, greedy decoding, thinking off. Qwen3-0.6B solved none, by any method. Every reply from both models is stored in the repository, and each bar here is recomputed from those files.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/zebra-cover",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2611.03641)",
+            "url": "https://arxiv.org/abs/2611.03641"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Language models are bad at Zebra puzzles (the Swede keeps a dog, the green house is directly left of the white one) because solving one is a long search with backtracking, and a model writing left to right cannot take a move back. Exact cover is a problem shape made for exactly that search, and Donald Knuth's dancing-links algorithms solve it in milliseconds."
+      },
+      {
+        "type": "text",
+        "value": "From Natural Language to Exact Cover (Skaisgiris, Pammer, Semmelrock, Ielanskyi, Heisinger and Kobler; TU Wien, JKU Linz and the University of Klagenfurt; November 2026) splits the work between the two. The model only translates: it reads the puzzle and writes tool calls, one per clue. A solver finds every grid consistent with those calls, and its verdict goes back to the model. With Qwen3-30B-Instruct the paper solves 95% of ZebraLogic puzzles this way, against 70.9% when the same model answers directly, and with Devstral Small 2 it reaches 97.9%, above the best entry on the public leaderboard. Its code runs on vLLM and a GPU.\nzebra-cover is the same loop in 1,012 lines of standard-library Python with no dependencies: Knuth's Algorithm C, a generator of fresh puzzles that have exactly one solution, each with its gold tool calls, the paper's tools behind a strict checker, the feedback loop, a grader, and backends for a local transformers model or any OpenAI-compatible endpoint."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e .\nzebra-cover generate --size 4x4 --seed 3   # one puzzle, one answer\nzebra-cover gold --size 5x5 --seed 0       # encode, solve, print\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; NeuralExactCover, the loop</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Translate</b><em>The model reads the puzzle and writes tool calls: init_zebra declares the houses and attributes, then one call per clue, such as clue_property_<wbr>directly_left_of_<wbr>property(Color_green, Color_white).</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>Solve</b><em>Every call becomes items and options of one exact-cover problem. Knuth&#8217;s Algorithm C, dancing links with colours, finds every grid consistent with all of them.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Feed back</b><em>No solution: some call says more than its clue. Several: some call says less. The verdict goes back to the model, which rewrites its calls. Exactly one: done.</em></div>\n</div>\n<figcaption>A Zebra puzzle has exactly one answer by construction, which is what makes the solver&#8217;s verdict worth sending back: zero and many are both proof that the encoding is wrong.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "The solver is never the bottleneck. On gold encodings its median time is 3.6 ms for a 4×4 puzzle, 14 ms at 5×5 and 78 ms at 6×6, in pure Python. A clue like \"next to\" becomes one item with one option per pair of houses it allows, and Algorithm C's colours let several options share a cell as long as they agree on what is in it. Its 44 tests run in four seconds."
+      },
+      {
+        "type": "markdown",
+        "value": "## What two small models do with it"
+      },
+      {
+        "type": "text",
+        "value": "The paper's headline results come from models of 20 to 30 billion parameters. I had a CPU and the two Qwen3 models already on the machine, 0.6B and 1.7B, so this is a small test: 30 fresh puzzles, five at each of six sizes from 2 houses × 3 attributes up to 5 × 5, greedy decoding, thinking off. One feedback run on 1.7B took between 3 and 76 minutes per puzzle. Treat it as evidence about how the method fails, not as a leaderboard."
+      },
+      {
+        "type": "markdown",
+        "value": "| Qwen3-1.7B, 30 puzzles | solved | cells right |\n|---|---:|---:|\n| answer directly | **4** | 43.7% |\n| tool calls + solver, one shot | 1 | 3.3% |\n| tool calls + solver + feedback, 4 rounds | 1 | 5.6% |\n| the one-shot replies, lenient reader | **7** | 28.8% |"
+      },
+      {
+        "type": "text",
+        "value": "Qwen3-0.6B solved none by any method: 30.6% of cells right when it answered directly, and not one tool call that could be checked.\nAs specified, the method loses to plain answering at this scale. The strict loop solves 1 puzzle of 30; answering directly solves 4, all of them the smallest size. Feedback did not help: 1.7B solved nothing more in rounds two to four."
+      },
+      {
+        "type": "markdown",
+        "value": "Most of the gap is spelling, not reasoning. Score each first-round clue call from 1.7B against the gold call for that clue, by meaning, so that left-of(A, B) and right-of(B, A) match: 54% are right as written, and 80% once near-miss tool names are mapped to the closest real one. The model writes `clue_property_right_of_property` for `clue_property_right_of`, 144 times across its replies, and `clue_property_property` for `clue_property_at_property`. Only 5 wrong calls are the left-right swap you might expect from a small model. But one unknown name invalidates a whole reply, and 24 of the 30 first replies were rejected outright."
+      },
+      {
+        "type": "text",
+        "value": "Read those same replies with the aliases and 7 puzzles of 30 are solved, six of them at sizes from 3×3 to 4×5, where plain answering solves none. That number is exact for a one-shot run with a lenient reader, because a first reply never depends on feedback. But the alias table was written after seeing the replies, so it is a diagnosis rather than a result, and the strict reader stays the default."
+      },
+      {
+        "type": "markdown",
+        "value": "Feedback broke on bookkeeping. In 12 of 82 later-round replies, 1.7B re-sent its clue calls but dropped `init_zebra`, so nothing could be encoded at all; 0.6B dropped it in 78 of 90. The invented tool names kept coming back after the error message had listed the valid ones. And a unique solution can still be wrong: four encodings from 1.7B had exactly one solution, two of them first replies and two reached through feedback, and only one was the right grid. The solver can check that the calls agree with each other. It cannot check that they say what the clues say."
+      },
+      {
+        "type": "markdown",
+        "value": "## What the paper says about small models"
+      },
+      {
+        "type": "text",
+        "value": "None of this contradicts the paper, and part of it is in the paper. Its Appendix C runs the same comparison across Qwen3 sizes on ZebraLogic, and at the two sizes I could run, answering directly wins there too."
+      },
+      {
+        "type": "markdown",
+        "value": "| Qwen3, ZebraLogic (the paper&#8217;s Table 5) | answer directly | exact cover + feedback |\n|---|---:|---:|\n| 0.6B | **24.1%** | 2.2% |\n| 1.7B | **44.6%** | 28.1% |\n| 4B | 52.7% | **84.9%** |\n| 30B | 54.2% | **95.6%** |"
+      },
+      {
+        "type": "text",
+        "value": "The crossover sits between 1.7B and 4B parameters. Above it, translation is the easy half and the solver does the rest; below it, the model cannot yet use the tools reliably. My puzzles are generated in the ZebraLogic style rather than taken from ZebraLogic, so the two sets of numbers agree in direction, not cell for cell."
+      },
+      {
+        "type": "text",
+        "value": "One engineering finding worth passing on: handing the tools to Qwen3 through its chat template's tool slot makes the model stop after its first call and wait for a result. The paper's format is a single reply containing every call, so the tool schemas go into the system prompt as plain text."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: a reproduction of the paper's numbers. It runs no 20B or 30B model, uses neither ZebraLogic nor the paper's ZebraExtreme set, and replaces the paper's MiniExact solver with a from-scratch Algorithm C that solves the same encoding. The method is Skaisgiris and colleagues'. What this adds is the loop with nothing to install, a puzzle generator with gold calls, and every reply from both models stored in the repository, so each number above can be recomputed without running a model. Pointing it at a larger model is one command against any OpenAI-compatible endpoint, and nothing here has done that yet."
+      }
+    ]
+  }
+}

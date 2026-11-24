@@ -1,0 +1,106 @@
+{
+  "slug": "heavy-metal-gym",
+  "title": "heavy-metal-gym: Five Tonnes on Two Wheels",
+  "date": "2026-11-18",
+  "tags": [
+    "Reinforcement Learning",
+    "Robotics",
+    "Simulation",
+    "Paper Implementation",
+    "Python"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/heavy-metal-gym-chain.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; The whole stunt, with nobody at the stick</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">From rest, 1,000 randomised machines &#183; share still on course after each stage</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">swung up</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:93.70%\" title=\"swung up: 93.7%\"></i><i class=\"fig-blab\" style=\"left:93.70%\">93.7%</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">caught</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:92.50%\" title=\"caught: 92.5%\"></i><i class=\"fig-blab\" style=\"left:92.50%\">92.5%</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">10 s on two wheels</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:83.40%\" title=\"10 s on two wheels: 83.4%\"></i><i class=\"fig-blab\" style=\"left:83.40%\">83.4%</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">landed</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:83.40%\" title=\"landed: 83.4%\"></i><i class=\"fig-blab\" style=\"left:83.40%\">83.4%</i></span><span class=\"fig-val\">&#160;</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Reversing on two wheels over 15 cm bumps &#183; share that crossed</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">RL policy</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:60.80%\" title=\"RL policy: 60.8%\"></i><i class=\"fig-blab\" style=\"left:60.80%\">60.8%</i></span><span class=\"fig-val\">&#160;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">LQR</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:13.80%\" title=\"LQR: 13.8%\"></i><i class=\"fig-blab\" style=\"left:13.80%\">13.8%</i></span><span class=\"fig-val\">&#160;</span></div>\n</div>\n<div class=\"fig-note\">Every machine has its own mass, centre of mass, inertia, arm angle, tyre grip and stiffness, hydraulic dead time, lag and torque limit, and takes the paper&#8217;s <b>random 1 kN pushes</b> throughout. 9.3% of the full runs end on the bucket.</div>\n<figcaption>Simulated, not real: every number comes from this repository&#8217;s planar simulator, in results/eval.json. While balancing, the policy wobbles &#177;1.57&#176;; the paper measured &#177;1.6&#176; on its real loader. The LQR, identified from the same simulator, cannot swing up or land at all &#8212; and on flat ground it balances better than the policy does (Figure 2).</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/heavy-metal-gym",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2611.18365)",
+            "url": "https://arxiv.org/abs/2611.18365"
+          },
+          {
+            "label": "Drive it in your browser",
+            "url": "https://tatra-labs.github.io/heavy-metal-gym/"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Balancing a five-tonne skid-steer loader on its two front wheels is a stunt, the kind that ends up in Guinness World Records, and only a handful of human operators can do it. In November 2026, Lorentz, Egli, Jelavic and nine co-authors from ETH Zürich's Robotic Systems Lab, Blue River Technology, Gravis Robotics and Intel, among them Marco Hutter and Vladlen Koltun, showed in Science Robotics that reinforcement learning can do it on a real John Deere 332G. Their policies were trained entirely in simulation, and they swing the machine up from rest, balance it, drive it over rough ground, spin it, and set it back down softly. They only drive the wheels: all of the balancing comes from rolling back and forth under the centre of mass. No code had been released."
+      },
+      {
+        "type": "text",
+        "value": "heavy-metal-gym rebuilds the method in the open, flattened into the pitch plane. The loader is one rigid body on spring-damper tyres, with a bucket lip and heel, a rear underside and a belly that can all hit the ground, and a hydraulic drive modelled as a dead time, a first-order lag and a relief torque, simulated in numba for 2,048 machines at once. The paper's four skills are four RL tasks with its rewards, discounts, episode lengths and iteration counts: swing-up, stabilise, balance-and-track and soft landing, each a 128×128 tanh network trained with PPO at 50 Hz, chained by the same rule-based switching. An LQR identified from the simulator is the baseline to beat. A line-by-line JavaScript port of the physics agrees with numba to 1e-7, so the trained policies also run in a browser, where you can pop the machine up, shove it, put bumps under it, hand the balancing to the LQR, or take the stick yourself."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/heavy-metal-gym-filmstrip.webp",
+        "alt": "Eight drawings of a skid-steer loader: at rest on four wheels, pitching forward onto its front wheels, balancing there with the bucket raised, and back on four wheels",
+        "caption": "One run of the full sequence with the trained policies, drawn by the repository. Rest at 0 s; the swing-up policy hands over at 1.38 s, just past −30°; the machine is balancing at 4.14 s, and after three seconds on two wheels it is back on four at 8.40 s."
+      },
+      {
+        "type": "text",
+        "value": "The swing-up is the part I most wanted to see, because nothing shows the policy how to do it. Its reward pays for pitch and nothing else, and a single full-reverse stab from rest cannot tip the machine: the torque limit was set so that it only reaches −10°, and a test enforces that. What does tip it is a pump, and the policy finds one by itself: a quarter of a second at full forward, then full reverse, which throws the nose down past the −30° hand-over a median 1.34 seconds after the start. It is the same bang-bang shape the paper reports from its real machine. It reaches the hand-over on 93.7% of randomised machines, and it first succeeded 24 PPO iterations into training, with a fixed learning rate of 3e-4 as in the paper. An early pilot used rsl_rl's KL-adaptive learning rate instead; it ran as high as 1e-2, the exploration noise fell from 0.6 to 0.12 within 80 iterations, and the machine never got up once."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[test,figures]\"\npytest -q                       # physics, JS port, tasks, LQR\npython scripts/evaluate.py      # every rate below: results/eval.json\npython scripts/train.py swingup # retrain a skill: 35 min here\n```"
+      },
+      {
+        "type": "text",
+        "value": "The trained policies ship with the repository, and the evaluation scores them on 1,000 machines per scenario, each with its own mass, centre of mass, inertia, arm angle, tyre grip and stiffness, hydraulic dead time, lag and torque limit, under the paper's random 1 kN pushes. From rest, with nobody touching anything, 83.4% go up, hold ten seconds on two wheels and come back down (Figure 1); 9.3% end on the bucket. While balancing, the policy wobbles ±1.57°, where the paper measured ±1.6° on its real machine, and it keeps every machine up with hydraulic dead times of 240 ms, half as long again as the 80–160 ms it trained on."
+      },
+      {
+        "type": "text",
+        "value": "Getting four policies to pass a five-tonne machine between them took decisions the paper does not describe, each found by running the chain and watching where it broke. Ending the swing-up episode with a bonus at the −30° hand-over taught the policy to arrive falling too fast, with full reverse still in the hydraulic pipeline, and nothing downstream could catch it; letting the episode run its full six seconds, still paid for pitch, made it arrive at a speed that can be caught. Even then the machine arrives rolling backwards, at a median 6.6 rad/s, and braking a backward roll means leaning toward the bucket, so the balance policy has to take over at speed: its start states were widened from the paper's ±2 rad/s to ±7. And every skill trains half of its episodes from states its predecessor actually produces, recorded by running the trained predecessor, observation history included."
+      },
+      {
+        "type": "text",
+        "value": "The balance policy also needs that history, which the paper gives its swing-up and stabilise policies but not this one. With the paper's observations it completes slightly more full sequences, 88.1%, but wobbles ±6.9°; with the same 1.8 s history it wobbles ±1.57°. And it needs an early stop: trained on, the speed-tracking term keeps pushing it to brake harder and the falls at the hand-over climb, so the shipped policy is the iteration-800 checkpoint, which is also the paper's iteration count."
+      },
+      {
+        "type": "text",
+        "value": "The comparison I did not expect to lose is the one against a textbook controller. On flat ground the LQR is the better balancer: it wobbles less, tracks speed commands to within 0.24–0.35 rad/s, and takes harder shoves. That does not contradict the paper. This LQR is identified from this exact simulator and has the dead time in its state, while the paper's MPC was built on a simplified pendulum and run on a real machine. What the paper does report holds here: on rough ground the learned policy goes where the model-based one cannot, at least in reverse."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; Where the learned policy wins, and where a textbook controller does</span>\n<div class=\"fig-grid\">\n<span class=\"fig-cell fig-cell--hd\">1,000 randomised machines per cell</span><span class=\"fig-cell fig-cell--hd\">RL policy</span><span class=\"fig-cell fig-cell--hd\">LQR</span>\n<span class=\"fig-cell fig-cell--row\">Swing up from rest, and land</span><span class=\"fig-cell fig-cell--alt\"><b>93.7% up</b><em>then lands on four wheels</em></span><span class=\"fig-cell\"><b>cannot</b><em>a linear law around balance</em></span>\n<span class=\"fig-cell fig-cell--row\">Wobble, balancing in place</span><span class=\"fig-cell\"><b>&#177;1.07&#176;</b><em>half peak-to-peak, median</em></span><span class=\"fig-cell fig-cell--alt\"><b>&#177;0.44&#176;</b></span>\n<span class=\"fig-cell fig-cell--row\">Speed error at +4 / &#8722;4 rad/s</span><span class=\"fig-cell\"><b>2.74 / 0.33</b><em>rad/s, mean</em></span><span class=\"fig-cell fig-cell--alt\"><b>0.25 / 0.25</b></span>\n<span class=\"fig-cell fig-cell--row\">Reversing over 10 / 15 cm bumps</span><span class=\"fig-cell fig-cell--alt\"><b>99% / 61%</b><em>crossed</em></span><span class=\"fig-cell\"><b>74% / 14%</b></span>\n<span class=\"fig-cell fig-cell--row\">Forward over 10 cm bumps</span><span class=\"fig-cell\"><b>0%</b><em>never falls, never crosses</em></span><span class=\"fig-cell fig-cell--alt\"><b>73%</b></span>\n<span class=\"fig-cell fig-cell--row\">A 15 kN shove for 0.5 s</span><span class=\"fig-cell\"><b>38%</b><em>still balancing</em></span><span class=\"fig-cell fig-cell--alt\"><b>89%</b></span>\n<span class=\"fig-cell fig-cell--row\">Longest dead time, &#8805;99% still up</span><span class=\"fig-cell\"><b>240 ms</b><em>trained on 80&#8211;160 ms</em></span><span class=\"fig-cell fig-cell--alt\"><b>280 ms</b></span>\n</div>\n<figcaption>The marked cell is the better of each pair. The LQR is identified from this same simulator and carries the nominal dead time in its state, which makes it a stronger baseline than the paper&#8217;s MPC, built on a simplified pendulum with a first-order actuator. Neither model-based controller can swing the machine up or land it; the paper&#8217;s operators did that part by hand for the MPC.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "Forward is the other honest gap. Accelerating forward on the front wheels means leaning further toward the bucket, and the bucket is only 11° away, so the policy tracks forward commands with 1.6–3.4 rad/s of error against 0.3–1.2 in reverse. It never falls under any command from −6 to +6 rad/s, but it crosses none of the bumps going forward. The paper's policy tracks ±4 rad/s on the real machine."
+      },
+      {
+        "type": "text",
+        "value": "The landing did not reproduce as written. The paper's landing reward pays for getting the pitch back to zero and penalises stick effort, and on the real loader its policy lands without rebound. Here the same reward produces a policy that hits the rear tyres about as hard as doing nothing clever at all. One extra term fixes it."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 3 &#183; The landing reward as written lands as hard as letting go</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Peak rear-tyre force at touchdown, kN, median of 1,000 &#183; right: front-wheel bounce</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">stick to zero</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:88.96%\" title=\"stick to zero: 102.3 kN\"></i><i class=\"fig-blab\" style=\"left:88.96%\">102.3 kN</i></span><span class=\"fig-val\">3.21&#176;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">drive forward, let go</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:79.13%\" title=\"drive forward, let go: 91.0 kN\"></i><i class=\"fig-blab\" style=\"left:79.13%\">91.0 kN</i></span><span class=\"fig-val\">2.67&#176;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">the paper&#8217;s reward</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:82.96%\" title=\"the paper&#8217;s reward: 95.4 kN\"></i><i class=\"fig-blab\" style=\"left:82.96%\">95.4 kN</i></span><span class=\"fig-val\">2.55&#176;</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">+ an impact term</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:36.00%\" title=\"+ an impact term: 41.4 kN\"></i><i class=\"fig-blab\" style=\"left:36.00%\">41.4 kN</i></span><span class=\"fig-val\">0.59&#176;</span></div>\n</div>\n<div class=\"fig-note\">The rear tyres carry <b>18.9 kN</b> standing still. The extra term subtracts a penalty for every step the rear-tyre force spends above 1.5 times that, and nothing else changes.</div>\n<figcaption>The paper&#8217;s reward pays for bringing the pitch back to zero and penalises stick effort. On its real loader the resulting policy drives full forward, then full reverse, and lands without rebound. Here the same reward lands at about the force of driving forward and releasing the stick, with the same bounce. The demo and the full-sequence numbers in Figure 1 use the impact-penalised policy.</figcaption>\n</figure>"
+      },
+      {
+        "type": "markdown",
+        "value": "## The arm-angle test\n\n| arm angle | swing-up, here | full sequence, here | swing-up, paper&#8217;s real loader |\n|---|---:|---:|---:|\n| 28&#176; | 92.5% | 45.4% | 11 of 11 |\n| 31&#176; | 96.3% | 93.9% | 12 of 12 |\n| 34&#176; | 97.3% | 97.2% | 11 of 14 |"
+      },
+      {
+        "type": "text",
+        "value": "The trend runs the other way. The real machine failed most with the arm high, at 34°, where the extra inertia made the policy overshoot onto the bucket in 3 of 14 trials. Here 28° is worst, because in this geometry a lower arm brings the bucket closer to the ground: it touches at −49.3° with the arm at 28° and at −55.1° at 34°, so a machine balancing near −40° has 9° of room in one case and 16° in the other. The swing-up barely notices; it is the ten seconds on two wheels that fail. The paper publishes no dimensions, so the geometry was chosen to hit the three angles it does report, and it does, to within a degree. The arm-angle test is the evidence that three matching angles do not make it the same machine."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's code, and it has never touched a real loader. It is planar, so the spins, which need yaw, are not here, and rough ground is a row of raised-cosine bumps under both tracks at once. The paper fitted a neural actuator model to 107 minutes of driving data; this uses a parametric dead time and lag with randomised parameters, and the reward coefficients are my reading of its Table S.7. The method, the four-skill decomposition, the rewards and the hand-over at −30° are the authors'. What the repository adds is a version anyone can run, retrain on a laptop in about an hour and a half, and argue with, and a browser page where the argument takes one click."
+      }
+    ]
+  }
+}

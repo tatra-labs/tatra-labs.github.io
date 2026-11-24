@@ -1,0 +1,84 @@
+{
+  "slug": "done-or-not",
+  "title": "Done or Not: Grading the Verifiers of Computer-Using Agents",
+  "date": "2026-11-01",
+  "tags": [
+    "LLM Agents",
+    "Computer-Use Agents",
+    "Evaluation",
+    "Paper Implementation",
+    "Python"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/done-or-not-verifiers.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Which verifiers believe a false &#8220;Done&#8221; &#183; 910 cases, measured here</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Balanced accuracy (bar) &#183; share of false &#8220;Done&#8221; claims accepted (right)</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">explorer (goes and looks)</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:100.00%\" title=\"explorer (goes and looks): balanced accuracy 1.000, accepts 0% of false Done claims\"></i><i class=\"fig-blab\" style=\"left:100.00%\">1.000</i></span><span class=\"fig-val\">0%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">all screenshots, strict</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:88.81%\" title=\"all screenshots, strict: balanced accuracy 0.888, accepts 27% of false Done claims\"></i><i class=\"fig-blab\" style=\"left:88.81%\">0.888</i></span><span class=\"fig-val\">27%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">code only</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:83.33%\" title=\"code only: balanced accuracy 0.833, accepts 0% of false Done claims\"></i><i class=\"fig-blab\" style=\"left:83.33%\">0.833</i></span><span class=\"fig-val\">0%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">last screenshot, lenient</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:71.87%\" title=\"last screenshot, lenient: balanced accuracy 0.719, accepts 68% of false Done claims\"></i><i class=\"fig-blab\" style=\"left:71.87%\">0.719</i></span><span class=\"fig-val\">68%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">last screenshot, strict</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:62.03%\" title=\"last screenshot, strict: balanced accuracy 0.620, accepts 16% of false Done claims\"></i><i class=\"fig-blab\" style=\"left:62.03%\">0.620</i></span><span class=\"fig-val\">16%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">believes the agent</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:58.96%\" title=\"believes the agent: balanced accuracy 0.590, accepts 100% of false Done claims\"></i><i class=\"fig-blab\" style=\"left:58.96%\">0.590</i></span><span class=\"fig-val\">100%</span></div>\n</div>\n<div class=\"fig-note\">Balanced accuracy averages the accept rate on the 240 real successes and the reject rate on the 670 failures, so <b>0.500 is chance</b>. The right-hand column counts only the 550 failures in which the agent said it was done.</div>\n<figcaption>From results/results.json. Every verifier shares one rubric parser, one set of screenshot readers and one set of evidence rules; the rows differ only in which evidence each may use, and in what it does with a requirement nothing settled (strict fails it, lenient passes it). The explorer probes the live computer with a budget of 12 and spends 3.18 on average.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/done-or-not",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.40578)",
+            "url": "https://arxiv.org/abs/2610.40578"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Every pipeline that trains or evaluates a computer-using agent ends in the same question. The agent says it is done. Is it?\nSomething has to answer that thousands of times, and its answers become the reward in reinforcement learning, the filter in data curation and the number in the evaluation. Usually it is a vision-language model reading the agent's screenshots, or a script checking whatever state it can reach. Both judge from a partial view. A screenshot can show an edit that was never saved; a script can query a table that does not answer the question."
+      },
+      {
+        "type": "text",
+        "value": "VeriCUA (Sun, Yu, Knop, Sinha, Kong, Kao, Kumar and Kamath, of Google and the University of Hong Kong, October 2026) proposes to treat verification as exploration. The verifier first inspects the context and writes a rubric of fine-grained requirements. Then, for each requirement still unresolved, it chooses a GUI check or a code check, and it combines what it finds under explicit evidence rules in which the agent's own report of success is a claim to verify, never evidence.\nOn AndroidWorld, verifying the live machine, it agrees with the reference labels 90.5% of the time against 78.4% for a VLM judge, and halves the false-positive rate, 7.7% against 15.4%. On ScienceBoard its false-positive rate of 5.4% is about a quarter of a generated checker's 21.7%. The paper links no code."
+      },
+      {
+        "type": "text",
+        "value": "done-or-not is a test bed for that idea, exact enough to grade against and small enough to run in a couple of seconds. It simulates three computers whose hidden state the harness knows exactly: a desktop with files and an editor, a helpdesk web app whose database lives on a server, and a phone's settings and notification shade. Twelve task templates at ten seeds make 120 tasks, and scripted agents run each one under every failure mode that applies to it: 910 cases in eleven labelled modes, 240 of them genuinely done and 670 not.\nA verifier sees the task, every screenshot and the agent's claim, and it may spend a budget of 12 on read-only probes. A fresh look through the GUI costs 3 and a code read costs 1, and what code can reach differs by computer: the whole disk on the desktop, settings over a debug bridge on the phone, and nothing at all on the web, where the database is someone else's server."
+      },
+      {
+        "type": "markdown",
+        "value": "```text\ndone-or-not show w_close-02/optimistic_ui\n  ...\n  --- 3: set('status', 'Closed')\n  [Helpdesk] Ticket #957 — Docking station not detected\n    Status:    Closed\n    ...\n    ✓ Saved\n  CLAIM     Done: I closed ticket #957.\n\ndone-or-not probe w_close-02/optimistic_ui gui open_ticket id=957\n  [Helpdesk] Ticket #957 — Docking station not detected\n    Status:    Pending\n    ...\n```"
+      },
+      {
+        "type": "text",
+        "value": "The page said Saved. The server dropped the write. Every screenshot the agent took looks exactly like a real success, and only a fresh page load shows that it is not one. Code cannot make that check either: asked to read the database, the probe answers that it lives on a remote server and the verifier's sandbox has no credentials for it."
+      },
+      {
+        "type": "markdown",
+        "value": "## Each judge has a column that defeats it\n\n| accuracy | server only | unsaved edit | reverted | optimistic UI |\n|---|---:|---:|---:|---:|\n| explorer | 1.00 | 1.00 | 1.00 | 1.00 |\n| code only | **0.00** | 1.00 | 1.00 | 1.00 |\n| all screenshots, strict | 1.00 | 1.00 | **0.00** | **0.00** |\n| all screenshots, lenient | 1.00 | 0.75 | **0.00** | **0.00** |\n| last screenshot, strict | **0.00** | 1.00 | 1.00 | **0.00** |\n| last screenshot, lenient | 1.00 | **0.00** | **0.00** | **0.00** |"
+      },
+      {
+        "type": "text",
+        "value": "Read the table by column; each cell is the share of that mode's cases the verifier got right. Code alone cannot reach the helpdesk server, so it rejects every web success it cannot confirm, and it scores 1.00 on optimistic UI for the wrong reason: it rejects those because it cannot see them either. Judges that read every screenshot catch nearly everything an agent did on screen, side effects included, and are blind to whatever happened after the last frame, when a sync, an automation rule or battery saver undid the change.\nJudges that read only the last screenshot trade one error for another. Strict ones fail real successes the last screen does not show. Lenient ones accept anything it does not contradict, so they pass every unsaved edit, because the editor's unsaved-change dot reads as absence of evidence rather than as a no."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; Screenshots are history &#183; accuracy against probe budget</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--pi\"></i>explorer</span><span><i class=\"fig-m fig-m--cx\"></i>explorer, no screenshots</span><span><i class=\"fig-m fig-m--cc\"></i>explorer that trusts the screenshots</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Accuracy over 910 cases &#183; a GUI probe costs 3, a code probe 1</span>\n<div class=\"fig-row\"><span class=\"fig-name\">budget 0</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:12.09%;width:32.97%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:12.09%\" title=\"no screenshots, budget 0: 0.736\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:45.05%\" title=\"trusts the screenshots, budget 0: 0.835\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:45.05%\" title=\"explorer, budget 0: 0.835\"></i></span><span class=\"fig-val\">0.835</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">budget 1</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:41.39%;width:25.64%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:41.39%\" title=\"no screenshots, budget 1: 0.824\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:45.05%\" title=\"trusts the screenshots, budget 1: 0.835\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:67.03%\" title=\"explorer, budget 1: 0.901\"></i></span><span class=\"fig-val\">0.901</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">budget 2</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:45.05%;width:25.64%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:63.37%\" title=\"no screenshots, budget 2: 0.890\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:45.05%\" title=\"trusts the screenshots, budget 2: 0.835\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:70.70%\" title=\"explorer, budget 2: 0.912\"></i></span><span class=\"fig-val\">0.912</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">budget 3</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:45.05%;width:54.95%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:89.01%\" title=\"no screenshots, budget 3: 0.967\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:45.05%\" title=\"trusts the screenshots, budget 3: 0.835\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"explorer, budget 3: 1.000\"></i></span><span class=\"fig-val\">1.000</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">budget 6</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:45.05%;width:54.95%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:100.00%\" title=\"no screenshots, budget 6: 1.000\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:45.05%\" title=\"trusts the screenshots, budget 6: 0.835\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"explorer, budget 6: 1.000\"></i></span><span class=\"fig-val\">1.000</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">budget 12 (default)</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:45.05%;width:54.95%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:100.00%\" title=\"no screenshots, budget 12: 1.000\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:45.05%\" title=\"trusts the screenshots, budget 12: 0.835\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"explorer, budget 12: 1.000\"></i></span><span class=\"fig-val\">1.000</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0.70</i><i class=\"fig-tick\" style=\"left:33.33%\"></i><i class=\"fig-tlab\" style=\"left:33.33%\">0.80</i><i class=\"fig-tick\" style=\"left:66.67%\"></i><i class=\"fig-tlab\" style=\"left:66.67%\">0.90</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">1.00</i></span><span class=\"fig-val\">explorer</span></div>\n</div>\n<figcaption>From the budget sweep in results/results.json. The verifier that trusts the screenshots and probes only what they left open sits at 0.835 at every budget, the same as the strict screenshot judge. Where two marks coincide, the explorer&#8217;s ring is drawn on top.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "The budget sweep says the paper's thesis more sharply than the table does: screenshots are history. A verifier that trusts them and probes only the requirements they left open never improves, however much budget it is given. One that re-checks what the screenshots seemed to settle reaches 1.000 at a budget of 3, which is one GUI probe or three code reads. Without the screenshots at all it gets there too, at twice the budget."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e .\ndone-or-not grade explorer      # 1.000 on all 910 cases\ndone-or-not table               # every built-in verifier\ndone-or-not grade --cmd \"python examples/minimal_verifier.py\"\ndone-or-not grade --llm my-model --base-url http://localhost:8000/v1\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "A verifier can be a Python class, any program that speaks JSON lines on stdin and stdout — [`examples/minimal_verifier.py`](https://github.com/tatra-labs/done-or-not/blob/main/examples/minimal_verifier.py) is a skeleton of about 30 lines that imports nothing from the package — or a model behind any OpenAI-compatible `/chat/completions` endpoint. The model sees the task, every screenshot, the claim, the probe catalogue and the budget, and answers each turn with one JSON object, a probe or a verdict. It never sees the case id, which names the failure mode."
+      },
+      {
+        "type": "text",
+        "value": "What this is, plainly, is a harness and not evidence. The failure modes are designed, so the baselines' blind spots exist by construction: I built a world in which screenshots go stale, and screenshot judges fail when they do. The explorer's perfect score comes from the same hand that wrote the worlds and their view parsers. It shows that a perfect score is reachable, not that exploration is easy. What the harness does contribute is exact labels, from an oracle over the full hidden state; controls that pin the floor, with always-accept and always-reject scoring exactly the base rates, 0.264 and 0.736, at a balanced accuracy of 0.500; and one shared set of evidence rules, so the rows compare evidence sources rather than prompts.\nIt is not VeriCUA. The paper runs real desktop, mobile and web environments with real agent trajectories, and a model builds each rubric from context; here the task text follows a fixed grammar and the rubric is parsed, so rubric quality is not under test. The evidence rules are this repository's reading of the paper's. And no LLM verifier has been graded here yet. The adapter ships and is tested against a scripted local server, but running a real one costs money I did not spend, and that is where the interesting numbers will come from."
+      }
+    ]
+  }
+}

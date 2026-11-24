@@ -1,0 +1,96 @@
+{
+  "slug": "doc2harness",
+  "title": "doc2harness: Grade the Harness, Not the Model",
+  "date": "2026-10-26",
+  "tags": [
+    "LLM Agents",
+    "Harness Engineering",
+    "Evaluation",
+    "Paper Implementation",
+    "Python"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/doc2harness-controls.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Break one rule, lose these cases &#183; measured here</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">The reference harness with one rule broken &#183; bars: cases failed, of 110 &#183; right: categories hit, of 10</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">a failed tool ends the run</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:90.00%\" title=\"a failed tool ends the run: fails 27 of 110 cases, in 5 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:90.00%\">27</i></span><span class=\"fig-val\">5 of 10</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">never prints its token total</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:63.33%\" title=\"never prints its token total: fails 19 of 110 cases, in 3 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:63.33%\">19</i></span><span class=\"fig-val\">3 of 10</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">tool results sent as user turns</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:30.00%\" title=\"tool results sent as user turns: fails 9 of 110 cases, in 4 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:30.00%\">9</i></span><span class=\"fig-val\">4 of 10</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">tool errors hidden from the model</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:30.00%\" title=\"tool errors hidden from the model: fails 9 of 110 cases, in 3 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:30.00%\">9</i></span><span class=\"fig-val\">3 of 10</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">never retries a 500</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:23.33%\" title=\"never retries a 500: fails 7 of 110 cases, in 3 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:23.33%\">7</i></span><span class=\"fig-val\">3 of 10</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">no workspace containment</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:16.67%\" title=\"no workspace containment: fails 5 of 110 cases, in 1 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:16.67%\">5</i></span><span class=\"fig-val\">1 of 10</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">tool list out of order</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:6.67%\" title=\"tool list out of order: fails 2 of 110 cases, in 1 of 10 categories\"></i><i class=\"fig-blab\" style=\"left:6.67%\">2</i></span><span class=\"fig-val\">1 of 10</span></div>\n</div>\n<div class=\"fig-note\"><b>reference</b>, complete, passes 110 of 110. <b>null</b>, a program that exits at once, passes 0 of 110 &#8212; yet 120 of its 310 individual checks, which is why a case counts only when every check in it passes.</div>\n<figcaption>Every number is this repository&#8217;s grader run against its own controls (scripts/controls_table.py, re-run for this page, about twelve seconds per harness on a laptop). Each control is the complete reference harness with exactly one rule of the specification broken, so the cases it fails are what that rule is worth.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/doc2harness",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.20344)",
+            "url": "https://arxiv.org/abs/2610.20344"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Every agent benchmark holds the harness still. The loop, the tools, the retries and the context management are fixed, and the benchmark measures the model inside them. But a harness is ordinary software, coding agents now write ordinary software, and so there is an obvious question that existing benchmarks leave alone: can a coding agent build the thing it runs inside?"
+      },
+      {
+        "type": "text",
+        "value": "Doc2Harness (Ge, Liu, Gao, Ge, Liu, Wang, Mei, Bi, Yao, Guo and Cheng, at the Institute of Computing Technology of the Chinese Academy of Sciences, Tsinghua, Peking and Southeast universities, October 2026) measures exactly that. In stage one a model, working inside a fixed builder harness (OpenCode), gets a development document consolidated from the documentation of twelve frontier harnesses and an interface-only skeleton, and builds a complete harness. In stage two that harness is frozen and driven end to end by a scripted mock model, and each test case reads four channels: the requests sent to the model, the files on disk, the exit code and the command output.\nAcross nineteen frontier models, three builds each, on 328 cases, the best model, GPT-6 Astra, passes 53.05% and the weakest 27.44%. Even the best fails nearly half."
+      },
+      {
+        "type": "text",
+        "value": "The finding I keep thinking about is not the leaderboard. The authors parsed the source of all 57 scored builds and found that harnesses which spread their behaviour over more modules score lower: holding code size fixed, the partial correlation between module count and pass rate is −0.423. In the abstract's words, failures cluster around how cross-cutting functionality is split across modules. Fragmentation, as they put it, is not free."
+      },
+      {
+        "type": "text",
+        "value": "The authors have published a partial release of their own: 53 of the 328 scored cases and the 41 positive controls that gate them, run in Docker, with the rest held out. doc2harness is a different thing, an independent and dependency-free implementation of the idea that is small enough to read in one sitting: a 333-line specification, a scripted model server, 110 cases over the same four channels, a 583-line reference harness that passes all of them, and a set of deliberately broken harnesses that show what each case is worth."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e .\ndoc2harness grade reference -j 8   # 110/110\ndoc2harness grade controls/null    # 0/110\ndoc2harness pack --out BUILD.md    # the prompt for your agent\ndoc2harness grade candidate -v     # grade what it built\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "`BUILD.md` is one self-contained prompt: the task, the whole specification and the skeleton. Hand it to Claude Code, Codex, Cursor, an API loop or a person, let them work, and grade the directory they produce. A candidate is any directory with a `harness.json` naming the command that starts it."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; How one case is graded</span>\n<div class=\"fig-steps fig-steps--v\">\n<div class=\"fig-step\"><b>Set up</b><em>A fresh, empty workspace with the case&#8217;s files in it, and a fresh model server on localhost that will answer from a fixed script and record everything it is sent.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Run</b><em>The candidate starts once, from the command its harness.json names, with --prompt, --workdir, --model-url and whatever flags the case needs. Any language works.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step fig-step--hi\"><b>Read four channels</b><em>Every request the model was sent, the exact bytes of every file on disk, the exit code, and the exact lines on stdout and stderr.</em></div>\n<i class=\"fig-arr\">&#8595;</i>\n<div class=\"fig-step\"><b>Score</b><em>The case passes only if every one of its checks passes. Same candidate, same score, every run.</em></div>\n</div>\n<figcaption>No API key and no network. The scripted server is the only model in the second stage; a model is needed only to write the harness in the first.</figcaption>\n</figure>"
+      },
+      {
+        "type": "markdown",
+        "value": "The specification, HARNESS-1, is one document in nine sections. A harness that meets it parses nine flags and tells four exit codes apart: success, task failure, usage error and transport failure. It sends a fixed system prompt, seven tools sorted by name and the whole conversation, with tool results as `role: tool` messages. Its seven tools return exact strings and fail with exact messages. It keeps every path inside the workspace and refuses a deny list of commands. It feeds a tool failure back to the model and carries on, retries a 429 or a 5xx but not a 404, compacts the conversation when it outgrows a character budget without leaving an orphaned tool result at the front, writes a JSON-lines transcript, and prints the tokens it was charged as its last line."
+      },
+      {
+        "type": "text",
+        "value": "The specification names five of these as cross-cutting, because each touches more than one part of the loop: retries, logging, token accounting, path containment and compaction. It tells the builder that the cases concentrate there. In the paper, that kind of behaviour is where frontier models failed."
+      },
+      {
+        "type": "markdown",
+        "value": "## The scoreboard\n\n| harness | cases passed | checks passed | where it fails |\n|---|---:|---:|---|\n| reference, complete | **110/110** | 383/383 | nowhere |\n| null, does nothing | **0/110** | 120/310 | all ten categories |\n| a failed tool ends the run | 83/110 | 309/375 | commands, loop, paths, tools, transcript |\n| never prints its token total | 91/110 | 364/383 | compaction, loop, tokens |\n| tool results sent as user turns | 101/110 | 361/383 | commands, compaction, protocol, tools |\n| tool errors hidden from the model | 101/110 | 366/378 | commands, paths, tools |\n| never retries a 500 | 103/110 | 363/383 | tokens, transcript, transport |\n| accepts any tool arguments | 104/110 | 368/383 | commands, tools |\n| no workspace containment | 105/110 | 376/383 | paths |\n| transcript misses tool events | 106/110 | 377/381 | transcript |\n| never compacts the conversation | 108/110 | 375/383 | compaction |\n| tool list out of order | 108/110 | 380/383 | protocol |"
+      },
+      {
+        "type": "text",
+        "value": "Every number above is the grader run on this repository, and pytest fails if either of the first two rows ever changes. Cases are pass or fail as a whole; the check count is a diagnostic of how close a failing harness came."
+      },
+      {
+        "type": "text",
+        "value": "The first two rows are the benchmark's integrity. The reference harness passes everything, so a perfect score is reachable. The null harness is a program that exits immediately, and it must pass nothing, because a case it passed would be a case that can be passed without doing anything. The paper guards against such vacuous passes with positive controls paired to individual cases. This repository makes a blunter version of the same guarantee for the suite as a whole, and the null row is also why the headline counts cases rather than checks: doing nothing at all passes 120 of its 310 checks."
+      },
+      {
+        "type": "text",
+        "value": "Every other row is the reference harness with exactly one rule broken, and together they show that the cases localise. Remove workspace containment and you lose five path cases and nothing else. Send the tool list in the wrong order and you lose two protocol cases. But let a failing tool end the run and you lose 27 cases in five categories, because tools fail on purpose inside cases about commands, paths, the loop and the transcript, not only in the cases about tools. Stop printing the token total and you lose 19, only seven of them in the token category: a dozen loop and compaction cases compare a run's whole output exactly, and the total is its last line. That is the paper's point about cross-cutting behaviour, in miniature. The rules that cost most when you break them are the ones that live everywhere."
+      },
+      {
+        "type": "text",
+        "value": "What I have not done: no harness built by a model has been graded here yet. The grading half is finished and free to run. The building half needs a model and a budget, and that score is the open part."
+      },
+      {
+        "type": "text",
+        "value": "What this is not. It is not the paper's benchmark, and its numbers are not comparable with the paper's. The specification is written from scratch and is shorter than the authors' consolidated document. There are 110 cases rather than 328. Isolation is a fresh temporary workspace and a fresh server per case rather than a container per case, so run the grader inside a container if you want the paper's guarantee. And stage one is whatever you like, where the paper fixes the builder harness. The idea, the four channels and the case against vacuous passes are the authors'. What this adds is a grader with no dependencies that anyone can read and run offline in seconds; its 23 tests take under a minute."
+      }
+    ]
+  }
+}

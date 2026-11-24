@@ -1,0 +1,100 @@
+{
+  "slug": "lb-audit",
+  "title": "lb-audit: Spend the Strong Verifier Where Hacks Pay",
+  "date": "2026-10-27",
+  "tags": [
+    "Reinforcement Learning",
+    "Reward Hacking",
+    "RLVR",
+    "Paper Implementation",
+    "NumPy"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/lb-audit-labels.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; How many strong checks before a hack stops paying &#183; simulated GRPO</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>caught hack scored as a failure</span><span><i class=\"fig-m fig-m--pi\"></i>caught hack punished (reflected)</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Passing rollouts that must get a strong check, % &#183; lower is better</span>\n<div class=\"fig-row\"><span class=\"fig-name\">high-pass first</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:50.03%;width:45.70%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:95.73%\" title=\"high-pass first, caught hack scored as a failure: 57.4%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:50.03%\" title=\"high-pass first, caught hack punished: 30.0%\"></i></span><span class=\"fig-val\">30.0%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">random groups</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:43.72%;width:44.58%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:88.31%\" title=\"random groups, caught hack scored as a failure: 53.0%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:43.72%\" title=\"random groups, caught hack punished: 26.2%\"></i></span><span class=\"fig-val\">26.2%</span></div>\n<div class=\"fig-row\"><span class=\"fig-name fig-name--hi\">low-pass first</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:38.46%;width:42.92%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:81.38%\" title=\"low-pass first, caught hack scored as a failure: 48.8%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:38.46%\" title=\"low-pass first, caught hack punished: 23.1%\"></i></span><span class=\"fig-val\">23.1%</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">15%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">30%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">45%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">60%</i></span><span class=\"fig-val\">punished</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Then train it: chance the policy hacks after 400 steps &#183; 32.5% budget, punished</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">random groups</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:54.99%\" title=\"random groups: 0.550\"></i></span><span class=\"fig-val\">55%</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">low-pass first</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:11.91%\" title=\"low-pass first: 0.119\"></i></span><span class=\"fig-val\">12%</span></div>\n</div>\n<figcaption>The top panel holds the policy still: 256 groups of eight rollouts, 35% of rollouts solving the task and 40% of the rest hacking the cheap check, 20 seeds, budget raised until the advantage left on hacks reaches zero. The bottom panel trains a three-action policy with GRPO for 400 steps, 6 seeds. Both come from this repository&#8217;s results files.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/lb-audit",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.35716)",
+            "url": "https://arxiv.org/abs/2610.35716"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Reinforcement learning with verifiable rewards trains a model against a cheap check — a unit test, an exact-match grader — and the model learns that passing the check and solving the task are different things. In Countdown-Code it rewrites the target value in its own solution file so the provided test passes. In a LeetCode environment it defines its own run_tests function, which the grader then runs. A stronger check usually exists, the full test suite or a semantic check of the answer, and it costs too much to run on every rollout."
+      },
+      {
+        "type": "text",
+        "value": "Audit Where Hacks Pay (Shurun Li, Michael Hua Wang and Long Wang of Tsinghua University, with Haibo Zeng of Virginia Tech, October 2026) asks what to do with a fixed budget of those strong checks inside GRPO, and splits the question in two: which passing rollouts to send to the strong verifier, and what a hack is worth once it is caught. The answer to both is short enough to drop into any trainer. Audit whole groups, the ones with the fewest passes first. Give a caught hack the pass reward reflected about the failure reward, so that with rewards of 1 and 0 it gets −1. The paper links no code.\nlb-audit is that rule as a small library, plus the simulations that say what it is worth: pure numpy, no model, no GPU, and every experiment runs on a laptop CPU."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[dev,experiments]\"\npython experiments/advantage.py   # where the budget pays\npython experiments/budget.py      # does training agree?\npytest -q                         # 27 tests\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "## Why the groups where almost nothing passed\n\nGRPO centres rewards within each group, so what a rollout earns depends on what its siblings did. A lone pass among seven failures takes nearly all of the group's advantage; a pass in a group where everything passed takes none.\n\n| passes in a group of 8 | advantage to each passing rollout |\n|---:|---:|\n| 1 | 0.875 |\n| 2 | 0.750 |\n| 4 | 0.500 |\n| 7 | 0.125 |\n| 8 | 0.000 |"
+      },
+      {
+        "type": "text",
+        "value": "If that pass is a hack, the right-hand column is exactly what the policy gradient pays it. Hacks pay most where least passed, so that is where a rationed verifier should look.\nThose groups are also the cheapest to audit. A rollout that already failed the cheap check needs no strong one, so auditing a group costs one strong label per passing rollout, and the low-pass groups have the fewest. The order that takes the most reward away from hacks is the one that costs least per group, which is why it wins twice."
+      },
+      {
+        "type": "text",
+        "value": "The second choice matters at least as much. Score a caught hack as an ordinary failure and you cancel its pull towards hacking, nothing more. Reflect it — put it as far below failure as a pass is above — and the update points away from hacking instead of merely declining to point towards it. The paper proves that the reflected reward exactly negates the advantages of a group whose passes are all hacks, where scoring it as a failure only zeroes them."
+      },
+      {
+        "type": "text",
+        "value": "Figure 1 measures both choices at once. Holding the policy still, it raises the budget until the advantage left on hacks reaches zero, the point past which the gradient stops paying for them. Ordering groups by pass count saves 12% of the strong labels against random groups. Reflecting the correction roughly halves the requirement again. Together that is 23.1% of passing rollouts checked against 53.0% for random audits that score a caught hack as a failure: the naive combination needs 2.3× the strong verification to reach the same place."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; Chance the policy is hacking after 400 GRPO steps &#183; caught hacks punished</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>random groups</span><span><i class=\"fig-m fig-m--pi\"></i>low-pass first</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Share of passing rollouts given a strong check, by row</span>\n<div class=\"fig-row\"><span class=\"fig-name\">20% budget</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:81.99%;width:16.86%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:98.86%\" title=\"20% budget, random groups: 0.989\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:81.99%\" title=\"20% budget, low-pass first: 0.820\"></i></span><span class=\"fig-val\">&#8722;17 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">25% budget</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:58.60%;width:38.05%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:96.65%\" title=\"25% budget, random groups: 0.966\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:58.60%\" title=\"25% budget, low-pass first: 0.586\"></i></span><span class=\"fig-val\">&#8722;38 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">30% budget</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:27.53%;width:63.02%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:90.55%\" title=\"30% budget, random groups: 0.905\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:27.53%\" title=\"30% budget, low-pass first: 0.275\"></i></span><span class=\"fig-val\">&#8722;63 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">32.5% budget</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:11.91%;width:43.08%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:54.99%\" title=\"32.5% budget, random groups: 0.550\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:11.91%\" title=\"32.5% budget, low-pass first: 0.119\"></i></span><span class=\"fig-val\">&#8722;43 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">35% budget</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:4.93%;width:0.47%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:5.39%\" title=\"35% budget, random groups: 0.054\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:4.93%\" title=\"35% budget, low-pass first: 0.049\"></i></span><span class=\"fig-val\">+0 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">40% budget</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:1.50%;width:0.12%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:1.50%\" title=\"40% budget, random groups: 0.015\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:1.62%\" title=\"40% budget, low-pass first: 0.016\"></i></span><span class=\"fig-val\">+0 pts</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">25%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">50%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">75%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">100%</i></span><span class=\"fig-val\">low-pass</span></div>\n</div>\n<figcaption>Mean of 6 seeds per point, 16 groups of 8 per step, starting from a policy that hacks a third of the time. Both orderings stop hacking by a 35% budget; the difference is how far below that each one already works. From results/budget.json.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "A frozen-policy number is only a prediction, so the repository also trains: a GRPO loop over a policy with three things it can do, attempt the task, hack the cheap check, or give up, run for 400 steps at each budget (Figure 2). Hacking turns over a few points above the frozen-policy thresholds and in the same order, and the ordering decides how early. At a 30% budget random groups leave the policy hacking 91% of the time and low-pass first 28%; at 32.5%, 55% against 12%. By 35% both have stopped.\nScoring a caught hack as a failure never gets there inside half the passes: with a 50% budget the policy still ends up hacking 77% of the time under low-pass first and 98% under random groups. The paper reports the same failure in real training: with the plain failure reward, auditing the lowest-pass groups first did no better than auditing random ones."
+      },
+      {
+        "type": "text",
+        "value": "The paper's own experiments are real training runs: LeetCode with a LoRA-trained Qwen3-4B, and Countdown-Code with a fully fine-tuned Qwen2.5-3B, each starting from a checkpoint where about a quarter of the rollouts are hacks. On LeetCode, low-pass audits drove hacking to near zero within about ten steps in all three seeds, while auditing groups in random order left late hacking at 36–52% and used about twice the labels. And the sign of the advantage left on hacks, measured once on a frozen panel, predicted whether a run would suppress hacking in 33 of 39 runs, 13 of 16 of them preregistered."
+      },
+      {
+        "type": "text",
+        "value": "The paper's closing point is that an audit scheme is not described by its expected update alone, and that one is cheap to check. Holding the policy still at a 30% budget and drawing 2,000 independent batches of 16 groups, low-pass first with the reflected correction pushes away from hacking 57% harder on average than random groups, and 17.7% of its batches push the wrong way against 27.5%. Better, and still about one step in six pointing at the hack. A scheme whose mean is right can be close to a coin flip from one step to the next."
+      },
+      {
+        "type": "text",
+        "value": "What did not reproduce, said plainly. The paper finds that unbiased corrections, which scale a caught hack's penalty so that its expected reward matches a full audit, suppress hacking too but cost accuracy: on Countdown-Code they end 6.1–11.8 and 8.0–11.5 points lower on held-out problems than low-pass audits at the same budget. Here the per-item version, the only one implemented, is simply the best option: it stops hacking at a 5% budget, where the reflected correction needs about a third of passes checked, with no loss of accuracy.\nThe paper puts that cost down to the randomness of the estimate. Here the unbiased update is not noisier relative to its signal than the others: its standard deviation is 0.33 to 0.37 of its mean, against 1.13 for low-pass first with the reflected correction. What it does do is put −9 on a single rollout at a 10% audit rate. A three-logit policy absorbs that without complaint; a language model may not, and that damage would live in the model, not in the advantage algebra this repository simulates. A toy that models only the estimator cannot find it. If you are choosing a correction for a real run, this is the result here not to lean on."
+      },
+      {
+        "type": "markdown",
+        "value": "The pieces work on a real trainer without the simulation. Given a batch's groups, with `passes` marking the rollouts the cheap verifier accepted:"
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nfrom lb_audit import audit, caught_reward\n\nspent = audit(groups, \"low_pass\", budget=strong_labels)\ncaught = caught_reward(\"reflect\")        # -1.0 with 1/0 rewards\n\nfor group in groups:\n    rewards = group.rewards(correction=caught)\n    # then GRPO as usual: centre within the group, update\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "`audit` only ever marks passing rollouts, never spends more than the budget, and audits whole groups, because a half-audited group still has unchallenged passes in it. All three are tested."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's experiments. Those are LeetCode and Countdown-Code with real policies; everything here is a three-action policy and synthetic groups, which is exactly why the one claim that depends on a real model's fragility is the one that did not reproduce. The rule, the reflected correction and the idea of minimising the advantage left on hacks are the authors'. The paper proves optimality among pass-count designs under stated assumptions; this checks the consequences numerically rather than reproving them, and one detail differs — where the paper audits the boundary group with whatever probability the budget has left, this skips it for the next group that fits. What it adds is the rule as two functions you can call from a real trainer, and 27 tests that run in about three seconds."
+      }
+    ]
+  }
+}

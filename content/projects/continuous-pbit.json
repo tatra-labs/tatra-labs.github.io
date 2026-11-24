@@ -1,0 +1,96 @@
+{
+  "slug": "continuous-pbit",
+  "title": "continuous-pbit: Bits That Hold Real Numbers",
+  "date": "2026-10-26",
+  "tags": [
+    "Probabilistic Computing",
+    "Energy-Based Models",
+    "Optimization",
+    "Paper Implementation",
+    "NumPy"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/continuous-pbit-rastrigin.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Rastrigin, the same evaluation budget for all three &#183; measured here</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--pi\"></i>continuous p-bits</span><span><i class=\"fig-m fig-m--cx\"></i>restarted Adam</span><span><i class=\"fig-m fig-m--cc\"></i>random search</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Best energy found, mean of 5 seeds, log scale &#183; lower is better, global minimum 0</span>\n<div class=\"fig-row\"><span class=\"fig-name\">2 dimensions</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:24.07%;width:7.93%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:32.00%\" title=\"restarted Adam, 2D: 0.3980\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:16.35%\" title=\"random search, 2D: 0.0657\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:24.07%\" title=\"continuous p-bits, 2D: 0.1597\"></i></span><span class=\"fig-val\">2.5&#215;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">5 dimensions</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:32.03%;width:20.39%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:52.42%\" title=\"restarted Adam, 5D: 4.179\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:62.44%\" title=\"random search, 5D: 13.25\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:32.03%\" title=\"continuous p-bits, 5D: 0.3994\"></i></span><span class=\"fig-val\">10&#215;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">10 dimensions</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:38.05%;width:28.76%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:66.80%\" title=\"restarted Adam, 10D: 21.89\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:75.34%\" title=\"random search, 10D: 58.51\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:38.05%\" title=\"continuous p-bits, 10D: 0.7987\"></i></span><span class=\"fig-val\">27&#215;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">20 dimensions</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:44.07%;width:32.41%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:76.48%\" title=\"restarted Adam, 20D: 66.66\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:85.33%\" title=\"random search, 20D: 184.7\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:44.07%\" title=\"continuous p-bits, 20D: 1.597\"></i></span><span class=\"fig-val\">42&#215;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name fig-name--hi\">40 dimensions</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:50.09%;width:35.25%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:85.34%\" title=\"restarted Adam, 40D: 184.9\"></i><i class=\"fig-pt fig-pt--cc\" style=\"left:93.50%\" title=\"random search, 40D: 473.2\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:50.09%\" title=\"continuous p-bits, 40D: 3.195\"></i></span><span class=\"fig-val\">58&#215;</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0.01</i><i class=\"fig-tick\" style=\"left:20.00%\"></i><i class=\"fig-tlab\" style=\"left:20.00%\">0.1</i><i class=\"fig-tick\" style=\"left:40.00%\"></i><i class=\"fig-tlab\" style=\"left:40.00%\">1</i><i class=\"fig-tick\" style=\"left:60.00%\"></i><i class=\"fig-tlab\" style=\"left:60.00%\">10</i><i class=\"fig-tick\" style=\"left:80.00%\"></i><i class=\"fig-tlab\" style=\"left:80.00%\">100</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">1,000</i></span><span class=\"fig-val\">Adam &#247; p-bits</span></div>\n</div>\n<div class=\"fig-note\">At every dimension and in every seed, the p-bits return <b>exactly the lowest value their 8-bit grid contains</b>, 0.0799 per dimension. Nothing on that grid is lower.</div>\n<figcaption>Each method gets the same count of energy evaluations: 150 annealing sweeps, each scoring all 256 grid values for every p-bit. Adam is charged two evaluations per step, a value and a gradient, whatever the dimension, which is generous to it. At 2 dimensions random search wins, because it is not confined to the grid and the grid does not contain 0.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/continuous-pbit",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.31339)",
+            "url": "https://arxiv.org/abs/2610.31339"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Almost all of computing is evaluation: given the inputs, work out the output. A probabilistic computer does something else. Each of its bits, when its turn comes, is redrawn at random from a distribution its neighbours define, and thousands of them updating in a loop settle into the low-energy states of whatever energy you wrote down. That is an Ising machine, and its bits have almost always been binary, so a real number has to be spread across many of them.\nIn October 2026, Chao Fang, Hsuan Yao Tu, Yihan He, Xiao Gong, Chin-Fu Nien and Gengchiau Liang (National University of Singapore and National Yang Ming Chiao Tung University) built one whose bits hold real numbers, on an FPGA. Each continuous p-bit holds a bounded value at finite precision and is resampled from p(xᵢ | the rest) ∝ exp(−E / T). They also keep the random source apart from the sampler that consumes it, so the noise could one day come from a physical device with whatever distribution that device happens to produce. On their 7-bit factorisation case the FPGA cuts mean core solving time about 33,000-fold against the QUBO software they evaluated."
+      },
+      {
+        "type": "text",
+        "value": "continuous-pbit is that machine in numpy: about 120 lines of sampler, five energies, four random sources, and three experiments chosen to find out where sampling wins and where it does not. It is software. Nothing in it touches the paper's hardware result."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[dev,experiments]\"\npython experiments/optimise.py   # Figure 1\npytest -q                        # 24 tests\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nimport numpy as np\nfrom continuous_pbit import Machine, Rastrigin, Schedule\n\nbounds = np.tile([-5.12, 5.12], (10, 1))\nmachine = Machine(Rastrigin(dimension=10), bounds, bits=8)\nmachine.run(Schedule(start=30.0, stop=0.02, sweeps=150))\nmachine.best_energy   # 0.7987, the lowest value this grid holds\n```"
+      },
+      {
+        "type": "text",
+        "value": "One update is three steps. Score every value the p-bit can hold — 256 of them at 8 bits — with every other p-bit held where it is. Turn those energies into a cumulative distribution at the current temperature. Push one uniform random number through it. Hot, the draw is nearly uniform over the whole interval; cold, it lands on the best value given everything else. Annealing from one to the other is the entire algorithm. Nothing is learned and nothing is trained: the machine is defined by its energy and nothing else."
+      },
+      {
+        "type": "text",
+        "value": "Rastrigin is the standard trap for anything that descends. It has one global minimum at the origin and a lattice of local ones about a unit apart in every direction — eleven per axis on this box, so more than 10⁴¹ of them at 40 dimensions. Gradient descent finds whichever is nearest to where it started, and the usual remedy is to start again somewhere else, many times. That works until the minima outnumber the restarts. A p-bit does not descend. Because it scores its whole interval at once, a hot p-bit can jump from one basin to any other along its own axis in a single update."
+      },
+      {
+        "type": "text",
+        "value": "Figure 1 is the result, and the p-bit column is stranger than merely lower. At every dimension, in all five seeds, the machine returns exactly the lowest value its grid contains. Restarted Adam gets worse as the dimension grows, because the number of local minima does, and at 40 dimensions it ends 58× above the machine: 184.9 against 3.195."
+      },
+      {
+        "type": "text",
+        "value": "Three things keep that from being a bigger claim than it is. The grid is the catch: an 8-bit p-bit can hold only 256 values, none of them exactly 0, so the machine's perfect score is 0.0799 per dimension rather than zero, and at 2 dimensions plain random search, which is not confined to the grid, beats it. The budget counts energy evaluations and charges Adam two per step whatever the dimension, which favours Adam. And a sweep scores a whole grid column at once — the one thing this hardware does in parallel and numpy does not — so the comparison is fair on arithmetic and says nothing about speed."
+      },
+      {
+        "type": "markdown",
+        "value": "The paper's other idea is the one I find most useful: the random source is not the sampler. A physical noise source does not hand you a uniform number. It hands you thermal noise, or arrival times, or whatever its device produces. Because the sampler only ever needs a uniform, any source can drive it by passing its own draws through its own CDF first.\n\n```python\nfrom continuous_pbit import Cauchy\nMachine(energy, bounds, source=Cauchy())   # a heavy-tailed device\n```"
+      },
+      {
+        "type": "text",
+        "value": "That is a test rather than a slogan. For each of four sources — uniform, Gaussian, exponential and Cauchy — 40,000 draws from one p-bit must match exp(−E / T) on the grid to within a total-variation distance of 0.02. All four pass."
+      },
+      {
+        "type": "markdown",
+        "value": "## Where it buys nothing\n\n| pixels flipped | continuous p-bits | greedy descent |\n|---:|---:|---:|\n| 0% | 100.0% | 100.0% |\n| 10% | 97.5% | 98.0% |\n| 20% | 91.0% | 91.5% |\n| 30% | 69.0% | 70.5% |\n| 40% | 23.5% | 23.5% |\n| 50% | 1.0% | 2.0% |"
+      },
+      {
+        "type": "text",
+        "value": "Ten 5×7 digits are written straight into a dense associative-memory energy — nothing is trained — and a corrupted digit is handed to the machine to clean up, 200 trials per row. The comparison is the same energy descended greedily, which is the fixed-point iteration an ordinary continuous Hopfield network runs. Sampling buys nothing here, and that is the result. This energy's basins are clean enough that taking each p-bit's best value already finds the stored digit whenever anything can. A machine that samples is only worth its temperature schedule on a landscape with somewhere to get stuck."
+      },
+      {
+        "type": "text",
+        "value": "Factoring is the paper's showcase, and here it is the weakest result. An energy of (ab − N)² makes two p-bits multiply to a target. The machine factors one of two 7-bit numbers (77 = 7 × 11), one of eight 10-bit numbers, and none of eight 12-bit ones. The paper's 7-bit case is a larger thing than mine: two 7-bit factors, 67 × 73 = 4,891, a 13-bit number, past the 12-bit size at which this machine already solves nothing. The reason is visible in the energy. Every real pair on the hyperbola ab = N scores zero, so near misses score almost as well as the answer and nothing in the surface points at the integers. It is not a factoring algorithm, it loses to trial division at every size, and it is in the repository only because it is one more energy you can hand the same machine."
+      },
+      {
+        "type": "markdown",
+        "value": "An energy is two methods: `total(state)`, and `column(state, i, grid)`, the energy for every candidate value of one p-bit with the rest held fixed. The second is what keeps a sweep cheap, and getting it wrong silently ruins a run, so the tests check every shipped energy's `column` against its own `total` at every grid point, to 1e-9."
+      },
+      {
+        "type": "text",
+        "value": "What this is not: it is not the paper's machine. The paper's contribution is an FPGA with a rejection sampler fed by a linear-feedback shift register; this samples by inverse CDF on a fixed grid, which is closer to the paper's own CPU implementation than to its hardware. The 33,000× is a hardware result about hardware, and nothing here reproduces it or is compared with it. The experiments are this repository's own — Rastrigin, the digits and the baselines were chosen here — and the paper's 100% recovery of MNIST patterns is a different experiment from the digit recall above. What it adds is the machine itself, small enough to read in one sitting, with the measurements that say where it is worth having."
+      }
+    ]
+  }
+}

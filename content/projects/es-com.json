@@ -1,0 +1,94 @@
+{
+  "slug": "es-com",
+  "title": "es-com: An Evolution-Strategies Step Is a Displacement",
+  "date": "2026-10-27",
+  "tags": [
+    "Evolution Strategies",
+    "Gradient-Free Optimization",
+    "Numerical Stability",
+    "Paper Implementation",
+    "NumPy"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/es-com-residual.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Exact at every population size, until the arithmetic cancels &#183; measured here</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--cx\"></i>one setting</span><span><i class=\"fig-m fig-m--pi\"></i>worst setting, printed on the right</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Relative gap between the ES step and its centre-of-mass form, by noise scale &#963;</span>\n<div class=\"fig-row\"><span class=\"fig-name\">&#963; = 10</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:5.46%;width:18.98%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:10.49%\" title=\"&#963; = 10, N = 2, 1 parameter: 8.8e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:7.15%\" title=\"&#963; = 10, N = 2, 16 parameters: 4.4e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:11.63%\" title=\"&#963; = 10, N = 2, 1,024 parameters: 1.1e-15\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:15.32%\" title=\"&#963; = 10, N = 8, 1 parameter: 2.4e-15\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:5.46%\" title=\"&#963; = 10, N = 8, 16 parameters: 3.1e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:9.43%\" title=\"&#963; = 10, N = 8, 1,024 parameters: 7.1e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:9.96%\" title=\"&#963; = 10, N = 64, 16 parameters: 7.9e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:13.80%\" title=\"&#963; = 10, N = 64, 1,024 parameters: 1.7e-15\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:24.30%\" title=\"&#963; = 10, N = 512, 16 parameters: 1.5e-14\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:21.50%\" title=\"&#963; = 10, N = 512, 1,024 parameters: 8.6e-15\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:24.44%\" title=\"&#963; = 10, worst: N = 512, 1 parameter: 1.6e-14\"></i></span><span class=\"fig-val\">1.6&#215;10&#8315;&#185;&#8308;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">&#963; = 0.1</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:5.03%;width:39.61%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:5.03%\" title=\"&#963; = 0.1, N = 2, 1 parameter: 2.8e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:24.95%\" title=\"&#963; = 0.1, N = 2, 16 parameters: 1.8e-14\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:26.79%\" title=\"&#963; = 0.1, N = 2, 1,024 parameters: 2.6e-14\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:10.62%\" title=\"&#963; = 0.1, N = 8, 1 parameter: 9.0e-16\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:18.84%\" title=\"&#963; = 0.1, N = 8, 16 parameters: 5.0e-15\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:25.01%\" title=\"&#963; = 0.1, N = 8, 1,024 parameters: 1.8e-14\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:33.32%\" title=\"&#963; = 0.1, N = 64, 1 parameter: 1.0e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:30.13%\" title=\"&#963; = 0.1, N = 64, 16 parameters: 5.1e-14\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:34.49%\" title=\"&#963; = 0.1, N = 64, 1,024 parameters: 1.3e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:39.22%\" title=\"&#963; = 0.1, N = 512, 1 parameter: 3.4e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:42.88%\" title=\"&#963; = 0.1, N = 512, 16 parameters: 7.2e-13\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:44.63%\" title=\"&#963; = 0.1, worst: N = 512, 1,024 parameters: 1.0e-12\"></i></span><span class=\"fig-val\">1.0&#215;10&#8315;&#185;&#178;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">&#963; = 0.001</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:37.47%;width:29.17%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:46.83%\" title=\"&#963; = 0.001, N = 2, 1 parameter: 1.6e-12\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:46.35%\" title=\"&#963; = 0.001, N = 2, 16 parameters: 1.5e-12\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:44.28%\" title=\"&#963; = 0.001, N = 2, 1,024 parameters: 9.7e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:37.47%\" title=\"&#963; = 0.001, N = 8, 1 parameter: 2.4e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:41.49%\" title=\"&#963; = 0.001, N = 8, 16 parameters: 5.4e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:45.39%\" title=\"&#963; = 0.001, N = 8, 1,024 parameters: 1.2e-12\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:38.34%\" title=\"&#963; = 0.001, N = 64, 1 parameter: 2.8e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:52.73%\" title=\"&#963; = 0.001, N = 64, 16 parameters: 5.6e-12\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:55.87%\" title=\"&#963; = 0.001, N = 64, 1,024 parameters: 1.1e-11\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:43.96%\" title=\"&#963; = 0.001, N = 512, 1 parameter: 9.1e-13\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:64.52%\" title=\"&#963; = 0.001, N = 512, 16 parameters: 6.4e-11\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:66.64%\" title=\"&#963; = 0.001, worst: N = 512, 1,024 parameters: 9.9e-11\"></i></span><span class=\"fig-val\">9.9&#215;10&#8315;&#185;&#185;</span></div>\n</div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Masses lifted by a constant c, which the algebra ignores &#183; centred ranks, N = 24</span>\n<div class=\"fig-row\"><span class=\"fig-name\">c = 1</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:23.75%\" title=\"c = 1: 1.4e-14\"></i></span><span class=\"fig-val\">1.4&#215;10&#8315;&#185;&#8308;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">c = 1,000</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:58.24%\" title=\"c = 1,000: 1.7e-11\"></i></span><span class=\"fig-val\">1.7&#215;10&#8315;&#185;&#185;</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">c = 1,000,000</span><span class=\"fig-track\"><i class=\"fig-pt fig-pt--pi\" style=\"left:91.50%\" title=\"c = 1,000,000: 1.7e-08\"></i></span><span class=\"fig-val\">1.7&#215;10&#8315;&#8312;</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">10&#8315;&#185;&#8310;</i><i class=\"fig-tick\" style=\"left:22.22%\"></i><i class=\"fig-tlab\" style=\"left:22.22%\">10&#8315;&#185;&#8308;</i><i class=\"fig-tick\" style=\"left:44.44%\"></i><i class=\"fig-tlab\" style=\"left:44.44%\">10&#8315;&#185;&#178;</i><i class=\"fig-tick\" style=\"left:66.67%\"></i><i class=\"fig-tlab\" style=\"left:66.67%\">10&#8315;&#185;&#8304;</i><i class=\"fig-tick\" style=\"left:88.89%\"></i><i class=\"fig-tlab\" style=\"left:88.89%\">10&#8315;&#8312;</i></span><span class=\"fig-val\">worst</span></div>\n</div>\n<figcaption>Each square is one population of 2, 8, 64 or 512 perturbed models in 1, 16 or 1,024 dimensions, with random rewards; the gap is the largest difference between the two ways of writing the step, relative to the step. One setting agreed to the last bit and has no place on a log scale. Both panels share one scale, and float64 rounding is about 2.2&#215;10&#8315;&#185;&#8310;. The residual grows as &#963; shrinks because the geometric form subtracts two nearby points and divides by &#963;.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/es-com",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2610.35865)",
+            "url": "https://arxiv.org/abs/2610.35865"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Evolution strategies are back. Perturb a model N times with Gaussian noise, score every copy, and move toward the perturbations that scored well: no backpropagation, and it has proved enough to fine-tune large language models. The textbook way to explain the update is as a Monte Carlo estimate of the gradient of a smoothed objective, right on average and less wrong as the population grows.\nAkshat Gupta (UC Berkeley) offers a different reading in Center-of-Mass Interpretation of Evolution Strategies, posted in October 2026, and it is not an approximation. Treat each perturbed model as a particle and its reward as its mass. Before scoring, every particle weighs the same and the population balances at its centroid. After scoring it balances somewhere else, at the reward-weighted centre of mass. The mean-subtracted ES update is exactly the displacement between those two points, scaled by the mean reward over σ, for any finite population. A population of two included."
+      },
+      {
+        "type": "markdown",
+        "value": "```\np_i = θ + σ·ε_i                  perturb\nΔθ  = (α/N) · Σ (r_i − r̄) ε_i    the usual step\nΔθ  = (α·r̄/σ) · (p_com − p̄)      the same step, exactly\n```"
+      },
+      {
+        "type": "text",
+        "value": "The paper's own limitations section says the identity “is exact and needs no experimental validation.” That is true of the algebra. es-com checks it anyway, because exact in algebra and exact in float64 are different claims, and the space between them turns out to hold the only practical advice in the whole exercise. The paper is pure derivation and ships no code; this is about 240 lines of numpy and 31 tests."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[dev,experiments]\"\npython experiments/identity.py   # 36 settings, seconds\npytest -q                        # 31 tests, under a second\n```"
+      },
+      {
+        "type": "text",
+        "value": "Across 36 settings (populations of 2, 8, 64 and 512, models with 1, 16 and 1,024 parameters, and noise from σ = 0.001 to σ = 10) the two ways of writing the step agree to a worst-case relative residual of 9.9 × 10⁻¹¹, and in one setting to the last bit. That is what rounding looks like, not what estimation looks like. An estimate would be at its worst with two particles; here the population of two has a worst case of 1.6 × 10⁻¹², better than the population of 512."
+      },
+      {
+        "type": "text",
+        "value": "Figure 1 also shows where the residual comes from. Mostly it is σ. The geometric form rebuilds a small step by subtracting two nearby points, the centre of mass and the centroid, and then dividing by σ, so the smaller the noise, the more digits that subtraction cancels: the worst case is 1.6 × 10⁻¹⁴ at σ = 10, 1.0 × 10⁻¹² at σ = 0.1 and 9.9 × 10⁻¹¹ at σ = 0.001. The population matters less, and in the opposite direction to an estimate: at every σ the largest population is the least exact, because more particles mean more terms to round. The constant that makes the masses positive does the same thing. The algebra ignores it entirely; the arithmetic does not, going from 1.4 × 10⁻¹⁴ at c = 1 to 1.7 × 10⁻⁸ at c = 1,000,000.\nSo the advice is plain, and worth having before anyone builds an optimiser out of the picture: compute the step the ordinary way, and use the geometry to think. Both failure modes are tested for the behaviour they have, rather than hidden under a loose tolerance."
+      },
+      {
+        "type": "image",
+        "value": "/assets/images/projects/es-com-balance.webp",
+        "alt": "Two frames of an ES run on a two-dimensional objective: blue particles sized by their reward, a ring at the centroid, a red dot at the centre of mass, and a black arrow showing the step.",
+        "caption": "Two steps of ES on a two-dimensional objective, 40 particles in mirrored pairs. A particle's area is its mass. The ring is the centroid, the red dot the centre of mass, and the black arrow is the step the optimiser actually takes: the short gap between ring and dot, scaled by the factor in each title. The cosine between gap and step is 1.000000000000 in both frames."
+      },
+      {
+        "type": "text",
+        "value": "That picture uses mirrored, or antithetic, sampling for a reason the paper gives and es-com measures. In general the displacement starts at the population's centroid, not at the model, and with plain sampling the centroid misses the model by an amount that shrinks only as one over the square root of the population. Mirror every perturbation and the mean noise is exactly zero, so the centroid sits exactly on the model, at any population size. Then the reading is as simple as it gets: from where it stands, the model moves toward the reward-weighted centre of mass of its own population."
+      },
+      {
+        "type": "markdown",
+        "value": "| population | plain sampling | mirrored pairs |\n|---:|---:|---:|\n| 2 | 5.57 | 0 |\n| 32 | 1.41 | 2.0×10⁻¹⁶ |\n| 2,048 | 0.176 | 1.8×10⁻¹⁶ |"
+      },
+      {
+        "type": "text",
+        "value": "Distance from the centroid to the model at σ = 1 in 64 dimensions, averaged over 64 seeds. Under plain sampling the paper's formula for the root-mean-square distance, σ√(d/N), gives 5.66 and 0.177 for the first and last rows; the measured averages are 5.57 and 0.176."
+      },
+      {
+        "type": "text",
+        "value": "The same picture explains what subtracting the mean reward does, which the paper works through in its Section 4.1. Raw rewards measure the displacement to the centre of mass from the model; mean-subtracted rewards measure it from the centroid. The destination is the same, only the starting point moves, which is why the two updates coincide under mirrored sampling, where the starting points do. And adding a constant to every reward moves the centre of mass and the mean reward in opposite directions, leaving the step untouched. es-com tests that for shifts up to 10,000, and it is what lets the masses always be made non-negative without changing the algorithm."
+      },
+      {
+        "type": "text",
+        "value": "The paper also states that its derivation covers any weighting whose coefficients sum to zero, and lists the common ones in its Table 1: standardised rewards (ARS, and the LLM fine-tuning of Qiu et al.), centred ranks (OpenAI-ES) and NES rank utilities. es-com makes that concrete. Lift sum-to-zero weights by any constant until they are all positive, use them as masses, and the step is again a centre-of-mass displacement: mean-subtracted, centred-rank and standardised weights all match the ordinary step to between 1.2×10⁻¹⁴ and 3.3×10⁻¹⁴. Raw rewards match too, measured from the model instead of the centroid. The library exposes each piece, so you can look at your own run this way:"
+      },
+      {
+        "type": "markdown",
+        "value": "```python\nimport es_com as es\n\nes.centroid(models)                # where it balanced before scoring\nes.center_of_mass(models, rewards) # where it balances after\nes.displacement_update(models, rewards, alpha, sigma)\n```"
+      },
+      {
+        "type": "text",
+        "value": "What this is not: an algorithm. The interpretation is the paper's, and the paper says plainly that it is an interpretation and not a new method. Nothing in es-com makes ES converge faster, and nothing here was trained; I have not run ES on a language model. The paper's footnote that the term mean subtraction removes is dominated by noise when the model has far more parameters than the population is checked here only as far as the centroid's distance from the model. The two numerical caveats are mine; the paper makes no claim about floating point. What es-com adds is the identity checked to the last bit, drawn, and a few functions that let anyone see their own ES step as a shift in balance."
+      }
+    ]
+  }
+}

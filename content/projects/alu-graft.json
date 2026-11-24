@@ -1,0 +1,112 @@
+{
+  "slug": "alu-graft",
+  "title": "alu-graft: Exact Arithmetic, Compiled into the Weights",
+  "date": "2026-11-23",
+  "tags": [
+    "Circuit Compilation",
+    "Model Editing",
+    "Transformers",
+    "Paper Implementation",
+    "PyTorch"
+  ],
+  "author": "Tatra Labs",
+  "image": "/assets/images/projects/alu-graft-digits.webp",
+  "content": {
+    "sections": [
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 1 &#183; Same prompts, same greedy decoding &#183; Qwen3-0.6B</span>\n<div class=\"fig-key\"><span><i class=\"fig-m fig-m--pi\"></i>with the graft</span><span><i class=\"fig-m fig-m--cx\"></i>Qwen3-0.6B as released</span></div>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Exact answers by longest operand, % &#183; 100 prompts per row</span>\n<div class=\"fig-row\"><span class=\"fig-name\">1 digit</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:81.00%;width:19.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:81.00%\" title=\"Qwen3-0.6B, 1 digit: 81%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"with the graft, 1 digit: 100%\"></i></span><span class=\"fig-val\">+19 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">2 digits</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:74.00%;width:26.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:74.00%\" title=\"Qwen3-0.6B, 2 digits: 74%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"with the graft, 2 digits: 100%\"></i></span><span class=\"fig-val\">+26 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">3 digits</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:53.00%;width:47.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:53.00%\" title=\"Qwen3-0.6B, 3 digits: 53%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"with the graft, 3 digits: 100%\"></i></span><span class=\"fig-val\">+47 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">4 digits</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:38.00%;width:62.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:38.00%\" title=\"Qwen3-0.6B, 4 digits: 38%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"with the graft, 4 digits: 100%\"></i></span><span class=\"fig-val\">+62 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">5 digits</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:26.00%;width:74.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:26.00%\" title=\"Qwen3-0.6B, 5 digits: 26%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"with the graft, 5 digits: 100%\"></i></span><span class=\"fig-val\">+74 pts</span></div>\n<div class=\"fig-row\"><span class=\"fig-name\">6 digits</span><span class=\"fig-track\"><i class=\"fig-span\" style=\"left:27.00%;width:73.00%\"></i><i class=\"fig-pt fig-pt--cx\" style=\"left:27.00%\" title=\"Qwen3-0.6B, 6 digits: 27%\"></i><i class=\"fig-pt fig-pt--pi\" style=\"left:100.00%\" title=\"with the graft, 6 digits: 100%\"></i></span><span class=\"fig-val\">+73 pts</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">25%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">50%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">75%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">100%</i></span><span class=\"fig-val\">gain</span></div>\n</div>\n<figcaption>600 addition and subtraction prompts in four formats (A+B=, A + B =, a chat turn, and Q/A), scored on the first number each model writes. 145 of the base model&#8217;s 301 misses write no number at all; the other 156 write a wrong one. The graft&#8217;s weights were set by formula: zero gradient steps, zero training examples.</figcaption>\n</figure>"
+      },
+      {
+        "type": "links",
+        "value": [
+          {
+            "label": "Source on GitHub",
+            "url": "https://github.com/tatra-labs/alu-graft",
+            "primary": true
+          },
+          {
+            "label": "Read the paper (arXiv 2611.26450)",
+            "url": "https://arxiv.org/abs/2611.26450"
+          },
+          {
+            "label": "Run the circuit in your browser",
+            "url": "https://tatra-labs.github.io/alu-graft/"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "value": "Small language models cannot add. Qwen3-0.6B, given 600 prompts like 48213+97654=, gets 299 right, and at six digits barely one in four. This repository gives it 184,277 more weights, every one of them set by a formula rather than learned, and the same model gets all 600. Everything else it writes is unchanged: on the WikiText-2 test set its next-token distribution moves by 5 × 10⁻⁸ nats per token."
+      },
+      {
+        "type": "text",
+        "value": "The method is from A CPU Inside an LLM: Zero-Gradient Compilation of Exact Circuits into Pretrained Weights (Tanmay Sah, an independent researcher, November 2026). Instead of teaching a model arithmetic, it compiles an exact circuit straight into the model's weights: no training examples, no gradient steps, no tool call and no runtime hook. The paper grafts signed addition, subtraction and multiplication into IBM's Granite 4.2 3B and Alibaba's Qwen 3.5 4B and reports 99.17% and 100% on 6-digit arithmetic, where a LoRA fine-tune on 12,800 examples reaches 42.2% and 61.7%. It releases no code.\nalu-graft is an independent, from-scratch implementation for a smaller model with a different attention design, built four days after the paper appeared. It writes a plain Qwen3ForCausalLM checkpoint that loads with vanilla transformers; nothing at inference time knows a circuit is there."
+      },
+      {
+        "type": "markdown",
+        "value": "```bash\npip install -e \".[dev]\"\npython scripts/graft.py --out qwen3-0.6b-alu   # ~2 min, fp32\npython scripts/chat_demo.py \"Compute 48213 + 97654.\"\n```"
+      },
+      {
+        "type": "markdown",
+        "value": "## How a calculator gets into a transformer"
+      },
+      {
+        "type": "text",
+        "value": "Widen the model; don't touch it. Qwen3-0.6B's 1,024 residual dimensions are kept bit for bit and 445 new ones, wires, are appended. No original weight ever reads a wire. Wires are written only by new attention heads (four extra key-value heads, eight query heads, per layer) and 7,020 new SwiGLU neurons in 15 of the 28 layers. The two halves meet in one place: RMSNorm, whose denominator now averages over 1,469 dimensions instead of 1,024. Scaling every original norm weight by √(1024/1469) makes the base computation exact whenever the wires are zero, and wires are stored at 2⁻¹³ so that even when they are not, they barely move it."
+      },
+      {
+        "type": "text",
+        "value": "The hard part is that same norm. Every layer reads the residual through RMSNorm, so the circuit never sees a value x, only λx, where λ depends on the text and changes from token to token. A bias-free SwiGLU layer cannot implement even a fixed threshold under that scaling; the paper proves it. Its answer, which I reimplemented, is a ratio unit: about 30 neurons with log-spaced gains on a reference wire r and a payload wire v, whose summed output is a numerical quadrature of an integral that equals v/r. The unknown λ cancels in the ratio, to about one part in a million. Two layers of ramps and a ratio give an exact 0/1 threshold of any linear function of the wires, whatever λ is, and that is enough to build an adder."
+      },
+      {
+        "type": "text",
+        "value": "The part that is new here is moving values between tokens. The paper's two models carry them across positions with a modified RoPE head in Granite and a zero-decay GatedDeltaNet layer in Qwen 3.5. Qwen3-0.6B has neither, and it normalises every query and key before RoPE, with one weight vector shared by all the heads in a layer, which caps how sharp any new head can be. So alu-graft optimises the direction of each new head's query and key until the logit at one chosen relative offset beats every other offset out to 40,960 tokens, the model's whole context, by at least 8.8 nats. Dynamic heads mix several such queries under 0/1 wires, so one head can read the operator |B|+1 tokens back, wherever that is."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 2 &#183; The adder, in the first 15 of the model&#8217;s 28 layers</span>\n<div class=\"fig-stack\">\n<div class=\"fig-layer\"><b>L0</b><span>Eight offset heads copy what kind of token sits 1 to 8 places back: a digit, +, &#8722;, =, a space.</span></div>\n<div class=\"fig-layer\"><b>L1&#8211;L2</b><span>Find the digit runs: where A starts, where B ends, which positions will hold an answer.</span></div>\n<div class=\"fig-layer\"><b>L3</b><span>At the =, fetch the digits of A from the operator token |B|+1 places back.</span></div>\n<div class=\"fig-layer fig-layer--hi\"><b>L4&#8211;L7</b><span>Per-digit generate and propagate, then carry-lookahead for A+B, A&#8722;B and B&#8722;A, all in one layer.</span></div>\n<div class=\"fig-layer\"><b>L8&#8211;L9</b><span>Result digits, the sign, leading zeros stripped, the spacing style to answer in.</span></div>\n<div class=\"fig-layer\"><b>L10</b><span>Every answer position reads the result from its own =, j places back.</span></div>\n<div class=\"fig-layer\"><b>L11&#8211;L14</b><span>Which token comes next: a digit, a minus, a space, or stop. Its logit moves by +300 nats.</span></div>\n</div>\n<figcaption>About 400 lines of Python in program.py, built from three primitives: a ratio unit, a ramp threshold, and attention heads aimed at a fixed relative offset. A readout that is not firing adds exactly zero to every logit, which is why the circuit cannot disturb a token it does not write.</figcaption>\n</figure>"
+      },
+      {
+        "type": "markdown",
+        "value": "## Results\n\n| test | Qwen3-0.6B | with the graft |\n|---|---:|---:|\n| the same 600 prompts, first number written | 299 / 600 | **600 / 600** |\n| 2,000 problems in 8 prompt formats | not run | **2,000 / 2,000** |\n| 300 chat questions, model answers its own way | 276 / 300 | **290 / 300** |\n| WikiText-2 test perplexity | 34.981 | 34.982 |"
+      },
+      {
+        "type": "text",
+        "value": "Every number was measured on the grafted fp32 checkpoint. A problem in the 2,000 counts only if greedy decoding writes the full answer and then stops writing digits: negative results come out with a sign, 999999+999999 gives 1999998, and leading zeros are stripped."
+      },
+      {
+        "type": "text",
+        "value": "The chat row is the honest one, because there the model decides what to write. Given 300 What is A + B? questions in its own chat template, it wrote the sum in a form the circuit was compiled for in 240 replies, and the graft got all 240 right where the base model got 226. In the other 60 it wrote 22,603 + 6,387 with commas, or broke the problem into steps of its own, and the circuit, which fires only on the patterns it knows, stayed silent: 50 right with it and 50 without. It fixed 14 answers and broke none.\nThe ten it still gets wrong are the model's own reasoning. Asked for 263418 − 110, it plans to subtract 10 and then 1; the circuit computes both steps exactly, 263408 and then 263407, and the plan is wrong."
+      },
+      {
+        "type": "markdown",
+        "value": "With thinking on, the circuit fires inside the model's own scratch work, and once a number it wrote becomes the next operand, it fires again. The double brackets mark the tokens the circuit wrote; the rest is the model, exactly as stored in `results/demos.jsonl`:"
+      },
+      {
+        "type": "markdown",
+        "value": "```text\n3 + 4 =[[ 7]]  \n1 + 5 =[[ 6]]  \n2 + 6 =[[ 8]]  \n8 + 7 =[[ 15]] (so write 5, carry over 1)  \n4 + 9 =[[ 13]] + 1 =[[ 14]] (write 4, carry over 1)  \n```"
+      },
+      {
+        "type": "text",
+        "value": "Nothing else changes, and that was measured, not assumed. Over the 36,652 tokens of the WikiText-2 test set the grafted model's next-token distribution differs from the original's by 5.4 × 10⁻⁸ nats per token, and the circuit fired at none of 7,200 positions of ordinary text. Of 31 patterns it was not compiled for (seven-digit operands, chains, decimals, 1,234, negative operands, multiplication, dates, hex, code) 29 stay silent. The two that fire do so on valid sums: 12 +3=, and a URL containing x=1+2=."
+      },
+      {
+        "type": "markdown",
+        "value": "<figure class=\"fig\">\n<span class=\"fig-title\">Figure 3 &#183; How much norm drift the circuit survives &#183; simulator</span>\n<div class=\"fig-panel\">\n<span class=\"fig-sub\">Exact answers on 5,000 random problems, as every RMSNorm scale is drawn over a wider range than calibrated</span>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">1&#215; the range</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:100.00%\" title=\"1&#215; the range: 100%\"></i></span><span class=\"fig-val\">5,000 / 5,000</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">1.5&#215; the range</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:100.00%\" title=\"1.5&#215; the range: 100%\"></i></span><span class=\"fig-val\">5,000 / 5,000</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name fig-name--hi\">2&#215; the range</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:100.00%\" title=\"2&#215; the range: 100%\"></i></span><span class=\"fig-val\">5,000 / 5,000</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">2.5&#215; the range</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:99.50%\" title=\"2.5&#215; the range: 99.5%\"></i></span><span class=\"fig-val\">4,975 / 5,000</span></div>\n<div class=\"fig-row fig-row--bar\"><span class=\"fig-name\">3&#215; the range</span><span class=\"fig-track\"><i class=\"fig-bar\" style=\"width:74.24%\" title=\"3&#215; the range: 74.2%\"></i></span><span class=\"fig-val\">3,712 / 5,000</span></div>\n<div class=\"fig-row fig-row--scale\"><span></span><span class=\"fig-track\"><i class=\"fig-tick\" style=\"left:0.00%\"></i><i class=\"fig-tlab\" style=\"left:0.00%\">0%</i><i class=\"fig-tick\" style=\"left:25.00%\"></i><i class=\"fig-tlab\" style=\"left:25.00%\">25%</i><i class=\"fig-tick\" style=\"left:50.00%\"></i><i class=\"fig-tlab\" style=\"left:50.00%\">50%</i><i class=\"fig-tick\" style=\"left:75.00%\"></i><i class=\"fig-tlab\" style=\"left:75.00%\">75%</i><i class=\"fig-tick\" style=\"left:100.00%\"></i><i class=\"fig-tlab\" style=\"left:100.00%\">100%</i></span><span class=\"fig-val\">exact</span></div>\n</div>\n<figcaption>The same circuit weights with no base model, every norm scale drawn at random per layer and per token. That is harsher than the real model, whose scales are smooth: it never leaves the calibrated range on ordinary text.</figcaption>\n</figure>"
+      },
+      {
+        "type": "text",
+        "value": "On the real model the norm scales are smooth and stay inside the range the circuit was calibrated on. The simulator is deliberately harsher: the same circuit weights, with every norm scale drawn at random per layer and per token. Inside the calibrated range, 100,000 random problems in five formats and every pair of operands from 0 to 99, both operations, come out exact. It still holds at twice the range and starts to fail at two and a half times, which is the margin."
+      },
+      {
+        "type": "text",
+        "value": "Where it differs from the paper, said plainly. A smaller model and fewer operations: unsigned operands of one to six digits, plus and minus, signed results, and none of the paper's multiplication, Boolean or majority circuits. Two prompt styles, A+B= and A + B = and their mixes, against the paper's eight templates. It runs only in fp32, because the ratio unit's gains span about ten orders of magnitude. And the checkpoint is dense: transformers wants every layer the same shape, so 184,277 non-zero circuit weights ship inside 1.22 billion parameters, most of them zeros. The paper's sparse sidecar would fix that; it is not implemented here. Finally, the circuit cannot answer when the first digit of A is the very first token of the context, because it has to see the token before a number to know the number has begun. The paper reports the same abstention, and any word, space or chat template in front fixes it."
+      },
+      {
+        "type": "markdown",
+        "value": "What this is not: a model that learned arithmetic, or one that knows when to compute. It gives exact arithmetic to a model that writes the expression in a form the circuit knows; written as 48,213 + 97,654 or in words, the base model is on its own. The construction, the ratio quadrature and the two-layer threshold are Sah's. The offset heads that survive QK-norm, the dynamic heads and every number on this page come from this repository, and the half-megabyte of circuit weights also runs [in your browser](https://tatra-labs.github.io/alu-graft/), with a trace of every wire."
+      }
+    ]
+  }
+}
